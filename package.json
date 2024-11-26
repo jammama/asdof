@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "express": "^4.21.1",
+    "http": "^0.0.1-security",
+    "socket.io": "^4.8.1",
+    "url": "^0.11.4"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}

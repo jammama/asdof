@@ -1,0 +1,111 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin: auto;
+    max-width: 800px;
+    width: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.chat-box {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    background: #f5f5f5;
+}
+
+.message {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+}
+
+.message-text {
+    padding: 10px 14px;
+    max-width: 70%;
+    word-wrap: break-word;
+    font-size: 14px;
+    border-radius: 8px;
+}
+
+.message-text span {
+    font-weight: bold;
+    color: #007BFF;
+}
+
+.user1 .message-text {
+    background: #e0f7fa;
+    color: #006064;
+    margin-left: auto;
+    border-radius: 8px 8px 0 8px;
+}
+
+.user2 .message-text {
+    background: #ede7f6;
+    color: #512da8;
+    margin-right: auto;
+    border-radius: 8px 8px 8px 0;
+}
+
+.message-id {
+    font-size: 12px;
+    color: #777;
+    position: absolute;
+    top: -18px; /* ID가 말풍선 위로 위치하도록 조정 */
+    padding: 0 2px 0 8px;
+    background-color: #fff;
+    border-radius: 4px;
+}
+
+.user1 .message-id {
+    right: 8px; /* 본인 메시지, 오른쪽 상단 */
+}
+
+.user2 .message-id {
+    left: 8px; /* 타인 메시지, 왼쪽 상단 */
+}
+
+.input-area {
+    display: flex;
+    padding: 16px;
+    border-top: 1px solid #ddd;
+    background: #fff;
+}
+
+.input-area textarea {
+    flex: 1;
+    resize: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.input-area button {
+    margin-left: 8px;
+    padding: 10px 16px;
+    border: none;
+    background: #006064;
+    color: white;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.input-area button:hover {
+    background: #004d40;
+}
