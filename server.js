@@ -18,16 +18,13 @@ app.get('*', (req, res) => {
 // 소켓 연결
 io.on('connection', (socket) => {
     const referer = socket.handshake.headers.referer; // 클라이언트 URL
-    console.log(socket.handshake.headers)
-    const roomName = new URL(referer).pathname.split('/')[1]; // 방 이름 추출
+    const userId = parseId(socket.id);
+    io.to(socket.id).emit('id', userId);
+    const roomName = new URL(referer).pathname.split('/')[1] || 'about'; // 방 이름 추출
+    socket.join(roomName);
 
-    if (roomName) {
-        console.log(`User joined room: ${roomName}`);
-        socket.join(roomName);
-    }else {
-        socket.join('about');
-        console.log('User joined room: about');
-        io.to('about').emit('info', {id:'admin', msg:
+    if (roomName === 'about') {
+        io.to(socket.id).emit('message', {id:'ADMIN', msg:
                 'This is about page. ' +
                 'You can start your chat here, or join other room by typing your own room like : asdof.xyx/roomname' +
                 'Asdof is simple. Do nothing to your message. ' +
@@ -38,12 +35,11 @@ io.on('connection', (socket) => {
     }
 
     socket.on('message', (msg) => {
-        console.log(`Message from ${roomName}: ${socket.id}`);
-        io.to(roomName).emit('message', {id : socket.id, msg}); // 같은 방에 있는 모든 클라이언트에 메시지 브로드캐스트
+        io.to(roomName).emit('message', {id : userId, msg}); // 같은 방에 있는 모든 클라이언트에 메시지 브로드캐스트
     });
 
     socket.on('disconnect', () => {
-        console.log('User disconnected');
+        io.to(roomName).emit('message', {id:'ADMIN', msg: userId + ' has left.'});
     });
 });
 
@@ -51,3 +47,14 @@ io.on('connection', (socket) => {
 server.listen(3000, '0.0.0.0', () => {
     console.log('Server is running on http://localhost:3000');
 });
+
+// socket id를 user Id화
+function parseId(key) {
+    const chars = key.split('').map(char => char.charCodeAt(0));
+    const sum = chars.reduce((p, c) => p + c, 0);
+    const baseId = Array(6).fill(sum)
+    chars.forEach((char, i) => baseId[i % 6] += char);
+    return baseId.slice(0,2).map(r => String.fromCharCode(r % 26 + 65)).join('') +
+        baseId.slice(2,4).map(r => (r % 10)).join('') +
+        String.fromCodePoint(baseId[5] % 847 + 0x1F300);
+}

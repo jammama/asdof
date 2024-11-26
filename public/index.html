@@ -19,12 +19,12 @@
     const chatBox = document.getElementById('chatBox');
     const messageInput = document.getElementById('messageInput');
     const sendMessageBtn = document.getElementById('sendMessageBtn');
-
+    let myId = '';
     // userName
 
     const socket = io();
-    socket.on('connect', () => {
-    })
+    // 접속시 parsing된 본인 id 확인
+    socket.on('id', (data) => {myId = data})
 
     // 메시지 수신
     socket.on('message', (data) => {
@@ -38,7 +38,7 @@
     // 메세지 노출
     function displayMessage(data) {
         const messageDiv = document.createElement('div');
-        const userType = socket.id === data.id ? 'user1' : 'user2';
+        const userType = myId === data.id ? 'user1' : 'user2';
         messageDiv.classList.add('message', userType);
 
         const userId = document.createElement('div');
