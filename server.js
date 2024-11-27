@@ -26,16 +26,15 @@ io.on('connection', (socket) => {
     if (roomName === 'about') {
         io.to(socket.id).emit('message', {id:'ADMIN', msg:
                 'This is about page. ' +
-                'You can start your chat here, or join other room by typing your own room like : asdof.xyx/roomname' +
-                'Asdof is simple. Do nothing to your message. ' +
-                'Everything will reset if you leave this page.' +
-                'No log, No auth, No record. So feel free but always be aware of your secure privacy.'
-        })
-        ;
+                'You can start your chat here, or join other room by typing your own room like: asdof.xyx/roomname ' +
+                'Asdof is simple, do nothing to your message. ' +
+                'Everything will reset after you leave this page. ' +
+                'No log, No auth, No record. So feel free and be aware of your secure privacy. '
+        });
     }
 
     socket.on('message', (msg) => {
-        io.to(roomName).emit('message', {id : userId, msg}); // 같은 방에 있는 모든 클라이언트에 메시지 브로드캐스트
+        io.to(roomName).emit('message', {id : userId, msg, time: Date.now()}); // 같은 방에 있는 모든 클라이언트에 메시지 브로드캐스트
     });
 
     socket.on('disconnect', () => {
