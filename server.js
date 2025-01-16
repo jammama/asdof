@@ -26,8 +26,8 @@ io.on('connection', (socket) => {
     if (roomName === 'about') {
         io.to(socket.id).emit('message', {id:'ADMIN', msg:
                 'This is about page. ' +
-                'You can start your chat here, or join other room by typing your own room like: asdof.xyx/roomname ' +
-                'Asdof is simple, do nothing to your message. ' +
+                'You can start your chat here, or join other room by typing your own room like: asdof.xyx/roomname.' +
+                '\n Asdof is simple, do nothing to your message. ' +
                 'Everything will reset after you leave this page. ' +
                 'No log, No auth, No record. So feel free and be aware of your secure privacy. '
         });
@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
 });
 
 // 서버 실행
-server.listen(3000, '0.0.0.0', () => {
+server.listen(3000, () => {
     console.log('Server is running on http://localhost:3000');
 });
 
