@@ -20,7 +20,8 @@ io.on('connection', (socket) => {
     const referer = socket.handshake.headers.referer; // 클라이언트 URL
     const userId = parseId(socket.id);
     io.to(socket.id).emit('id', userId);
-    const roomName = new URL(referer).pathname.split('/')[1] || 'about'; // 방 이름 추출
+    const url = new URL(referer);
+    const roomName = url.pathname.split('/')[1] || 'about';// 방 이름 추출
     socket.join(roomName);
 
     if (roomName === 'about') {

@@ -15,7 +15,8 @@ socket.on('message', (data) => {
 });
 // 메세지 전송
 function sendMessage() {
-    const messageText = messageInput.value.trim();
+    const messageText = messageInput.value;
+    if(messageText === '') return;
     messageInput.value = '';
     const res = socket.emit('message', messageText)
     if(!res){
