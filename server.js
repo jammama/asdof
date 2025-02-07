@@ -21,7 +21,10 @@ io.on('connection', (socket) => {
     const userId = parseId(socket.id);
     io.to(socket.id).emit('id', userId);
     const url = new URL(referer);
-    const roomName = url.pathname.split('/')[1] || 'about';// 방 이름 추출
+    let roomName = url.pathname.split('/')[1] || 'about';// 방 이름 추출
+    if(roomName === 'about' && ['www.asdof.xyz'|| 'asdof.xyz'].indexOf(url.hostname) === -1){
+        roomName = url.hostname.split('.')[0];
+    }
     socket.join(roomName);
 
     if (roomName === 'about') {
@@ -32,6 +35,8 @@ io.on('connection', (socket) => {
                 'Everything will reset after you leave this page. ' +
                 'No log, No auth, No record. So feel free and be aware of your secure privacy. '
         });
+    } else {
+        io.to(socket.id).emit('message', {id:'ADMIN', msg: 'Welcome to ' + roomName + ' room.'});
     }
 
     socket.on('message', (msg) => {
