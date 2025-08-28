@@ -30,7 +30,8 @@
   }
 
   .host {
-    flex: 2 1 400px;
+    flex: 1.5 1 ;
+    max-width: 200px;
 
     img {
       width: 100%;
@@ -41,7 +42,7 @@
   }
 
   .participants {
-    flex: 1 1 250px;
+    flex: 1 1;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;

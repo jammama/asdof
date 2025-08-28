@@ -20,13 +20,13 @@
     };
 </script>
 
-<div class="app" role="application" aria-label="둥글둥글 화상채팅 UI">
+<div class="app" role="application" aria-label="회의 진행중">
     <header>
         <div class="brand">
             <div class="logo" aria-hidden>둥</div>
             <div>
-                <div class="title">둥글둥글 미팅</div>
-                <div class="subtitle">편안하고 둥근 화면의 그룹 화상 — 접근성 중심 디자인</div>
+                <div class="title">회의 진행중</div>
+                <div class="meeting-id">회의 ID: <strong>{meetingId}</strong></div>
             </div>
         </div>
         <div class="controls" role="toolbar" aria-label="회의 제어">
@@ -39,7 +39,7 @@
         <VideoRoom {participants} />
 
         <div class="stage-footer">
-            <div class="meeting-id">회의 ID: <strong>{meetingId}</strong></div>
+            <div></div>
             <div class="controls" role="toolbar" aria-label="로컬 제어">
                 <button class="btn" aria-pressed="false" title="마이크 토글">🎙️</button>
                 <button class="btn" aria-pressed="true" title="비디오 토글">📷</button>
@@ -64,6 +64,7 @@
 </div>
 
 <style lang="scss">
+
   :root {
     --bg: #0f1724;
     --card: rgba(255, 255, 255, 0.04);
@@ -73,35 +74,39 @@
     --glass: rgba(255, 255, 255, 0.06);
     --radius: 18px;
     --gap: 12px;
+    overflow: hidden;
   }
-
   body {
     margin: 0;
     background: radial-gradient(1200px 600px at 10% 10%, rgba(124, 92, 255, 0.10), transparent),
     linear-gradient(180deg, #071226 0%, var(--bg) 100%);
     color: #fff;
     padding: 24px;
+
     font-family: Inter, ui-sans-serif, system-ui;
   }
 
   .app {
     width: 1100px;
+    padding: 1rem;
+    min-width: 300px;
     max-width: calc(100% - 48px);
-    min-height: 640px;
+    min-height: 440px;
+    height: 90vh;
     border-radius: 24px;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
     box-shadow: 0 10px 30px rgba(2, 6, 23, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.02);
-    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 18px;
+    overflow: auto;
   }
 
   header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
+    .meeting-id { font-size: 13px; color: var(--muted); }
     .brand {
       display: flex;
       gap: 12px;
@@ -176,7 +181,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    .meeting-id { font-size: 13px; color: var(--muted); }
+
   }
 
   .chat {
