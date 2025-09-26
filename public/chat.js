@@ -7,7 +7,6 @@ let myId = '';
 const socket = io();
 // 접속시 parsing된 본인 id 확인
 socket.on('id', (data) => {myId = data})
-
 // 메시지 수신
 socket.on('message', (data) => {
     displayMessage(data);

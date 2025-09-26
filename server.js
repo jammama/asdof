@@ -34,10 +34,10 @@ io.on('connection', (socket) => {
     const url = new URL(referer);
     let roomName = url.pathname.split('/')[1] || 'about';// 방 이름 추출
     if('asdof.xyz' !== url.hostname){
-        roomName = url.hostname.split('.')[0];
+        const roomNameExtra = socket.handshake.query.room
+        roomName = url.hostname.split('.')[0] + (roomNameExtra || '');
     }
     socket.join(roomName);
-
     if (roomName === 'about') {
         io.to(socket.id).emit('message', {id:'ADMIN', msg:
                 'This is about page. ' +
