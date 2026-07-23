@@ -1,0 +1,12 @@
+# 컴파일된 바이너리
+/anonchat
+/dist/
+*.exe
+*.test
+*.out
+
+# 로컬 런타임 상태 (핀볼 순위판 등)
+scores.json
+
+# macOS
+.DS_Store

@@ -1,0 +1,8 @@
+# 빌드 산출물 (재생성 가능)
+build-web/
+bin/
+
+# 게임 데이터 (Microsoft 저작권 — 커밋 금지, 로컬에만)
+webdata/
+
+.DS_Store

@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>익명 채팅</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3ClinearGradient%20id='bub'%20x1='0'%20y1='0'%20x2='0'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%235b95ff'/%3E%3Cstop%20offset='1'%20stop-color='%232b5cff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath%20fill='url(%23bub)'%20d='M18%209h28a10%2010%200%200%201%2010%2010v14a10%2010%200%200%201-10%2010H31l-11%209.2A2.4%202.4%200%200%201%2016%2050.4V43h-.5A9.5%209.5%200%200%201%206%2033.5V19A10%2010%200%200%201%2016%209z'/%3E%3Ccircle%20cx='21'%20cy='26'%20r='3.6'%20fill='%23ffffff'/%3E%3Ccircle%20cx='31'%20cy='26'%20r='3.6'%20fill='%23ffffff'%20opacity='0.92'/%3E%3Ccircle%20cx='41'%20cy='26'%20r='3.6'%20fill='%23ffffff'%20opacity='0.82'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #0f1115; --panel: #171a21; --panel-2: #1f232c; --border: #2a2f3a;
+    --text: #e6e8ec; --muted: #8b93a1; --accent: #4f8cff; --mine: #2b5cff;
+    --ok: #3ecf6a; --warn: #f0a020; --err: #ff5d5d;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    display: flex; flex-direction: column; height: 100dvh;
+  }
+  input, button { font: inherit; }
+
+  /* ---- 입장 화면(루트) ---- */
+  #gate { margin: auto; width: min(92vw, 380px); padding: 28px 24px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 16px; }
+  #gate h1 { margin: 0 0 4px; font-size: 22px; }
+  #gate p { margin: 0 0 20px; color: var(--muted); font-size: 13px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  input[type=text] { width: 100%; padding: 11px 13px; background: var(--panel-2);
+    border: 1px solid var(--border); border-radius: 10px; color: var(--text); outline: none; }
+  input[type=text]:focus { border-color: var(--accent); }
+  #joinBtn { width: 100%; padding: 12px; margin-top: 6px; border: none; border-radius: 10px;
+    background: var(--accent); color: #fff; font-weight: 600; cursor: pointer; }
+  .hint { color: var(--muted); font-size: 12px; margin-top: 12px; }
+  .hint code { background: var(--panel-2); padding: 1px 6px; border-radius: 6px; }
+
+  /* ---- 채팅 화면 ---- */
+  #chat { display: none; flex-direction: column; height: 100%; }
+  header { display: flex; align-items: center; gap: 10px; padding: 12px 16px;
+    background: var(--panel); border-bottom: 1px solid var(--border); padding-top: max(12px, env(safe-area-inset-top)); }
+  header .room { font-weight: 700; }
+  header .count { color: var(--muted); font-size: 13px; }
+  header .spacer { flex: 1; }
+  header .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); flex: none; }
+  header .dot.on { background: var(--ok); }
+  .chip { background: var(--panel-2); color: var(--muted); border: 1px solid var(--border);
+    padding: 5px 10px; font-size: 12.5px; border-radius: 999px; cursor: pointer; }
+  .chip:hover { color: var(--text); }
+
+  #log { flex: 1; overflow-y: auto; padding: 14px 14px 6px; display: flex;
+    flex-direction: column; gap: 8px; -webkit-overflow-scrolling: touch; }
+  .msg { max-width: 82%; }
+  .msg .nick { font-size: 11px; color: var(--muted); margin: 0 0 3px 4px; }
+  .msg .bubble { padding: 8px 12px; border-radius: 14px; background: var(--panel-2);
+    white-space: pre-wrap; word-break: break-word; }
+  .msg.mine { align-self: flex-end; }
+  .msg.mine .bubble { background: var(--mine); }
+  .msg.mine .nick { display: none; }
+  .sys { align-self: center; color: var(--muted); font-size: 12px; background: var(--panel);
+    padding: 3px 10px; border-radius: 999px; }
+  .msg .time { font-size: 10px; color: var(--muted); margin: 3px 4px 0; text-align: left; }
+  .msg.mine .time { text-align: right; }
+
+  /* ---- 파일 카드 ---- */
+  .filecard { min-width: 220px; }
+  .filecard .fname { font-weight: 600; word-break: break-all; }
+  .filecard .fmeta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .msg.mine .filecard .fmeta { color: #cfe0ff; }
+  .filecard .frow { margin-top: 8px; display: flex; align-items: center; gap: 8px; }
+  .filecard .fbtn { border: none; border-radius: 8px; background: var(--accent); color: #fff;
+    padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .filecard .fbtn[disabled] { background: var(--border); color: var(--muted); cursor: default; }
+  .filecard .fstatus { font-size: 12px; color: var(--muted); }
+  .filecard .fstatus.ok { color: var(--ok); }
+  .filecard .fstatus.err { color: var(--err); }
+  .progress { height: 6px; background: rgba(255,255,255,.12); border-radius: 999px;
+    overflow: hidden; margin-top: 8px; display: none; }
+  .progress.show { display: block; }
+  .progress > i { display: block; height: 100%; width: 0%; background: var(--ok); transition: width .12s linear; }
+  .msg.mine .progress > i { background: #cfe0ff; }
+
+  /* ---- 입력줄 ---- */
+  form { display: flex; gap: 8px; padding: 10px 12px; padding-bottom: max(10px, env(safe-area-inset-bottom));
+    background: var(--panel); border-top: 1px solid var(--border); align-items: center; }
+  #text { flex: 1; }
+  .iconbtn { border: 1px solid var(--border); background: var(--panel-2); color: var(--text);
+    width: 42px; height: 42px; border-radius: 10px; cursor: pointer; font-size: 18px; flex: none; }
+  #sendBtn { padding: 0 18px; height: 42px; border: none; border-radius: 10px; background: var(--accent);
+    color: #fff; font-weight: 600; cursor: pointer; flex: none; }
+  #file { display: none; }
+
+  /* ---- 드래그&드롭 + 확인 모달 ---- */
+  .dropzone { position: fixed; inset: 0; z-index: 30; margin: 12px; display: flex;
+    align-items: center; justify-content: center; background: rgba(15,17,21,.82);
+    border: 3px dashed var(--accent); border-radius: 16px; color: var(--text);
+    font-size: 18px; font-weight: 700; pointer-events: none; }
+  .dropzone[hidden] { display: none; }
+  .modal { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center;
+    justify-content: center; background: rgba(0,0,0,.5); padding: 20px; }
+  .modal[hidden] { display: none; }
+  .modal-card { width: min(92vw, 360px); background: var(--panel); border: 1px solid var(--border);
+    border-radius: 16px; padding: 22px; }
+  .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+  .modal-file { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 10px 12px; word-break: break-all; font-size: 14px; }
+  .modal-note { color: var(--muted); font-size: 12px; margin-top: 8px; }
+  .modal-note[hidden] { display: none; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+  .mbtn { border: none; border-radius: 10px; padding: 9px 18px; font-weight: 600; cursor: pointer;
+    background: var(--accent); color: #fff; }
+  .mbtn.ghost { background: var(--panel-2); color: var(--muted); border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+  <div id="gate">
+    <h1>익명 채팅</h1>
+    <p>방 이름을 입력하면 그 방으로 입장해요. 대화는 저장되지 않습니다.</p>
+    <div class="field">
+      <label for="room">방 이름</label>
+      <input type="text" id="room" placeholder="예: rd1" maxlength="60" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="nick">닉네임 (선택)</label>
+      <input type="text" id="nick" placeholder="비우면 '익명'" maxlength="24" autocomplete="off">
+    </div>
+    <button id="joinBtn">입장하기</button>
+    <div class="hint">주소 뒤에 방 이름을 붙여도 바로 입장돼요. 예: <code>이 주소/rd1</code></div>
+  </div>
+
+  <div id="chat">
+    <header>
+      <span class="dot" id="statusDot"></span>
+      <span class="room" id="roomName"></span>
+      <span class="count" id="count"></span>
+      <span class="spacer"></span>
+      <button class="chip" id="nickBtn">🙂 <span id="nickLabel"></span> ✎</button>
+      <button class="chip" id="leaveBtn">나가기</button>
+    </header>
+    <div id="log"></div>
+    <form id="form">
+      <button type="button" class="iconbtn" id="attachBtn" title="파일 보내기">📎</button>
+      <input type="file" id="file" multiple>
+      <input type="text" id="text" placeholder="메시지 입력…" autocomplete="off" maxlength="1000">
+      <button id="sendBtn" type="submit">전송</button>
+    </form>
+  </div>
+
+  <div id="dropOverlay" class="dropzone" hidden>여기에 놓아 파일 전송 📎</div>
+
+  <div id="dropModal" class="modal" hidden>
+    <div class="modal-card">
+      <div class="modal-title" id="dropTitle">파일을 전송할까요?</div>
+      <div class="modal-file" id="dropFileName"></div>
+      <div class="modal-note" id="dropNote" hidden></div>
+      <div class="modal-actions">
+        <button class="mbtn ghost" id="dropCancel">취소</button>
+        <button class="mbtn" id="dropOk">확인</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  var $ = function (id) { return document.getElementById(id); };
+  var gate = $("gate"), chat = $("chat"), logEl = $("log");
+  var ws = null, room = "", nick = "", manualClose = false, reconnectDelay = 1000, inChat = false;
+
+  // 파일 전송 상태 추적
+  var myOffers = {};   // id -> outgoing 객체 (내가 보내는 것)
+  var incoming = {};   // id -> receiver 객체 (내가 받는 것)
+  var offerEls = {};   // id -> {btn, statusEl} (남이 올린 offer 카드; 받기 버튼 관리)
+
+  // ---------- 유틸 ----------
+  function human(n) {
+    if (n < 1024) return n + " B";
+    if (n < 1048576) return (n / 1024).toFixed(1) + " KB";
+    if (n < 1073741824) return (n / 1048576).toFixed(1) + " MB";
+    return (n / 1073741824).toFixed(2) + " GB";
+  }
+  function randomId() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return Date.now().toString(36) + Math.random().toString(36).slice(2);
+  }
+  function delay(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function scrollToBottom() { logEl.scrollTop = logEl.scrollHeight; }
+  function fmtTime(ms) { var d = ms ? new Date(ms) : new Date(); var h = d.getHours(), m = d.getMinutes(); return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m; }
+  function wsBase() { return (location.protocol === "https:" ? "wss:" : "ws:") + "//" + location.host; }
+  function roomFromPath() {
+    return decodeURIComponent(location.pathname.replace(/^\/+/, "").replace(/\/+$/, ""));
+  }
+
+  // ---------- 렌더링 ----------
+  function addChat(m) {
+    var mine = m.nick === nick;
+    var wrap = document.createElement("div");
+    wrap.className = "msg" + (mine ? " mine" : "");
+    var n = document.createElement("div"); n.className = "nick"; n.textContent = m.nick || "익명";
+    var b = document.createElement("div"); b.className = "bubble"; b.textContent = m.text; // XSS 안전
+    var t = document.createElement("div"); t.className = "time"; t.textContent = fmtTime(m.time);
+    wrap.appendChild(n); wrap.appendChild(b); wrap.appendChild(t);
+    logEl.appendChild(wrap); scrollToBottom();
+  }
+  function addSystem(text) {
+    var s = document.createElement("div"); s.className = "sys"; s.textContent = text;
+    logEl.appendChild(s); scrollToBottom();
+  }
+  function setStatus(el, text, kind) {
+    if (!el) return;
+    el.textContent = text;
+    el.className = "fstatus" + (kind ? " " + kind : "");
+  }
+  function setProgress(barWrap, bar, pct) {
+    barWrap.classList.add("show");
+    bar.style.width = (Math.max(0, Math.min(1, pct)) * 100).toFixed(0) + "%";
+  }
+  // 파일 카드 DOM 생성. mine이면 오른쪽 정렬.
+  function buildFileCard(opts) {
+    var wrap = document.createElement("div");
+    wrap.className = "msg" + (opts.mine ? " mine" : "");
+    var nickEl = document.createElement("div"); nickEl.className = "nick"; nickEl.textContent = opts.nick || "익명";
+    var bubble = document.createElement("div"); bubble.className = "bubble filecard";
+    var fname = document.createElement("div"); fname.className = "fname"; fname.textContent = "📎 " + opts.name;
+    var fmeta = document.createElement("div"); fmeta.className = "fmeta"; fmeta.textContent = human(opts.size);
+    var frow = document.createElement("div"); frow.className = "frow";
+    var statusEl = document.createElement("span"); statusEl.className = "fstatus";
+    frow.appendChild(statusEl);
+    var barWrap = document.createElement("div"); barWrap.className = "progress";
+    var bar = document.createElement("i"); barWrap.appendChild(bar);
+    bubble.appendChild(fname); bubble.appendChild(fmeta); bubble.appendChild(frow); bubble.appendChild(barWrap);
+    var t = document.createElement("div"); t.className = "time"; t.textContent = fmtTime(opts.time);
+    wrap.appendChild(nickEl); wrap.appendChild(bubble); wrap.appendChild(t);
+    logEl.appendChild(wrap); scrollToBottom();
+    return { wrap: wrap, frow: frow, statusEl: statusEl, barWrap: barWrap, bar: bar };
+  }
+
+  // ---------- 파일 보내기 (단일 + 브라우저 zip 스트리밍) ----------
+  var textEnc = new TextEncoder();
+  var CRC_TABLE = (function () {
+    var t = new Uint32Array(256);
+    for (var n = 0; n < 256; n++) { var c = n; for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[n] = c >>> 0; }
+    return t;
+  })();
+  function crc32(crc, buf) { crc = crc >>> 0; for (var i = 0; i < buf.length; i++) crc = (CRC_TABLE[(crc ^ buf[i]) & 0xFF] ^ (crc >>> 8)) >>> 0; return crc >>> 0; }
+
+  // 고른 파일 전송: 1개면 원본 그대로, 여러 개면 브라우저에서 zip으로 묶어 1개로.
+  function sendSelection(files) {
+    if (!ws || ws.readyState !== 1 || !files.length) return;
+    if (files.length === 1) sendFile(files[0]);
+    else sendZip(files);
+  }
+  function sendFile(file) {
+    if (!ws || ws.readyState !== 1) return;
+    startSend({ name: file.name, size: file.size, mime: file.type }, fileChunks(file));
+  }
+  function sendZip(files) {
+    if (!ws || ws.readyState !== 1) return;
+    var named = dedupeNames(files), i;
+    for (i = 0; i < named.length; i++) {
+      if (named[i].file.size >= 0xFFFFFFFF) { addSystem("4GB 이상 파일은 zip 전송을 지원하지 않아요(개별 전송하세요)"); return; }
+    }
+    var total = zipTotalSize(named);
+    if (total >= 0xFFFFFFFF) { addSystem("합계 4GB 이상은 zip 전송을 지원하지 않아요(나눠 보내주세요)"); return; }
+    startSend({ name: files.length + "개_파일.zip", size: total, mime: "application/zip" }, zipStream(named));
+  }
+
+  // 공통 송신 수명주기: offer 알림 → 송신 소켓 open → 수신자 accept 시 pump()
+  function startSend(meta, gen) {
+    var id = randomId();
+    var card = buildFileCard({ mine: true, nick: nick, name: meta.name, size: meta.size, time: Date.now() });
+    var o = { id: id, card: card, fws: null, accepted: false, wsOpen: false, started: false, gen: gen, size: meta.size };
+    myOffers[id] = o;
+    setStatus(card.statusEl, "받는 사람 대기중…", null);
+    ws.send(JSON.stringify({ type: "file-offer", transferId: id, name: meta.name, size: meta.size, mime: meta.mime }));
+    var fws = new WebSocket(wsBase() + "/_file?id=" + encodeURIComponent(id) + "&role=send");
+    fws.binaryType = "arraybuffer";
+    o.fws = fws;
+    fws.onopen = function () { o.wsOpen = true; maybeStartSending(o); };
+    fws.onclose = function () { if (!o.started) setStatus(card.statusEl, "취소됨", "err"); };
+    fws.onerror = function () {};
+  }
+  function maybeStartSending(o) {
+    if (o.accepted && o.wsOpen && !o.started) { o.started = true; pump(o); }
+  }
+
+  // 바이트 소스(async generator)를 청크로 잘라 백프레셔를 지키며 전송.
+  // for await 로 하나씩 당겨 쓰므로 소스는 pull 기반이 되어 메모리가 청크 크기로 유지된다.
+  async function pump(o) {
+    var fws = o.fws, card = o.card, CHUNK = 256 * 1024, sent = 0;
+    setStatus(card.statusEl, "전송중…", null);
+    try {
+      for await (var chunk of o.gen) {
+        var view = (chunk instanceof Uint8Array) ? chunk : new Uint8Array(chunk), p = 0;
+        while (p < view.length) {
+          while (fws.bufferedAmount > 8 * CHUNK) { if (fws.readyState !== 1) throw 0; await delay(15); }
+          if (fws.readyState !== 1) throw 0;
+          var piece = view.subarray(p, p + CHUNK);
+          fws.send(piece);
+          p += piece.length; sent += piece.length;
+          setProgress(card.barWrap, card.bar, sent / (o.size || 1));
+        }
+      }
+      while (fws.bufferedAmount > 0) { if (fws.readyState !== 1) throw 0; await delay(15); }
+      fws.close(1000, "eof");
+      setStatus(card.statusEl, "완료 ✓", "ok");
+    } catch (e) {
+      try { fws.close(); } catch (_) {}
+      setStatus(card.statusEl, "전송 실패/중단", "err");
+    }
+  }
+
+  // 단일 파일 → Uint8Array 청크 async generator
+  async function* fileChunks(file) {
+    var CHUNK = 256 * 1024, off = 0;
+    while (off < file.size) {
+      var buf = await file.slice(off, off + CHUNK).arrayBuffer();
+      off += buf.byteLength;
+      yield new Uint8Array(buf);
+    }
+  }
+
+  // ---- 브라우저 스트리밍 ZIP (store/무압축, 데이터 디스크립터 방식) ----
+  function b16(n) { return new Uint8Array([n & 0xFF, (n >>> 8) & 0xFF]); }
+  function b32(n) { n = n >>> 0; return new Uint8Array([n & 0xFF, (n >>> 8) & 0xFF, (n >>> 16) & 0xFF, (n >>> 24) & 0xFF]); }
+  function cat(parts) { var len = 0, i; for (i = 0; i < parts.length; i++) len += parts[i].length; var out = new Uint8Array(len), o = 0; for (i = 0; i < parts.length; i++) { out.set(parts[i], o); o += parts[i].length; } return out; }
+  function dedupeNames(files) {
+    var seen = {}, out = [], i;
+    for (i = 0; i < files.length; i++) {
+      var name = files[i].name || ("file" + (i + 1));
+      if (seen[name]) {
+        var dot = name.lastIndexOf("."), base = dot > 0 ? name.slice(0, dot) : name, ext = dot > 0 ? name.slice(dot) : "", k = 1, cand;
+        do { cand = base + " (" + (k++) + ")" + ext; } while (seen[cand]);
+        name = cand;
+      }
+      seen[name] = true;
+      out.push({ file: files[i], nameBytes: textEnc.encode(name) });
+    }
+    return out;
+  }
+  // store zip은 크기를 미리 정확히 계산 가능(로컬헤더30+이름 + 데이터 + 디스크립터16 + 중앙헤더46+이름, 끝에 EOCD22)
+  function zipTotalSize(named) {
+    var total = 0, i;
+    for (i = 0; i < named.length; i++) total += 30 + named[i].nameBytes.length + named[i].file.size + 16 + 46 + named[i].nameBytes.length;
+    return total + 22;
+  }
+  async function* zipStream(named) {
+    var CHUNK = 256 * 1024, offset = 0, central = [], i;
+    for (i = 0; i < named.length; i++) {
+      var nameBytes = named[i].nameBytes, file = named[i].file;
+      // 로컬 파일 헤더 (flags 0x0808 = 데이터디스크립터 + UTF-8 이름, method 0 = store)
+      var lh = cat([b32(0x04034b50), b16(20), b16(0x0808), b16(0), b16(0), b16(0x21),
+        b32(0), b32(0), b32(0), b16(nameBytes.length), b16(0), nameBytes]);
+      var localOffset = offset; offset += lh.length; yield lh;
+      var crc = 0xFFFFFFFF, read = 0;
+      while (read < file.size) {
+        var buf = await file.slice(read, read + CHUNK).arrayBuffer();
+        var u = new Uint8Array(buf); read += u.length; crc = crc32(crc, u); offset += u.length; yield u;
+      }
+      crc = (crc ^ 0xFFFFFFFF) >>> 0;
+      var dd = cat([b32(0x08074b50), b32(crc), b32(file.size), b32(file.size)]); // 데이터 디스크립터
+      offset += dd.length; yield dd;
+      central.push({ crc: crc, size: file.size, nameBytes: nameBytes, offset: localOffset });
+    }
+    var cdOffset = offset, cdSize = 0;
+    for (i = 0; i < central.length; i++) {
+      var e = central[i];
+      var ch = cat([b32(0x02014b50), b16(20), b16(20), b16(0x0808), b16(0), b16(0), b16(0x21),
+        b32(e.crc), b32(e.size), b32(e.size), b16(e.nameBytes.length), b16(0), b16(0),
+        b16(0), b16(0), b32(0), b32(e.offset), e.nameBytes]);
+      cdSize += ch.length; yield ch;
+    }
+    yield cat([b32(0x06054b50), b16(0), b16(0), b16(central.length), b16(central.length), b32(cdSize), b32(cdOffset), b16(0)]);
+  }
+
+  // ---------- 파일 받기 ----------
+  function acceptOffer(o, btn) {
+    if (btn) { btn.disabled = true; btn.textContent = "받는 중"; }
+    incoming[o.id] = o;
+    ws.send(JSON.stringify({ type: "file-accept", transferId: o.id })); // 다른 사람들에게 알림
+    var fws = new WebSocket(wsBase() + "/_file?id=" + encodeURIComponent(o.id) + "&role=recv");
+    fws.binaryType = "arraybuffer";
+    o.fws = fws; o.received = 0; o.chunks = []; o.completed = false;
+    setStatus(o.card.statusEl, "받는 중…", null);
+    fws.onmessage = function (ev) {
+      o.chunks.push(ev.data);
+      o.received += ev.data.byteLength;
+      setProgress(o.card.barWrap, o.card.bar, o.received / (o.size || 1));
+      if (o.received >= o.size && !o.completed) { o.completed = true; finalize(o); }
+    };
+    fws.onclose = function (ev) {
+      if (o.completed) return;
+      if (ev && ev.code === 1008) setStatus(o.card.statusEl, "다른 사람이 받는 중", "err");
+      else setStatus(o.card.statusEl, "전송 중단", "err");
+      o.chunks = [];
+    };
+    fws.onerror = function () {};
+  }
+  function finalize(o) {
+    var blob = new Blob(o.chunks, { type: o.mime || "application/octet-stream" });
+    o.chunks = [];
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = o.name || "download"; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+    setStatus(o.card.statusEl, "완료 ✓ 다운로드됨", "ok");
+    try { o.fws.close(1000, "done"); } catch (_) {}
+  }
+
+  // ---------- 수신 메시지 처리 ----------
+  function handleMessage(m) {
+    switch (m.type) {
+      case "chat": addChat(m); break;
+      case "system":
+        addSystem(m.text);
+        if (typeof m.count === "number") $("count").textContent = "· " + m.count + "명";
+        break;
+      case "file-offer":
+        if (myOffers[m.transferId]) break; // 내 offer의 에코 → 무시
+        renderIncomingOffer(m);
+        break;
+      case "file-accept":
+        if (myOffers[m.transferId]) {           // 내가 보낸 파일을 누가 받기 시작
+          myOffers[m.transferId].accepted = true;
+          setStatus(myOffers[m.transferId].card.statusEl, "수신자 연결됨, 전송 시작…", null);
+          maybeStartSending(myOffers[m.transferId]);
+        } else if (incoming[m.transferId]) {     // 내 accept의 에코 → 무시
+          /* no-op */
+        } else if (offerEls[m.transferId]) {      // 남이 먼저 받는 중 → 버튼 잠금
+          var e = offerEls[m.transferId];
+          if (e.btn) { e.btn.disabled = true; e.btn.textContent = "다른 사람이 받는 중"; }
+        }
+        break;
+      case "file-cancel":
+        if (offerEls[m.transferId] && offerEls[m.transferId].statusEl)
+          setStatus(offerEls[m.transferId].statusEl, "보낸 사람이 취소함", "err");
+        break;
+    }
+  }
+  function renderIncomingOffer(m) {
+    var o = { id: m.transferId, name: m.name, size: m.size, mime: m.mime };
+    var card = buildFileCard({ mine: false, nick: m.nick, name: m.name, size: m.size, time: m.time });
+    o.card = card;
+    var btn = document.createElement("button");
+    btn.className = "fbtn"; btn.textContent = "받기";
+    btn.addEventListener("click", function () { acceptOffer(o, btn); });
+    card.frow.insertBefore(btn, card.statusEl);
+    offerEls[m.transferId] = { btn: btn, statusEl: card.statusEl };
+  }
+
+  // ---------- 연결 ----------
+  function connect() {
+    ws = new WebSocket(wsBase() + "/_ws?room=" + encodeURIComponent(room) + "&nick=" + encodeURIComponent(nick));
+    ws.onopen = function () { $("statusDot").classList.add("on"); reconnectDelay = 1000; };
+    ws.onmessage = function (ev) {
+      var m; try { m = JSON.parse(ev.data); } catch (e) { return; }
+      handleMessage(m);
+    };
+    ws.onclose = function () {
+      $("statusDot").classList.remove("on");
+      if (manualClose) return;
+      setTimeout(connect, reconnectDelay);
+      reconnectDelay = Math.min(reconnectDelay * 2, 10000);
+    };
+    ws.onerror = function () { try { ws.close(); } catch (e) {} };
+  }
+
+  function startChat() {
+    $("roomName").textContent = "# " + room;
+    $("nickLabel").textContent = nick;
+    gate.style.display = "none";
+    chat.style.display = "flex";
+    inChat = true;
+    connect();
+    $("text").focus();
+  }
+
+  // ---------- 게이트(루트) ----------
+  function submitGate() {
+    var r = ($("room").value || "").trim();
+    var n = ($("nick").value || "").trim();
+    if (!r) { $("room").focus(); return; }
+    if (n) sessionStorage.setItem("nick", n);
+    location.assign("/" + encodeURIComponent(r));
+  }
+
+  // ---------- 이벤트 배선 ----------
+  $("joinBtn").addEventListener("click", submitGate);
+  $("room").addEventListener("keydown", function (e) { if (e.key === "Enter") submitGate(); });
+  $("nick").addEventListener("keydown", function (e) { if (e.key === "Enter") submitGate(); });
+
+  $("leaveBtn").addEventListener("click", function () { manualClose = true; location.assign("/"); });
+  $("nickBtn").addEventListener("click", function () {
+    var n = prompt("닉네임", nick);
+    if (n === null) return;
+    n = n.trim().slice(0, 24) || "익명";
+    if (n === nick) return;
+    nick = n; sessionStorage.setItem("nick", n); $("nickLabel").textContent = n;
+    if (ws) { try { ws.close(); } catch (e) {} } // 새 닉으로 자동 재연결됨
+  });
+
+  $("attachBtn").addEventListener("click", function () { $("file").click(); });
+  $("file").addEventListener("change", function (e) {
+    var files = e.target.files;
+    if (files && files.length) sendSelection(files);
+    e.target.value = ""; // 같은 파일 다시 선택 가능하도록 리셋
+  });
+
+  $("form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var text = $("text").value;
+    if (!text.trim() || !ws || ws.readyState !== 1) return;
+    ws.send(JSON.stringify({ text: text }));
+    $("text").value = ""; $("text").focus();
+  });
+
+  // ---------- 드래그&드롭 ----------
+  var pendingFiles = null, dragDepth = 0;
+  function hasFiles(e) {
+    var t = e.dataTransfer && e.dataTransfer.types;
+    return !!t && Array.prototype.indexOf.call(t, "Files") !== -1;
+  }
+  function showDropConfirm(files) {
+    pendingFiles = files;
+    var listEl = $("dropFileName"), note = $("dropNote"), i;
+    if (files.length === 1) {
+      $("dropTitle").textContent = "파일을 전송할까요?";
+      listEl.textContent = "📎 " + files[0].name + " · " + human(files[0].size);
+      note.hidden = true;
+    } else {
+      $("dropTitle").textContent = files.length + "개 파일을 zip으로 묶어 전송할까요?";
+      var names = [], total = 0;
+      for (i = 0; i < files.length; i++) { names.push(files[i].name); total += files[i].size; }
+      listEl.textContent = "📦 " + (names.length > 6 ? names.slice(0, 6).join(", ") + " 외 " + (names.length - 6) + "개" : names.join(", "));
+      note.textContent = "총 " + human(total) + " · 브라우저에서 zip으로 묶어 하나로 전송돼요";
+      note.hidden = false;
+    }
+    $("dropModal").hidden = false;
+  }
+  function closeDropModal() { $("dropModal").hidden = true; pendingFiles = null; }
+
+  document.addEventListener("dragenter", function (e) {
+    if (!inChat || !hasFiles(e)) return;
+    e.preventDefault(); dragDepth++; $("dropOverlay").hidden = false;
+  });
+  document.addEventListener("dragover", function (e) {
+    if (!inChat || !hasFiles(e)) return;
+    e.preventDefault();
+  });
+  document.addEventListener("dragleave", function (e) {
+    if (!inChat) return;
+    dragDepth--; if (dragDepth <= 0) { dragDepth = 0; $("dropOverlay").hidden = true; }
+  });
+  document.addEventListener("drop", function (e) {
+    if (!inChat) return;
+    e.preventDefault(); dragDepth = 0; $("dropOverlay").hidden = true;
+    var files = e.dataTransfer && e.dataTransfer.files;
+    if (!files || !files.length) return;
+    if (!ws || ws.readyState !== 1) { addSystem("연결 중이에요. 잠시 후 다시 놓아 주세요"); return; }
+    showDropConfirm(files);
+  });
+  $("dropOk").addEventListener("click", function () {
+    var fs = pendingFiles; closeDropModal(); if (fs) sendSelection(fs);
+  });
+  $("dropCancel").addEventListener("click", closeDropModal);
+  $("dropModal").addEventListener("click", function (e) { if (e.target === $("dropModal")) closeDropModal(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("dropModal").hidden) closeDropModal(); });
+
+  // ---------- 부팅 ----------
+  room = roomFromPath();
+  if (room) {
+    nick = (sessionStorage.getItem("nick") || "익명").slice(0, 24);
+    startChat();
+  } else {
+    // 루트: 게이트 표시. 이전에 쓰던 닉 채워두기.
+    var savedNick = sessionStorage.getItem("nick");
+    if (savedNick) $("nick").value = savedNick;
+    $("room").focus();
+  }
+})();
+</script>
+</body>
+</html>

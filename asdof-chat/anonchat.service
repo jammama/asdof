@@ -1,0 +1,30 @@
+[Unit]
+Description=anonchat - 초경량 익명 채팅 서버
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/opt/anonchat
+ExecStart=/opt/anonchat/anonchat
+# localhost에만 바인딩 — nginx가 앞단에서 리버스 프록시하므로 외부로 직접 노출하지 않음
+Environment=LISTEN_ADDR=127.0.0.1:8080
+Environment=STATIC_DIR=/opt/anonchat/static
+# 핀볼 경쟁 순위판 영속화. StateDirectory 가 /var/lib/anonchat 을 생성하고 쓰기 허용
+# (ProtectSystem=strict / ReadOnlyPaths 의 예외로 자동 처리됨).
+StateDirectory=anonchat
+Environment=SCORE_DB=/var/lib/anonchat/scores.json
+Restart=always
+RestartSec=2
+
+# --- 최소 권한 / 메모리 보호 ---
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadOnlyPaths=/opt/anonchat
+# RAM 952MB / swap 0 환경 보호: 이 서비스의 메모리 상한
+MemoryMax=256M
+
+[Install]
+WantedBy=multi-user.target

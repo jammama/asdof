@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>핀볼 경쟁 순위판</title>
+    <style>
+        :root { color-scheme: dark; }
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0; min-height: 100%;
+            background: radial-gradient(120% 80% at 30% 0%, #1a2036 0%, #0c0e16 60%);
+            color: #d0d0d8; font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        }
+        header {
+            display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+            padding: 18px 20px; border-bottom: 1px solid #23273a;
+        }
+        header h1 { font-size: 1.25rem; margin: 0; font-weight: 700; letter-spacing: .01em; }
+        .chip {
+            font-size: .8rem; color: #b9c4e0; background: rgba(43,111,214,.16);
+            border: 1px solid #2b6fd6; padding: 4px 10px; border-radius: 999px;
+        }
+        .dot { width: 9px; height: 9px; border-radius: 50%; background: #d05050; display: inline-block; margin-right: 6px; vertical-align: middle; transition: background .3s; }
+        .dot.on { background: #46c46a; }
+        .status { font-size: .78rem; color: #7a8296; margin-left: auto; }
+        main {
+            display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px;
+            padding: 20px; max-width: 1100px; margin: 0 auto;
+        }
+        @media (max-width: 720px) { main { grid-template-columns: 1fr; } }
+        section {
+            background: rgba(18,20,30,.72); border: 1px solid #23273a; border-radius: 14px;
+            padding: 16px 16px 8px; min-height: 120px;
+        }
+        section h2 { font-size: .95rem; margin: 2px 4px 12px; color: #aeb6cc; font-weight: 600; }
+        ol { list-style: none; margin: 0; padding: 0; }
+        li {
+            display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 10px;
+            font-variant-numeric: tabular-nums;
+        }
+        li + li { margin-top: 4px; }
+        li .rank { width: 2.1rem; text-align: center; font-weight: 700; color: #7a8296; font-size: 1rem; }
+        li .nick { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+        li .score { font-weight: 700; font-size: 1.05rem; color: #e6ebf5; }
+        .board li:nth-child(1) { background: linear-gradient(90deg, rgba(255,196,60,.16), transparent); }
+        .board li:nth-child(2) { background: linear-gradient(90deg, rgba(200,208,224,.12), transparent); }
+        .board li:nth-child(3) { background: linear-gradient(90deg, rgba(205,127,80,.14), transparent); }
+        .board li:nth-child(1) .rank { color: #ffce50; }
+        .board li:nth-child(2) .rank { color: #cfd6e6; }
+        .board li:nth-child(3) .rank { color: #d8895a; }
+        .live li { background: rgba(43,111,214,.10); }
+        .live .score { color: #8ad0ff; }
+        .live .badge { font-size: .64rem; color: #8ad0ff; border: 1px solid #2b6fd6; border-radius: 6px; padding: 1px 5px; }
+        .empty { color: #5c6478; font-size: .85rem; padding: 14px 12px 20px; }
+        footer { text-align: center; color: #4d5468; font-size: .72rem; padding: 8px 0 24px; }
+        .flash { animation: flash .8s ease; }
+        @keyframes flash { from { background: rgba(70,196,106,.35); } }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🕹️ 핀볼 경쟁 순위판</h1>
+        <span class="chip">방 <b id="room">pinball</b></span>
+        <span class="status"><span class="dot" id="dot"></span><span id="statustext">연결 중…</span></span>
+    </header>
+
+    <main>
+        <section class="board">
+            <h2>🏆 역대 순위</h2>
+            <ol id="boardList"></ol>
+            <div class="empty" id="boardEmpty">아직 기록이 없어요. 게임을 끝내면 여기에 올라옵니다.</div>
+        </section>
+        <section class="live">
+            <h2>🎮 지금 플레이 중</h2>
+            <ol id="liveList"></ol>
+            <div class="empty" id="liveEmpty">지금 플레이 중인 사람이 없어요.</div>
+        </section>
+    </main>
+    <footer>실시간 갱신 · 같은 방(<span id="roomFoot">pinball</span>)의 점수를 모읍니다</footer>
+
+    <script>
+        (function () {
+            var params = new URLSearchParams(location.search);
+            function cleanRoom(s) {
+                s = s || 'pinball';
+                var out = '';
+                for (var i = 0; i < s.length && out.length < 60; i++) {
+                    var c = s.charCodeAt(i);
+                    if (c >= 0x20 && c !== 0x7f) out += s.charAt(i);
+                }
+                return out || 'pinball';
+            }
+            var room = cleanRoom(params.get('room'));
+            document.getElementById('room').textContent = room;
+            document.getElementById('roomFoot').textContent = room;
+
+            var board = [];      // [{nick, score, time}] — 서버가 정렬해서 내려줌
+            var live = {};       // nick -> { score, ts }
+            var prevTop = null;  // 1위 변동 감지용
+            var LIVE_TTL = 20000;
+
+            var dot = document.getElementById('dot');
+            var statusText = document.getElementById('statustext');
+            function setStatus(on, text) { dot.classList.toggle('on', !!on); statusText.textContent = text; }
+
+            function fmt(n) { try { return Number(n).toLocaleString(); } catch (_) { return String(n); } }
+            function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+
+            function renderBoard() {
+                var list = board.slice().sort(function (a, b) { return b.score - a.score; }).slice(0, 20);
+                var ol = document.getElementById('boardList');
+                document.getElementById('boardEmpty').style.display = list.length ? 'none' : '';
+                var topChanged = list.length && prevTop !== null && list[0].nick !== prevTop;
+                ol.innerHTML = list.map(function (e, i) {
+                    var medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1);
+                    return '<li' + (i === 0 && topChanged ? ' class="flash"' : '') + '>' +
+                        '<span class="rank">' + medal + '</span>' +
+                        '<span class="nick">' + esc(e.nick) + '</span>' +
+                        '<span class="score">' + fmt(e.score) + '</span></li>';
+                }).join('');
+                prevTop = list.length ? list[0].nick : null;
+            }
+
+            function renderLive() {
+                var now = Date.now();
+                var arr = Object.keys(live).map(function (n) { return { nick: n, score: live[n].score, ts: live[n].ts }; })
+                    .filter(function (e) { return now - e.ts < LIVE_TTL; })
+                    .sort(function (a, b) { return b.score - a.score; });
+                var ol = document.getElementById('liveList');
+                document.getElementById('liveEmpty').style.display = arr.length ? 'none' : '';
+                ol.innerHTML = arr.map(function (e) {
+                    return '<li><span class="rank badge">LIVE</span>' +
+                        '<span class="nick">' + esc(e.nick) + '</span>' +
+                        '<span class="score">' + fmt(e.score) + '</span></li>';
+                }).join('');
+            }
+
+            // 오래된 live 엔트리 정리
+            setInterval(function () {
+                var now = Date.now(), changed = false;
+                for (var n in live) { if (now - live[n].ts >= LIVE_TTL) { delete live[n]; changed = true; } }
+                if (changed) renderLive();
+            }, 5000);
+
+            var ws = null;
+            function connect() {
+                var proto = location.protocol === 'https:' ? 'wss' : 'ws';
+                var url = proto + '://' + location.host + '/_ws?room=' + encodeURIComponent(room) + '&nick=' + encodeURIComponent('📊순위판');
+                setStatus(false, '연결 중…');
+                try { ws = new WebSocket(url); } catch (_) { ws = null; setTimeout(connect, 3000); return; }
+                ws.onopen = function () { setStatus(true, '실시간 연결됨'); };
+                ws.onclose = function () { setStatus(false, '재연결 중…'); ws = null; setTimeout(connect, 3000); };
+                ws.onerror = function () { try { ws.close(); } catch (_) {} };
+                ws.onmessage = function (ev) {
+                    var m; try { m = JSON.parse(ev.data); } catch (_) { return; }
+                    if (m.type === 'board') { board = m.entries || []; renderBoard(); }
+                    else if (m.type === 'score') {
+                        if (m.final) { delete live[m.nick]; renderLive(); }
+                        else { live[m.nick] = { score: m.score, ts: Date.now() }; renderLive(); }
+                    }
+                };
+            }
+            connect();
+        })();
+    </script>
+</body>
+</html>
