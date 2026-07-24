@@ -150,7 +150,12 @@ static unsigned char textEraseFileButton[][16] = { {TEXT_ERASE_FILE}, {TEXT_ERAS
 #endif
 
 #ifndef VERSION_EU
+#ifdef LANG_KR
+// 한글은 음절당 3바이트라 US(8)보다 길다 — 스테레오/헤드폰 수용 위해 확장
+static unsigned char textSoundModes[][16] = { { TEXT_STEREO }, { TEXT_MONO }, { TEXT_HEADSET } };
+#else
 static unsigned char textSoundModes[][8] = { { TEXT_STEREO }, { TEXT_MONO }, { TEXT_HEADSET } };
+#endif
 #endif
 
 static unsigned char textMarioA[] = { TEXT_FILE_MARIO_A };

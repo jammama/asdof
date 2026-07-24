@@ -268,9 +268,26 @@ BUILD_DIR_BASE := build
 ifeq ($(TARGET_N64),1)
   BUILD_DIR := $(BUILD_DIR_BASE)/$(VERSION)
 else ifeq ($(TARGET_WEB),1)
-  BUILD_DIR := $(BUILD_DIR_BASE)/$(VERSION)_web
+  # 한국어 빌드는 별도 디렉터리로 격리 (US 빌드 build/us_web 는 그대로 유지)
+  ifeq ($(LANG_KR),1)
+    BUILD_DIR := $(BUILD_DIR_BASE)/kr_web
+  else
+    BUILD_DIR := $(BUILD_DIR_BASE)/$(VERSION)_web
+  endif
 else
   BUILD_DIR := $(BUILD_DIR_BASE)/$(VERSION)_pc
+endif
+
+# 한국어(kr) 빌드 플래그 — C 코드에서 #ifdef LANG_KR 로 한글 폰트/텍스트 경로 분기
+# 텍스트 파이프라인도 한글로 분기: text/kr/ 소스 + charmap_kr.txt (tools/kr_gen.py 생성)
+CHARMAP          := charmap.txt
+TEXT_VERSION     := $(VERSION)
+TEXT_STRINGS_SRC := include/text_strings.h.in
+ifeq ($(LANG_KR),1)
+  DEFINES += LANG_KR=1
+  CHARMAP          := charmap_kr.txt
+  TEXT_VERSION     := kr
+  TEXT_STRINGS_SRC := include/text_strings.kr.h.in
 endif
 
 ifeq ($(TARGET_WEB),1)
@@ -651,9 +668,9 @@ else
     TEXT_DIRS := text/jp
     $(BUILD_DIR)/bin/segment2.o: $(BUILD_DIR)/text/jp/define_text.inc.c
   else
-    TEXT_DIRS := text/$(VERSION)
-    # non-EU encoded text inserted into segment 0x02
-    $(BUILD_DIR)/bin/segment2.o: $(BUILD_DIR)/text/$(VERSION)/define_text.inc.c
+    TEXT_DIRS := text/$(TEXT_VERSION)
+    # non-EU encoded text inserted into segment 0x02 (LANG_KR → text/kr)
+    $(BUILD_DIR)/bin/segment2.o: $(BUILD_DIR)/text/$(TEXT_VERSION)/define_text.inc.c
   endif
 endif
 
@@ -796,19 +813,19 @@ $(BUILD_DIR)/assets/demo_data.c: assets/demo_data.json $(wildcard assets/demos/*
 	@$(PRINT) "$(GREEN)Generating demo data $(NO_COL)\n"
 	$(V)$(PYTHON) $(TOOLS_DIR)/demo_data_converter.py assets/demo_data.json $(DEF_INC_CFLAGS) > $@
 
-# Encode in-game text strings
-$(BUILD_DIR)/include/text_strings.h: include/text_strings.h.in
+# Encode in-game text strings (LANG_KR → text_strings.kr.h.in + charmap_kr.txt)
+$(BUILD_DIR)/include/text_strings.h: $(TEXT_STRINGS_SRC)
 	$(call print,Encoding:,$<,$@)
-	$(V)$(TEXTCONV) charmap.txt $< $@
+	$(V)$(TEXTCONV) $(CHARMAP) $< $@
 $(BUILD_DIR)/include/text_menu_strings.h: include/text_menu_strings.h.in
 	$(call print,Encoding:,$<,$@)
 	$(V)$(TEXTCONV) charmap_menu.txt $< $@
 $(BUILD_DIR)/text/%/define_courses.inc.c: text/define_courses.inc.c text/%/courses.h
 	@$(PRINT) "$(GREEN)Preprocessing: $(BLUE)$@ $(NO_COL)\n"
-	$(V)$(CPP) $(CPPFLAGS) $< -o - -I text/$*/ | $(TEXTCONV) charmap.txt - $@
+	$(V)$(CPP) $(CPPFLAGS) $< -o - -I text/$*/ | $(TEXTCONV) $(CHARMAP) - $@
 $(BUILD_DIR)/text/%/define_text.inc.c: text/define_text.inc.c text/%/courses.h text/%/dialogs.h
 	@$(PRINT) "$(GREEN)Preprocessing: $(BLUE)$@ $(NO_COL)\n"
-	$(V)$(CPP) $(CPPFLAGS) $< -o - -I text/$*/ | $(TEXTCONV) charmap.txt - $@
+	$(V)$(CPP) $(CPPFLAGS) $< -o - -I text/$*/ | $(TEXTCONV) $(CHARMAP) - $@
 
 # Level headers
 $(BUILD_DIR)/include/level_headers.h: levels/level_headers.h.in

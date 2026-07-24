@@ -366,10 +366,23 @@ void render_multi_text_string(s16 *xPos, s16 *yPos, s8 multiTextID)
  * Prints a generic white string.
  * In JP/EU a IA1 texture is used but in US a IA4 texture is used.
  */
+#ifdef LANG_KR
+extern const Texture *const kr_glyphs[];   // tools/kr_gen.py 생성 (bin/segment2.c)
+#define KR_ESC 0xFB                          // 한글 이스케이프: { 0xFB, idx_hi, idx_lo }
+// 한글 반쪽 글리프 하나를 현재 행렬 위치에 그림 (render_generic_char 의 US 경로와 동일).
+static void render_kr_half(const Texture *tex) {
+    void *packedTexture = segmented_to_virtual((void *) tex);
+    gDPPipeSync(gDisplayListHead++);
+    gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_16b, 1, VIRTUAL_TO_PHYSICAL(packedTexture));
+    gSPDisplayList(gDisplayListHead++, dl_ia_text_tex_settings);
+}
+#endif
+
 void print_generic_string(s16 x, s16 y, const u8 *str) {
     UNUSED s8 mark = DIALOG_MARK_NONE; // unused in EU
     s32 strPos = 0;
     u8 lineNum = 1;
+
 #ifdef VERSION_EU
     s16 xCoord = x;
     s16 yCoord = 240 - y;
@@ -381,6 +394,17 @@ void print_generic_string(s16 x, s16 y, const u8 *str) {
 
     while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
         switch (str[strPos]) {
+#ifdef LANG_KR
+            case KR_ESC: {  // 한글 음절: { 0xFB, idx_hi, idx_lo } → 좌/우 반쪽 8px 씩
+                s32 kidx = (str[strPos + 1] << 8) | str[strPos + 2];
+                render_kr_half(kr_glyphs[kidx * 2]);
+                create_dl_translation_matrix(MENU_MTX_NOPUSH, 8.0f, 0.0f, 0.0f);
+                render_kr_half(kr_glyphs[kidx * 2 + 1]);
+                create_dl_translation_matrix(MENU_MTX_NOPUSH, 8.0f, 0.0f, 0.0f);
+                strPos += 2;  // 뒤 2바이트(idx) 추가 소비 (루프 끝 strPos++ 포함 총 3바이트)
+                break;
+            }
+#endif
 #ifdef VERSION_EU
             case DIALOG_CHAR_SPACE:
                 xCoord += 5;
@@ -612,6 +636,26 @@ void print_menu_char_umlaut(s16 x, s16 y, u8 chr) {
 }
 #endif
 
+#ifdef LANG_KR
+// 한글 반쪽을 절대좌표(x,y)에 그림 — print_menu_generic_string(menu_font_lut, 8x8 IA8 경로)용.
+// kr_glyphs 는 대사/메뉴 공용 IA 8x16 규격. dl_ia_text_tex_settings(US)와 동일한 타일 셋업 후 명시적 사각형.
+// (좌표/회전은 화면 육안 검증 필요 — 점수목록/액트명 등 print_menu_generic_string 경로에서만 사용)
+static void render_kr_half_menu(s16 x, s16 y, const Texture *tex) {
+    void *packedTexture = segmented_to_virtual((void *) tex);
+    gDPPipeSync(gDisplayListHead++);
+    gDPSetTextureImage(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_16b, 1, VIRTUAL_TO_PHYSICAL(packedTexture));
+    gDPSetTile(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_8b, 0, 0, G_TX_LOADTILE, 0,
+               G_TX_CLAMP, 4, G_TX_NOLOD, G_TX_CLAMP, 3, G_TX_NOLOD);
+    gDPLoadSync(gDisplayListHead++);
+    gDPLoadBlock(gDisplayListHead++, G_TX_LOADTILE, 0, 0, 8 * 16 - 1, CALC_DXT(8, G_IM_SIZ_8b_BYTES));
+    gDPSetTile(gDisplayListHead++, G_IM_FMT_IA, G_IM_SIZ_8b, 1, 0, G_TX_RENDERTILE, 0,
+               G_TX_CLAMP, 4, G_TX_NOLOD, G_TX_CLAMP, 3, G_TX_NOLOD);
+    gDPSetTileSize(gDisplayListHead++, 0, 0, 0, (8 - 1) << G_TEXTURE_IMAGE_FRAC, (16 - 1) << G_TEXTURE_IMAGE_FRAC);
+    gSPTextureRectangleFlip(gDisplayListHead++, x << 2, y << 2, (x + 8) << 2, (y + 16) << 2,
+                            G_TX_RENDERTILE, 0, 0, 1 << 10, 1 << 10);
+}
+#endif
+
 void print_menu_generic_string(s16 x, s16 y, const u8 *str) {
     UNUSED s8 mark = DIALOG_MARK_NONE; // unused in EU
     s32 strPos = 0;
@@ -621,6 +665,16 @@ void print_menu_generic_string(s16 x, s16 y, const u8 *str) {
 
     while (str[strPos] != DIALOG_CHAR_TERMINATOR) {
         switch (str[strPos]) {
+#ifdef LANG_KR
+            case KR_ESC: {  // 한글 음절: { 0xFB, idx_hi, idx_lo } → 좌/우 반쪽 8px 씩
+                s32 kidx = (str[strPos + 1] << 8) | str[strPos + 2];
+                render_kr_half_menu(curX, curY, kr_glyphs[kidx * 2]);
+                render_kr_half_menu(curX + 8, curY, kr_glyphs[kidx * 2 + 1]);
+                curX += 16;
+                strPos += 2;  // 뒤 2바이트(idx) 소비 (루프 끝 strPos++ 포함 총 3바이트)
+                break;
+            }
+#endif
 #ifdef VERSION_EU
             case DIALOG_CHAR_UPPER_A_UMLAUT:
                 print_menu_char_umlaut(curX, curY, ASCII_TO_DIALOG('A'));
@@ -1376,6 +1430,25 @@ void handle_dialog_text_and_pages(s8 colorMode, struct DialogEntry *dialog, s8 l
                 render_generic_dialog_char_at_pos(dialog, gDialogX, gDialogY + 8, 0xF6);
                 gDialogX += gDialogCharWidths[0xF6];
                 break;
+#endif
+#ifdef LANG_KR
+            case KR_ESC: {  // 한글 음절: { 0xFB, idx_hi, idx_lo } → 좌/우 반쪽 8px 씩 (대사창)
+                s32 kidx = (str[strIdx + 1] << 8) | str[strIdx + 2];
+                if (lineNum >= lowerBound && lineNum <= lowerBound + linesPerBox) {
+                    if (linePos || xMatrix != 1) {
+                        create_dl_translation_matrix(
+                            MENU_MTX_NOPUSH, (f32)(gDialogCharWidths[DIALOG_CHAR_SPACE] * (xMatrix - 1)), 0, 0);
+                    }
+                    render_kr_half(kr_glyphs[kidx * 2]);
+                    create_dl_translation_matrix(MENU_MTX_NOPUSH, 8.0f, 0, 0);
+                    render_kr_half(kr_glyphs[kidx * 2 + 1]);
+                    create_dl_translation_matrix(MENU_MTX_NOPUSH, 8.0f, 0, 0);
+                    xMatrix = 1;
+                    linePos++;
+                }
+                strIdx += 2;  // 뒤 2바이트(idx) 소비 (루프 끝 strIdx++ 포함 총 3바이트)
+                break;
+            }
 #endif
             default: // any other character
 #if defined(VERSION_JP) || defined(VERSION_SH)

@@ -16,7 +16,7 @@ struct CharmapEntry
     uint32_t unicode[3];
     int length; // length of the unicode array. TODO: use dynamic memory allocation
     int bytesCount;
-    uint8_t bytes[2]; // bytes to convert unicode array to, (e.g. 'A' = 0x0A)
+    uint8_t bytes[4]; // bytes to convert unicode array to, (e.g. 'A' = 0x0A). Korean = 3 bytes (KR_ESC, hi, lo)
 };
 
 static struct HashTable *charmap;
@@ -252,8 +252,8 @@ static void read_charmap(const char *filename)
             {
                 uint32_t value;
 
-                if (entry.bytesCount >= 2)
-                    parse_error(filename, lineNum, "more than 2 values specified");
+                if (entry.bytesCount >= (int) ARRAY_COUNT(entry.bytes))
+                    parse_error(filename, lineNum, "more than %d values specified", (int) ARRAY_COUNT(entry.bytes));
 
                 line = skip_whitespace(line);
 

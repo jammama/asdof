@@ -1858,6 +1858,11 @@ const Texture *const main_hud_lut[] = {
 };
 
 // Main small font print table 0x02008338-0x02008737
+#ifdef LANG_KR
+// 한글 반쪽 글리프 테이블 (tools/kr_gen.py 생성). kr_glyphs[음절*2 + 0/1] = 좌/우 반쪽.
+#include "textures/segment2/kr/kr_glyphs.inc.c"
+#endif
+
 const Texture *const main_font_lut[] = {
 #ifdef VERSION_EU // EU Font Table
     texture_font_char_eu_0, texture_font_char_eu_1, texture_font_char_eu_2, texture_font_char_eu_3,
@@ -2084,6 +2089,8 @@ const Texture *const main_hud_camera_lut[] = {
 // $(BUILD_DIR)/bin/segment2.o: $(BUILD_DIR)/text/$(VERSION)/define_text.inc.c
 #if defined(VERSION_JP) || defined(VERSION_SH)
 #include "text/jp/define_text.inc.c"
+#elif defined(LANG_KR)
+#include "text/kr/define_text.inc.c"   // 한국어: 대사/코스/액트 테이블 (charmap_kr 인코딩)
 #elif defined(VERSION_US)
 #include "text/us/define_text.inc.c"
 #endif
