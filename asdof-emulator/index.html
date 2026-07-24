@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#111318">
+  <title>asdof 에뮬레이터</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3ClinearGradient%20id='body'%20x1='0'%20y1='0'%20x2='0'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%237d6cff'/%3E%3Cstop%20offset='1'%20stop-color='%234636c8'/%3E%3C/linearGradient%3E%3CradialGradient%20id='scr'%20cx='50%25'%20cy='40%25'%20r='75%25'%3E%3Cstop%20offset='0'%20stop-color='%232affc8'/%3E%3Cstop%20offset='0.55'%20stop-color='%230f9c86'/%3E%3Cstop%20offset='1'%20stop-color='%230a2430'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect%20x='11'%20y='5'%20width='42'%20height='54'%20rx='9'%20fill='url(%23body)'/%3E%3Crect%20x='17'%20y='10'%20width='30'%20height='23'%20rx='3.5'%20fill='%2312131c'/%3E%3Crect%20x='19.5'%20y='12'%20width='25'%20height='19'%20rx='2'%20fill='url(%23scr)'/%3E%3Cg%20fill='%23eef0ff'%3E%3Crect%20x='15'%20y='45'%20width='14'%20height='4.6'%20rx='1.6'/%3E%3Crect%20x='19.7'%20y='40.3'%20width='4.6'%20height='14'%20rx='1.6'/%3E%3C/g%3E%3Ccircle%20cx='42'%20cy='43.5'%20r='3.2'%20fill='%23ff5d6c'/%3E%3Ccircle%20cx='47.5'%20cy='49'%20r='3.2'%20fill='%23ffd23f'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 인게임 스테이지 (플레이 중에만 표시; data-orient 로 가로/세로 전환) -->
+  <div id="stage">
+    <!-- 상단 HUD -->
+    <div id="hud">
+      <button id="btn-back">← 목록</button>
+      <div class="spacer"></div>
+      <button id="btn-save" title="상태 저장 (슬롯1)">저장</button>
+      <button id="btn-load" title="상태 불러오기 (슬롯1)">불러오기</button>
+      <button id="btn-ff" title="빨리감기">≫</button>
+      <button id="btn-rotate" title="가로/세로 전환">⟳</button>
+      <button id="btn-settings" title="설정">⚙</button>
+      <button id="btn-fs" title="전체화면">⛶</button>
+    </div>
+
+    <!-- 게임 화면: 코어가 이 캔버스에 그린다 (240x160=GBA, 160x144=GBC) -->
+    <div id="screen">
+      <canvas id="canvas" width="240" height="160"></canvas>
+    </div>
+
+    <!-- 왼쪽: L + 방향키 -->
+    <div class="side side-left">
+      <button class="pad bumper" data-input="l">L</button>
+      <div class="dpad">
+        <button class="pad up"    data-input="up">▲</button>
+        <button class="pad left"  data-input="left">◀</button>
+        <button class="pad right" data-input="right">▶</button>
+        <button class="pad down"  data-input="down">▼</button>
+      </div>
+    </div>
+
+    <!-- 오른쪽: R + A/B -->
+    <div class="side side-right">
+      <button class="pad bumper" data-input="r">R</button>
+      <div class="face">
+        <button class="pad a" data-input="a">A</button>
+        <button class="pad b" data-input="b">B</button>
+      </div>
+    </div>
+
+    <!-- 가운데 아래: SELECT / START -->
+    <div class="sysbtns">
+      <button class="pad select" data-input="select">SELECT</button>
+      <button class="pad start"  data-input="start">START</button>
+    </div>
+
+    <!-- 하단: 키보드 매핑 설명 -->
+    <div id="keylegend">
+      <span><b>← ↑ ↓ →</b>이동</span>
+      <span><b>X</b>A</span>
+      <span><b>Z</b>B</span>
+      <span><b>A</b>L</span>
+      <span><b>S</b>R</span>
+      <span><b>Enter</b>Start</span>
+      <span><b>Backspace</b>Select</span>
+    </div>
+  </div>
+
+  <!-- 롬 라이브러리 (플레이 중이 아닐 때 화면을 덮음) -->
+  <div id="library">
+    <header>
+      <h1>🎮 asdof 에뮬레이터</h1>
+      <p class="sub">GB · GBC · GBA — 롬을 올리면 브라우저에서 바로 플레이</p>
+    </header>
+
+    <section class="add">
+      <label class="upload">
+        <input type="file" id="file-input" accept=".gba,.gbc,.gb,.zip,.7z" multiple hidden>
+        <span>＋ 롬 파일 올리기</span>
+      </label>
+      <p class="hint">여러 개 한 번에 가능 · 세이브는 이 브라우저에 남습니다</p>
+    </section>
+
+    <ul id="rom-list"></ul>
+    <section id="shelf"></section>
+
+    <footer>
+      세이브·롬은 이 브라우저(IndexedDB)에 저장돼요. 데스크톱 조작: 방향키 · X=A · Z=B · A=L · S=R · Enter=Start · Backspace=Select
+    </footer>
+  </div>
+
+  <!-- 드래그앤드롭 오버레이 -->
+  <div id="drop">
+    <div class="drop-box">🎮 여기에 롬을 놓으세요<br><small>.gba · .gbc · .gb · .zip</small></div>
+  </div>
+
+  <!-- 설정 패널 (⚙ 로 열기) -->
+  <div id="settings">
+    <div class="settings-panel">
+      <div class="settings-head">
+        <h2>설정</h2>
+        <button id="settings-close" title="닫기">✕</button>
+      </div>
+      <div class="settings-cat">화면</div>
+      <label class="settings-row">
+        <span class="label">게임패드</span>
+        <input type="checkbox" id="set-gamepad" class="toggle" checked>
+      </label>
+    </div>
+  </div>
+
+  <div id="loading">코어 불러오는 중…</div>
+  <div id="toast"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

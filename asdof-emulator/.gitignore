@@ -1,0 +1,20 @@
+# 롬 바이너리는 커밋하지 않는다 (저작권 — 개인 소유본을 개인용으로만).
+# roms.json 매니페스트만 버전관리하고, 실제 롬 파일은 로컬/서버에만 둔다.
+roms/*
+!roms/roms.json
+
+# 롬/세이브 바이너리는 프로젝트 어디에 두든 커밋 금지
+*.gba
+*.gbc
+*.gb
+*.sav
+*.ss
+
+# npm 흔적 / OS 부산물
+node_modules/
+*.tgz
+.DS_Store
+
+# 코어(core/mgba.js, core/mgba.wasm)는 커밋한다 — npm 없이 재현 가능하도록.
+# 소스맵은 용량이 커서 제외.
+core/*.map
