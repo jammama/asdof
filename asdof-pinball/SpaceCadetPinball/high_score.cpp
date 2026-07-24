@@ -6,6 +6,10 @@
 #include "score.h"
 #include "translations.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 bool high_score::dlg_enter_name;
 bool high_score::ShowDialog = false;
 high_score_entry high_score::DlgData;
@@ -199,6 +203,10 @@ void high_score::RenderHighScoreDialog()
 			if (dlg_enter_name)
 			{
 				place_new_score_into(DlgData);
+#ifdef __EMSCRIPTEN__
+				// 등록한 점수를 경쟁 리더보드에 최종 점수로 전송 (shell.html 의 scpReportFinal).
+				EM_ASM({ if (window.scpReportFinal) window.scpReportFinal($0); }, (double)DlgData.Entry.Score);
+#endif
 			}
 			ImGui::CloseCurrentPopup();
 		}

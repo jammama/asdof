@@ -323,6 +323,10 @@
                 try { ws.send(JSON.stringify({ type: 'score', score: Math.round(score), final: !!final })); } catch (_) {}
             }
 
+            // 게임의 하이스코어 등록(OK/Enter) 시 C++(high_score.cpp)가 호출 —
+            // 등록한 점수를 리더보드 최종 점수로 확정 전송한다.
+            window.scpReportFinal = function (score) { lastSent = -1; sendScore(score, true); };
+
             // 게임 점수/게임오버를 폴링. 값이 바뀌면 live, InGame→GameOver 전이 때 final 1회 전송.
             setInterval(function () {
                 if (!ready || !started || !window.Module || !Module.ccall) return;
