@@ -15,8 +15,7 @@
     <div id="hud">
       <button id="btn-back">← 목록</button>
       <div class="spacer"></div>
-      <button id="btn-save" title="상태 저장 (슬롯1)">저장</button>
-      <button id="btn-load" title="상태 불러오기 (슬롯1)">불러오기</button>
+      <button id="btn-saves" title="세이브 / 상태저장">💾</button>
       <button id="btn-ff" title="빨리감기">≫</button>
       <button id="btn-rotate" title="가로/세로 전환">⟳</button>
       <button id="btn-settings" title="설정">⚙</button>
@@ -79,6 +78,7 @@
         <span>＋ 롬 파일 올리기</span>
       </label>
       <p class="hint">여러 개 한 번에 가능 · 세이브는 이 브라우저에 남습니다</p>
+      <button id="btn-savefiles" class="secondary">☁ 저장 파일 (서버 동기화)</button>
     </section>
 
     <ul id="rom-list"></ul>
@@ -95,17 +95,50 @@
   </div>
 
   <!-- 설정 패널 (⚙ 로 열기) -->
-  <div id="settings">
-    <div class="settings-panel">
-      <div class="settings-head">
+  <div id="settings" class="modal">
+    <div class="modal-panel">
+      <div class="modal-head">
         <h2>설정</h2>
-        <button id="settings-close" title="닫기">✕</button>
+        <button class="modal-close" data-close="settings" title="닫기">✕</button>
       </div>
       <div class="settings-cat">화면</div>
       <label class="settings-row">
         <span class="label">게임패드</span>
         <input type="checkbox" id="set-gamepad" class="toggle" checked>
       </label>
+      <div class="settings-cat">서버</div>
+      <label class="settings-row" style="cursor:default">
+        <span class="label">서버 토큰</span>
+        <input type="password" id="set-token" class="text-input" placeholder="토큰 입력" autocomplete="off">
+      </label>
+    </div>
+  </div>
+
+  <!-- 세이브 모달 (💾 로 열기) -->
+  <div id="saves" class="modal">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h2>세이브</h2>
+        <button class="modal-close" data-close="saves" title="닫기">✕</button>
+      </div>
+      <p class="modal-note">게임 내 저장(리포트/세이브)은 자동으로 기기에 보관됩니다. 아래 <b>상태 저장</b>은 어느 지점이든 즉시 저장·복원하는 슬롯이에요.</p>
+      <div class="settings-cat">상태 저장 슬롯</div>
+      <ul id="slot-list"></ul>
+    </div>
+  </div>
+
+  <!-- 저장 파일 (서버 동기화) 모달 -->
+  <div id="savefiles" class="modal">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h2>저장 파일</h2>
+        <button class="modal-close" data-close="savefiles" title="닫기">✕</button>
+      </div>
+      <p class="modal-note">이 기기의 세이브를 서버에 올려두면, 다른 기기에서 받아 이어할 수 있어요. (설정 &gt; 서버에서 <b>토큰</b> 입력 필요)</p>
+      <div class="settings-cat">이 기기의 세이브 파일</div>
+      <ul id="local-saves" class="file-list"></ul>
+      <div class="settings-cat">서버에 저장된 세이브</div>
+      <ul id="server-saves" class="file-list"></ul>
     </div>
   </div>
 

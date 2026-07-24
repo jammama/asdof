@@ -2,6 +2,8 @@
 import { getModule, persist } from './engine.js';
 
 const GAME_DIR = '/data/games/';
+const SAVE_DIR = '/data/saves/';
+const STATE_DIR = '/data/states/';
 const ROM_EXTS = ['gba', 'gbc', 'gb', 'zip', '7z'];
 
 const ext = (name) => name.split('.').pop().toLowerCase();
@@ -72,5 +74,35 @@ export async function importServerRom(entry) {
   // FS 경로/세이브 매칭 안정성을 위해 저장 파일명은 ascii(entry.file)로 통일.
   const file = new File([buf], entry.file);
   await uploadRom(file);
+  await persist();
+}
+
+// ── 로컬 세이브 파일 (서버 동기화용) ────────────────────
+// /data/saves (배터리 세이브 .sav) + /data/states (상태저장) 를 함께 나열.
+export function listSaveFiles() {
+  const m = getModule();
+  const out = [];
+  for (const dir of [SAVE_DIR, STATE_DIR]) {
+    let files = [];
+    try { files = m.FS.readdir(dir); } catch { files = []; }
+    for (const f of files) {
+      if (f === '.' || f === '..') continue;
+      let size = 0;
+      try { size = m.FS.stat(dir + f).size; } catch {}
+      out.push({ name: f, path: dir + f, size });
+    }
+  }
+  return out.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+}
+
+export function readSaveFile(path) {
+  return getModule().FS.readFile(path);   // Uint8Array
+}
+
+// 서버에서 받은 세이브를 로컬 FS 에 기록 (.ss* → states, 그 외 → saves) + 영속화.
+// 파일명이 게임의 세이브명과 같아야 인게임에서 이어진다(그래서 origin 을 우선 사용).
+export async function writeSaveFile(name, bytes) {
+  const dir = /\.ss\d*$/i.test(name) ? STATE_DIR : SAVE_DIR;
+  getModule().FS.writeFile(dir + name, bytes);
   await persist();
 }

@@ -501,6 +501,8 @@ ifeq ($(TARGET_WEB),1)
   # -O2 링크 최적화(원본은 -O0 라 wasm 비대·불안정). --shell-file 로 커스텀 셸 사용
   # (emscripten 기본 로고·출력 텍스트·상태바 제거, 캔버스만).
   PLATFORM_LDFLAGS := -O2 -lm -s INITIAL_MEMORY=64MB -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_RUNTIME_METHODS=callMain -s ASYNCIFY --shell-file web/shell.html
+  # 셸 변경 시 자동 재링크 (make 가 --shell-file 을 의존성으로 안 봄 → 수동 rm 함정 제거)
+  SHELL_FILE_DEP := web/shell.html
 endif
 
 PLATFORM_CFLAGS += -DNO_SEGMENTED_MEMORY -DUSE_SYSTEM_MALLOC
@@ -959,7 +961,7 @@ $(BUILD_DIR)/$(TARGET).objdump: $(ELF)
 	$(OBJDUMP) -D $< > $@
 
 else
-$(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(ULTRA_O_FILES) $(GODDARD_O_FILES)
+$(EXE): $(O_FILES) $(MIO0_FILES:.mio0=.o) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(SHELL_FILE_DEP)
 	$(LD) -L $(BUILD_DIR) -o $@ $(O_FILES) $(ULTRA_O_FILES) $(GODDARD_O_FILES) $(LDFLAGS)
 endif
 

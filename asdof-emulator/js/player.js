@@ -11,9 +11,12 @@ const DEFAULT_KEYS = [
   ['Return', 'start'], ['Backspace', 'select'],
 ];
 
+const ROM_EXT_RE = /\.(gba|gbc|gb|zip|7z)$/i;
+
 let syncTimer = null;
 let fastForward = false;
 let boundKeys = false;
+const sessionSlots = new Set();   // 이번 세션에 저장한 슬롯(디렉터리 탐지 보강)
 
 // 롬 실행. 성공 시 true. (loadGame 은 전체 경로를 받는다)
 export function launch(name) {
@@ -22,6 +25,7 @@ export function launch(name) {
   const ok = m.loadGame(path);
   console.log('[emu] loadGame', path, '→', ok);
   if (!ok) return false;
+  sessionSlots.clear();   // 새 게임 → 세션 슬롯 초기화
 
   // 코어 설정은 게임 로드 후에 적용한다 (로드 전엔 crash 위험).
   if (!boundKeys) {
@@ -54,12 +58,30 @@ export async function quit() {
 export async function saveState(slot = 1) {
   const m = getModule();
   const ok = m.saveState(slot);
+  if (ok) sessionSlots.add(slot);
   await persist();
   return ok;
 }
 
 export function loadState(slot = 1) {
   return getModule().loadState(slot);
+}
+
+// 현재 게임에서 채워진 상태저장 슬롯 번호 집합.
+// /data/states/ 의 파일(<롬>.ss<N>)을 탐지하고 이번 세션 저장분을 합친다.
+export function filledStateSlots() {
+  const m = getModule();
+  const base = (m.gameName || '').split('/').pop().replace(ROM_EXT_RE, '');
+  const out = new Set(sessionSlots);
+  let files = [];
+  try { files = m.FS.readdir('/data/states/'); } catch { return out; }
+  for (const f of files) {
+    if (f === '.' || f === '..') continue;
+    if (base && !f.includes(base)) continue;
+    const mm = f.match(/\.?ss(\d+)$/i);
+    if (mm) out.add(parseInt(mm[1], 10));
+  }
+  return out;
 }
 
 export function toggleFastForward() {

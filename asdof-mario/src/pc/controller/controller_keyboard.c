@@ -5,6 +5,7 @@
 
 #ifdef TARGET_WEB
 #include "controller_emscripten_keyboard.h"
+#include <emscripten.h>
 #endif
 
 #include "../configfile.h"
@@ -80,6 +81,16 @@ static void keyboard_read(OSContPad *pad) {
     if ((keyboard_buttons_down & 0xc0000) == 0x80000) {
         pad->stick_y = 127;
     }
+#ifdef TARGET_WEB
+    // 온스크린 아날로그 스틱(web/shell.html)이 window.__vstickX/Y 를 (-128..127) 로 세팅한다.
+    // 활성(0이 아님) 시 키보드 디지털 스틱 대신 아날로그 값으로 override → 밀은 만큼 속도 조절.
+    int vx = EM_ASM_INT({ return (window.__vstickX | 0); });
+    int vy = EM_ASM_INT({ return (window.__vstickY | 0); });
+    if (vx != 0 || vy != 0) {
+        pad->stick_x = (vx < -128) ? -128 : (vx > 127) ? 127 : vx;
+        pad->stick_y = (vy < -128) ? -128 : (vy > 127) ? 127 : vy;
+    }
+#endif
 }
 
 struct ControllerAPI controller_keyboard = {
