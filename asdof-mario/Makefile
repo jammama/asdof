@@ -481,8 +481,9 @@ ifeq ($(TARGET_LINUX),1)
 endif
 ifeq ($(TARGET_WEB),1)
   PLATFORM_CFLAGS  := -DTARGET_WEB
-  # -O2 링크 최적화만 추가(원본은 -O0 링크라 wasm 이 비대·불안정했음). 나머지는 원본 유지.
-  PLATFORM_LDFLAGS := -O2 -lm -s INITIAL_MEMORY=64MB -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_RUNTIME_METHODS=callMain -s ASYNCIFY
+  # -O2 링크 최적화(원본은 -O0 라 wasm 비대·불안정). --shell-file 로 커스텀 셸 사용
+  # (emscripten 기본 로고·출력 텍스트·상태바 제거, 캔버스만).
+  PLATFORM_LDFLAGS := -O2 -lm -s INITIAL_MEMORY=64MB -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_RUNTIME_METHODS=callMain -s ASYNCIFY --shell-file web/shell.html
 endif
 
 PLATFORM_CFLAGS += -DNO_SEGMENTED_MEMORY -DUSE_SYSTEM_MALLOC

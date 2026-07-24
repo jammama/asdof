@@ -8,6 +8,10 @@
 
 #include "configfile.h"
 
+#ifdef TARGET_WEB
+#include <emscripten.h>
+#endif
+
 #define ARRAY_LEN(arr) (sizeof(arr) / sizeof(arr[0]))
 
 enum ConfigOptionType {
@@ -145,6 +149,17 @@ void configfile_load(const char *filename) {
 
     printf("Loading configuration from '%s'\n", filename);
 
+#ifdef TARGET_WEB
+    // 웹: 설정을 localStorage 에 영속화(MEMFS 는 새로고침 시 사라짐).
+    // localStorage 사본이 있으면 MEMFS 파일로 복원한 뒤 평소대로 읽는다.
+    EM_ASM({
+        try {
+            var s = localStorage.getItem('sm64config');
+            if (s !== null) { FS.writeFile('sm64config.txt', s); }
+        } catch (e) {}
+    });
+#endif
+
     file = fopen(filename, "r");
     if (file == NULL) {
         // Create a new config file and save defaults
@@ -233,4 +248,14 @@ void configfile_save(const char *filename) {
     }
 
     fclose(file);
+
+#ifdef TARGET_WEB
+    // 웹: 방금 쓴 MEMFS 파일을 localStorage 로 복사해 영속화.
+    EM_ASM({
+        try {
+            var data = FS.readFile('sm64config.txt', { encoding: 'utf8' });
+            localStorage.setItem('sm64config', data);
+        } catch (e) {}
+    });
+#endif
 }
