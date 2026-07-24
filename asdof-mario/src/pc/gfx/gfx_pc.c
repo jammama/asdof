@@ -1613,7 +1613,7 @@ void gfx_init(struct GfxWindowManagerAPI *wapi, struct GfxRenderingAPI *rapi, co
     gfx_rapi = rapi;
     gfx_wapi->init(game_name, start_in_fullscreen);
     gfx_rapi->init();
-    
+
     // Used in the 120 star TAS
     static uint32_t precomp_shaders[] = {
         0x01200200,

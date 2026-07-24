@@ -481,10 +481,8 @@ ifeq ($(TARGET_LINUX),1)
 endif
 ifeq ($(TARGET_WEB),1)
   PLATFORM_CFLAGS  := -DTARGET_WEB
-  # ASYNCIFY 필요: SDL_Delay 등이 emscripten_sleep 로 구현됨(스택에서 확인).
-  # 진단용 플래그: --profiling-funcs 로 wasm 에 함수명 보존(스택에 funcN 대신 실제 이름),
-  #               -s ASSERTIONS=1 로 abort 메시지 상세화. (원인 확정 후 제거 예정)
-  PLATFORM_LDFLAGS := -O2 --profiling-funcs -s ASSERTIONS=1 -s INITIAL_MEMORY=256MB -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_RUNTIME_METHODS=callMain -s ASYNCIFY -s ASYNCIFY_STACK_SIZE=65536
+  # -O2 링크 최적화만 추가(원본은 -O0 링크라 wasm 이 비대·불안정했음). 나머지는 원본 유지.
+  PLATFORM_LDFLAGS := -O2 -lm -s INITIAL_MEMORY=64MB -s ALLOW_MEMORY_GROWTH=1 -s EXPORTED_RUNTIME_METHODS=callMain -s ASYNCIFY
 endif
 
 PLATFORM_CFLAGS += -DNO_SEGMENTED_MEMORY -DUSE_SYSTEM_MALLOC

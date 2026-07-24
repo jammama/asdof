@@ -79,9 +79,6 @@ void exec_display_list(struct SPTask *spTask) {
 #endif
 
 void produce_one_frame(void) {
-#ifdef TARGET_WEB
-    { static int _f = 0; if (_f < 3 || _f % 120 == 0) EM_ASM({ console.log('[sm64] produce_one_frame #' + $0); }, _f); _f++; }
-#endif
     gfx_start_frame();
     game_loop_one_iteration();
     
@@ -189,15 +186,9 @@ void main_func(void) {
 #endif
 
     gfx_init(wm_api, rendering_api, "Super Mario 64 PC-Port", configFullscreen);
-#ifdef TARGET_WEB
-    EM_ASM(console.log('[sm64] gfx_init done'));
-#endif
 
     wm_api->set_fullscreen_changed_callback(on_fullscreen_changed);
     wm_api->set_keyboard_callbacks(keyboard_on_key_down, keyboard_on_key_up, keyboard_on_all_keys_up);
-#ifdef TARGET_WEB
-    EM_ASM(console.log('[sm64] callbacks set, initializing audio'));
-#endif
 
 #if HAVE_WASAPI
     if (audio_api == NULL && audio_wasapi.init()) {
@@ -222,26 +213,16 @@ void main_func(void) {
     if (audio_api == NULL) {
         audio_api = &audio_null;
     }
-#ifdef TARGET_WEB
-    EM_ASM(console.log('[sm64] audio api selected, calling audio_init'));
-#endif
 
     audio_init();
-#ifdef TARGET_WEB
-    EM_ASM(console.log('[sm64] audio_init done, calling sound_init'));
-#endif
     sound_init();
 
-#ifdef TARGET_WEB
-    EM_ASM(console.log('[sm64] sound_init done, before thread5_game_loop'));
-#endif
     thread5_game_loop(NULL);
 #ifdef TARGET_WEB
     /*for (int i = 0; i < atoi(argv[1]); i++) {
         game_loop_one_iteration();
     }*/
     inited = 1;
-    EM_ASM(console.log('[sm64] init complete (inited=1), entering frame loop'));
 #else
     inited = 1;
     while (1) {

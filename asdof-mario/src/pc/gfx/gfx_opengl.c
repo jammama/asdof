@@ -168,8 +168,8 @@ static struct ShaderProgram *gfx_opengl_create_and_load_new_shader(uint32_t shad
     struct CCFeatures cc_features;
     gfx_cc_get_features(shader_id, &cc_features);
 
-    char vs_buf[8192];
-    char fs_buf[8192];
+    char vs_buf[1024];
+    char fs_buf[1024];
     size_t vs_len = 0;
     size_t fs_len = 0;
     size_t num_floats = 4;
