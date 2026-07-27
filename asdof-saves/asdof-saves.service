@@ -1,0 +1,16 @@
+[Unit]
+Description=asdof-saves (범용 세이브 스토리지)
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/asdof-saves.env
+ExecStart=/usr/local/bin/asdof-saves
+Restart=on-failure
+User=www-data
+Group=www-data
+ProtectSystem=strict
+ReadWritePaths=/var/lib/asdof-saves
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
