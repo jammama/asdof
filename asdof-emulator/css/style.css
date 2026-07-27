@@ -236,7 +236,7 @@ body.playing #library { display: none; }
 }
 .upload:active { background: var(--panel-2); }
 .add .hint { text-align: center; color: var(--muted); font-size: 12px; margin: 8px 0 0; }
-.add .secondary {
+.secondary {
   display: block;
   width: 100%;
   margin-top: 12px;
@@ -249,7 +249,7 @@ body.playing #library { display: none; }
   font-weight: 600;
   cursor: pointer;
 }
-.add .secondary:active { background: var(--line); }
+.secondary:active { background: var(--line); }
 
 #rom-list, .shelf-list {
   list-style: none;
@@ -463,6 +463,34 @@ body.playing #library { display: none; }
   padding: 7px 10px;
   font-size: 13px;
 }
+
+/* 셀렉트 (배속/주기 등) */
+.select-input {
+  flex: none;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+/* 이어하기 버튼 (라이브러리 상단) */
+#resume { max-width: 640px; margin: 0 auto; }
+.resume-btn {
+  display: block;
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 14px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.resume-btn:active { filter: brightness(0.92); }
 
 /* 저장 파일 목록 (서버 동기화 모달) */
 .file-list { list-style: none; padding: 0; margin: 4px 0 8px; display: flex; flex-direction: column; gap: 6px; }

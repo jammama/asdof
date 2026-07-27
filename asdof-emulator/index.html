@@ -78,9 +78,10 @@
         <span>＋ 롬 파일 올리기</span>
       </label>
       <p class="hint">여러 개 한 번에 가능 · 세이브는 이 브라우저에 남습니다</p>
-      <button id="btn-savefiles" class="secondary">☁ 저장 파일 (서버 동기화)</button>
+      <button id="btn-lib-settings" class="secondary">⚙ 설정</button>
     </section>
 
+    <div id="resume"></div>
     <ul id="rom-list"></ul>
     <section id="shelf"></section>
 
@@ -101,16 +102,58 @@
         <h2>설정</h2>
         <button class="modal-close" data-close="settings" title="닫기">✕</button>
       </div>
-      <div class="settings-cat">화면</div>
+      <div class="settings-cat">화면 · 조작</div>
       <label class="settings-row">
         <span class="label">게임패드</span>
         <input type="checkbox" id="set-gamepad" class="toggle" checked>
       </label>
-      <div class="settings-cat">서버</div>
-      <label class="settings-row" style="cursor:default">
-        <span class="label">서버 토큰</span>
-        <input type="password" id="set-token" class="text-input" placeholder="토큰 입력" autocomplete="off">
+      <label class="settings-row">
+        <span class="label">햅틱 진동</span>
+        <input type="checkbox" id="set-haptic" class="toggle">
       </label>
+
+      <div class="settings-cat">속도</div>
+      <label class="settings-row" style="cursor:default">
+        <span class="label">빨리감기 배속</span>
+        <select id="set-ffspeed" class="select-input">
+          <option value="1.5">1.5×</option>
+          <option value="2" selected>2×</option>
+          <option value="3">3×</option>
+          <option value="4">4×</option>
+          <option value="8">8×</option>
+        </select>
+      </label>
+
+      <div class="settings-cat">자동 저장</div>
+      <label class="settings-row">
+        <span class="label">자동 상태저장</span>
+        <input type="checkbox" id="set-autostate" class="toggle" checked>
+      </label>
+      <label class="settings-row" style="cursor:default">
+        <span class="label">자동 상태저장 주기</span>
+        <select id="set-autostate-min" class="select-input">
+          <option value="1" selected>1분</option>
+          <option value="3">3분</option>
+          <option value="5">5분</option>
+          <option value="10">10분</option>
+        </select>
+      </label>
+      <label class="settings-row">
+        <span class="label">서버 자동 동기화</span>
+        <input type="checkbox" id="set-serversync" class="toggle">
+      </label>
+      <label class="settings-row" style="cursor:default">
+        <span class="label">서버 동기화 주기</span>
+        <select id="set-serversync-min" class="select-input">
+          <option value="3">3분</option>
+          <option value="5" selected>5분</option>
+          <option value="10">10분</option>
+          <option value="30">30분</option>
+        </select>
+      </label>
+
+      <div class="settings-cat">저장 데이터</div>
+      <button id="btn-savedata" class="secondary">저장 데이터 관리 (서버 동기화)</button>
     </div>
   </div>
 
@@ -131,10 +174,19 @@
   <div id="savefiles" class="modal">
     <div class="modal-panel">
       <div class="modal-head">
-        <h2>저장 파일</h2>
+        <h2>저장 데이터 관리</h2>
         <button class="modal-close" data-close="savefiles" title="닫기">✕</button>
       </div>
-      <p class="modal-note">이 기기의 세이브를 서버에 올려두면, 다른 기기에서 받아 이어할 수 있어요. (설정 &gt; 서버에서 <b>토큰</b> 입력 필요)</p>
+      <p class="modal-note">이 기기의 세이브를 서버에 올려두면, 다른 기기에서 받아 이어할 수 있어요. 먼저 아래 <b>서버 주소·토큰</b>을 입력하세요.</p>
+      <div class="settings-cat">서버 (asdof-saves)</div>
+      <label class="settings-row" style="cursor:default">
+        <span class="label">서버 주소</span>
+        <input type="text" id="set-saves-url" class="text-input" placeholder="https://saves.asdof.xyz" autocomplete="off">
+      </label>
+      <label class="settings-row" style="cursor:default">
+        <span class="label">서버 토큰</span>
+        <input type="password" id="set-token" class="text-input" placeholder="토큰 입력" autocomplete="off">
+      </label>
       <div class="settings-cat">이 기기의 세이브 파일</div>
       <ul id="local-saves" class="file-list"></ul>
       <div class="settings-cat">서버에 저장된 세이브</div>

@@ -64,7 +64,7 @@ function wireUi() {
 
   // 모달 공통: 배경 클릭 / [data-close] 버튼으로 닫기
   document.querySelectorAll('.modal').forEach((m) => {
-    m.addEventListener('click', (e) => { if (e.target === m) m.classList.remove('show'); });
+    m.addEventListener('click', (e) => { if (e.target === m) closeModal(m.id); });
   });
   document.querySelectorAll('[data-close]').forEach((b) => {
     b.addEventListener('click', () => closeModal(b.dataset.close));
@@ -75,21 +75,45 @@ function wireUi() {
     document.body.classList.toggle('no-pad', !e.target.checked);
   });
 
-  // 설정 > 서버 > 토큰 (localStorage 에 보관)
+  // 설정 > 서버 (asdof-saves 주소 + 토큰) — localStorage 에 보관
+  const urlInput = $('#set-saves-url');
+  urlInput.value = localStorage.getItem('saves-url') || '';
+  urlInput.addEventListener('change', () => {
+    const v = urlInput.value.trim();
+    if (v) localStorage.setItem('saves-url', v);
+    else localStorage.removeItem('saves-url');
+  });
   const tokenInput = $('#set-token');
   tokenInput.value = localStorage.getItem('save-token') || '';
   tokenInput.addEventListener('change', () => {
     localStorage.setItem('save-token', tokenInput.value.trim());
   });
 
-  // 라이브러리: 저장 파일(서버 동기화) 모달
-  $('#btn-savefiles').addEventListener('click', () => { renderSaveFiles(); openModal('savefiles'); });
-
-  document.addEventListener('visibilitychange', () => {
-    if (!playing) return;
-    if (document.hidden) player.pause();
-    else player.resume();
+  // 라이브러리: 설정 버튼(게임 진입 전에도 접근)
+  $('#btn-lib-settings').addEventListener('click', () => openModal('settings'));
+  // 설정 > 저장 데이터 관리 → 관리 모달 열기
+  $('#btn-savedata').addEventListener('click', () => {
+    closeModal('settings');
+    renderSaveFiles();
+    openModal('savefiles');
   });
+
+  // 설정: 햅틱 / 배속 / 자동 상태저장 / 서버 자동동기화 (localStorage 연동)
+  bindToggle('#set-haptic', 'haptic');
+  bindSelect('#set-ffspeed', 'ff-speed', '2');
+  bindToggle('#set-autostate', 'autostate', true, () => { if (playing) player.applyAutoSaveSettings(); });
+  bindSelect('#set-autostate-min', 'autostate-min', '1', () => { if (playing) player.applyAutoSaveSettings(); });
+  bindToggle('#set-serversync', 'serversync', false, restartServerSync);
+  bindSelect('#set-serversync-min', 'serversync-min', '5', restartServerSync);
+
+  // WebGL 컨텍스트 손실 복원 허용 (모바일 백그라운드 복귀 크래시 완화)
+  $('#canvas').addEventListener('webglcontextlost', (e) => {
+    e.preventDefault();
+    console.warn('[emu] WebGL 컨텍스트 손실 — 복원 시도');
+  });
+
+  // 모달 열림 / 백그라운드 전환 → 실행상태 갱신(일시정지·입력·저장)
+  document.addEventListener('visibilitychange', updateRunState);
   window.addEventListener('pagehide', () => { if (playing) persist(); });
   window.addEventListener('resize', applyOrient);   // 창 방향 바뀌면 반영(자동 모드일 때)
 
@@ -137,7 +161,84 @@ function wireDragDrop() {
   });
 }
 
+// ── 실행상태 / 설정 / 서버동기화 / 유틸 ──────────────
+function anyModalOpen() { return !!document.querySelector('.modal.show'); }
+
+// 플레이 중이면: 모달 안 열림 && 탭 보임 → 실행, 아니면 일시정지(입력·저장 포함)
+function updateRunState() {
+  if (!playing) return;
+  player.setRunning(!document.hidden && !anyModalOpen());
+}
+
+// localStorage 연동 토글/셀렉트
+function bindToggle(sel, key, defaultOn = false, onChange) {
+  const el = $(sel);
+  const stored = localStorage.getItem(key);
+  el.checked = stored === null ? defaultOn : stored === '1';
+  el.addEventListener('change', () => {
+    localStorage.setItem(key, el.checked ? '1' : '0');
+    if (onChange) onChange();
+  });
+}
+function bindSelect(sel, key, def, onChange) {
+  const el = $(sel);
+  el.value = localStorage.getItem(key) || def;
+  el.addEventListener('change', () => {
+    localStorage.setItem(key, el.value);
+    if (onChange) onChange();
+  });
+}
+
+// 서버 자동 동기화 (주기별 현재 세이브 업로드)
+let serverSyncTimer = null;
+function startServerSync() {
+  stopServerSync();
+  if (localStorage.getItem('serversync') !== '1') return;
+  const min = parseInt(localStorage.getItem('serversync-min') || '5', 10) || 5;
+  serverSyncTimer = setInterval(autoServerSync, min * 60000);
+  console.log('[emu] 서버 자동동기화 ON:', min, '분');
+}
+function stopServerSync() { clearInterval(serverSyncTimer); serverSyncTimer = null; }
+function restartServerSync() { stopServerSync(); if (playing) startServerSync(); }
+async function autoServerSync() {
+  if (!playing || !localStorage.getItem('save-token')) return;
+  const bytes = player.currentSave();
+  const name = player.currentSaveName();
+  if (!bytes || !bytes.length || !name) return;
+  try {
+    await uploadServerSave(name, name, bytes);
+    console.log('[emu] 자동 서버동기화 완료:', name);
+  } catch (e) { console.warn('[emu] 자동 서버동기화 실패:', e.message); }
+}
+
+// 세이브 바이트를 기기에 파일로 다운로드
+function downloadToDevice(name, bytes) {
+  const blob = new Blob([bytes], { type: 'application/octet-stream' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// 이어하기: 비정상 종료(탭 사망) 대비 마지막 롬을 다시 실행
+function renderResume() {
+  const el = $('#resume');
+  el.innerHTML = '';
+  const last = localStorage.getItem('last-rom');
+  if (!last || !listLocalRoms().includes(last)) return;
+  const btn = document.createElement('button');
+  btn.className = 'resume-btn';
+  btn.textContent = `▶ 이어하기: ${labelOf(last)}`;
+  btn.addEventListener('click', () => launch(last));
+  el.appendChild(btn);
+}
+
 async function renderLibrary() {
+  renderResume();
   // 서버 선반과 로컬 롬을 하나의 목록으로 합친다.
   // 표시 이름은 매니페스트(roms.json)의 name, 저장/실행은 ascii 파일명(file).
   const shelf = await fetchServerShelf();
@@ -216,8 +317,14 @@ async function importAndPlay(entry) {
 
 // ── 모달 / 세이브 슬롯 ─────────────────────────────
 const SLOT_COUNT = 6;
-function openModal(id) { $('#' + id).classList.add('show'); }
-function closeModal(id) { $('#' + id).classList.remove('show'); }
+function openModal(id) {
+  $('#' + id).classList.add('show');
+  updateRunState();   // 모달 열림 → 일시정지 + 입력 차단
+}
+function closeModal(id) {
+  $('#' + id).classList.remove('show');
+  updateRunState();   // 모달 닫힘 → (다른 모달 없으면) 재개
+}
 
 // 상태 저장 슬롯 목록 렌더 (채워진 슬롯은 점 표시 · 빈 슬롯은 불러오기 비활성)
 function renderSlots() {
@@ -289,7 +396,10 @@ async function renderSaveFiles() {
       } catch (e) { alert(e.message); }
       up.disabled = false; up.textContent = '서버에 올리기';
     });
-    li.append(nm, up);
+    const dl = document.createElement('button');
+    dl.textContent = '기기에 저장';
+    dl.addEventListener('click', () => downloadToDevice(f.name, readSaveFile(f.path)));
+    li.append(nm, up, dl);
     ul.appendChild(li);
   }
   await renderServerSaves();
@@ -352,6 +462,8 @@ function launch(name) {
   }
   playing = true;
   document.body.classList.add('playing');
+  localStorage.setItem('last-rom', name);   // 탭 사망 대비 (이어하기)
+  startServerSync();
 }
 
 async function backToLibrary() {
@@ -359,6 +471,8 @@ async function backToLibrary() {
   playing = false;
   document.body.classList.remove('playing');
   $('#btn-ff').classList.remove('on');
+  stopServerSync();
+  localStorage.removeItem('last-rom');   // 정상 종료 → 이어하기 해제
   await renderLibrary();
 }
 

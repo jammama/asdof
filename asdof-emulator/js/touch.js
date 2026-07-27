@@ -13,6 +13,8 @@ export function initTouchControls(root) {
       e.preventDefault();
       btn.classList.add('active');
       resumeAudio();
+      // 햅틱(설정 토글, 안드로이드 크롬 등에서만 동작)
+      if (localStorage.getItem('haptic') === '1' && navigator.vibrate) navigator.vibrate(8);
       getModule().buttonPress(input);
     };
     const release = (e) => {

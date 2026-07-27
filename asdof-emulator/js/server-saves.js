@@ -1,8 +1,17 @@
-// server-saves.js — 서버 세이브 저장소 API 클라이언트 (/api/saves)
+// server-saves.js — asdof-saves(외부 범용 세이브 스토리지) 클라이언트.
 //
-// 토큰은 localStorage('save-token') 에서 읽는다(설정 > 서버에서 입력).
-// 이름/원본파일명은 비ASCII(한글) 대비 URI 인코딩해서 주고받는다.
-const API = '/api/saves';
+// 별도 서비스(saves.asdof.xyz)를 호출한다 — 에뮬레이터에 백엔드를 박지 않는다.
+//   base URL : localStorage('saves-url')  (기본 https://saves.asdof.xyz)
+//   토큰      : localStorage('save-token')
+//   네임스페이스: 'asdof-emulator'  (다른 앱/게임은 각자 다른 ns 사용)
+// 크로스 오리진이지만 서비스가 CORS 를 주므로 cross-origin isolated 페이지에서도 동작.
+const NS = 'asdof-emulator';
+const DEFAULT_BASE = 'https://saves.asdof.xyz';
+
+function apiRoot() {
+  const base = (localStorage.getItem('saves-url') || DEFAULT_BASE).replace(/\/+$/, '');
+  return `${base}/v1/${NS}/saves`;
+}
 
 function authHeaders(extra = {}) {
   const t = localStorage.getItem('save-token') || '';
@@ -14,7 +23,7 @@ function safeDecode(s) {
 }
 
 export async function listServerSaves() {
-  const res = await fetch(API, { headers: authHeaders() });
+  const res = await fetch(apiRoot(), { headers: authHeaders() });
   if (res.status === 401) throw new Error('서버 토큰이 없거나 틀렸어요. 설정 > 서버에서 토큰을 입력하세요.');
   if (!res.ok) throw new Error(`서버 목록 실패 (HTTP ${res.status})`);
   const data = await res.json();
@@ -22,7 +31,7 @@ export async function listServerSaves() {
 }
 
 export async function uploadServerSave(name, originName, bytes) {
-  const res = await fetch(`${API}/${encodeURIComponent(name)}`, {
+  const res = await fetch(`${apiRoot()}/${encodeURIComponent(name)}`, {
     method: 'POST',
     headers: authHeaders({ 'X-Origin-Name': encodeURIComponent(originName || '') }),
     body: bytes,
@@ -32,7 +41,7 @@ export async function uploadServerSave(name, originName, bytes) {
 }
 
 export async function downloadServerSave(name) {
-  const res = await fetch(`${API}/${encodeURIComponent(name)}`, { headers: authHeaders() });
+  const res = await fetch(`${apiRoot()}/${encodeURIComponent(name)}`, { headers: authHeaders() });
   if (!res.ok) throw new Error(`다운로드 실패 (HTTP ${res.status})`);
   const origin = res.headers.get('X-Origin-Name');
   const bytes = new Uint8Array(await res.arrayBuffer());
@@ -40,7 +49,7 @@ export async function downloadServerSave(name) {
 }
 
 export async function deleteServerSave(name) {
-  const res = await fetch(`${API}/${encodeURIComponent(name)}`, {
+  const res = await fetch(`${apiRoot()}/${encodeURIComponent(name)}`, {
     method: 'DELETE',
     headers: authHeaders(),
   });

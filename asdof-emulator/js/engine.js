@@ -28,7 +28,10 @@ export function initCore(canvas) {
     }
     const m = await mGBA({ canvas });
     await m.FSInit();               // IDBFS 마운트 + 저장돼 있던 롬/세이브 로드
-    // 볼륨/키바인딩/입력 설정은 게임 로드 후에 (로드 전엔 core 미생성 → wasm crash 위험)
+    // 기본은 입력 OFF: 코어가 켜져 있으면 키다운을 preventDefault 해서 라이브러리/설정
+    // 텍스트칸(토큰 등)에 타이핑이 안 됨. 게임 로드/모달종료 시점에만 켠다.
+    try { m.toggleInput(false); } catch (e) { console.warn('toggleInput(false) 실패', e); }
+    // 볼륨/키바인딩은 게임 로드 후에 적용(로드 전 crash 회피)
     mod = m;
     console.log('[emu] 코어 준비 완료', m.version);
     return m;
