@@ -17,7 +17,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FONT = os.path.join(ROOT, "tools", "pf_stardust_s.ttf")
 N64G = os.path.join(ROOT, "tools", "n64graphics")
 GLYPH_DIR = os.path.join(ROOT, "textures", "segment2", "kr")
-KR_ESC = 0xFB
+KR_ESC = 0xA9   # 한글 이스케이프. 0xFB 는 charmap 에서 '×' 라 충돌 → 미사용 0xA9 사용
 
 # 한글이 들어갈 수 있는 소스 파일들 (여기서 음절 수집)
 SRC_GLOBS = [

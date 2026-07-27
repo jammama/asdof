@@ -11,7 +11,8 @@
                font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #ddd; }
 
   /* 메뉴바 + 게임을 한 래퍼로 묶어 이 래퍼째로 풀스크린 → 풀스크린에서도 메뉴 유지 */
-  #wrapper { display: flex; flex-direction: column; height: 100vh; }
+  /* 모바일: 100vh 는 주소창 영역까지라 하단이 잘림 → 100dvh(동적 뷰포트)로 실제 보이는 높이에 맞춤 */
+  #wrapper { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 
   /* ── 상단 메뉴바 (항상 표시, 풀스크린에서도) ── */
   #menubar {
@@ -19,9 +20,18 @@
     display: flex; align-items: stretch;
     background: #1e1e22; border-bottom: 1px solid #333;
     user-select: none; z-index: 100; position: relative;
+    /* overflow:hidden 넣으면 드롭다운(아래로 펼쳐짐)이 잘려서 안 됨 → 브랜드 축소로만 넘침 방지 */
   }
   #menubar .brand { display: flex; align-items: center; padding: 0 12px; font-weight: 600;
-                    font-size: 13px; color: #e8b923; letter-spacing: .3px; }
+                    font-size: 13px; color: #e8b923; letter-spacing: .3px;
+                    flex: 0 1 auto; min-width: 0; overflow: hidden;
+                    text-overflow: ellipsis; white-space: nowrap; }
+  .menu > .menu-title { flex: 0 0 auto; white-space: nowrap; }
+  /* 아주 좁은 화면: 브랜드 텍스트 숨기고 🍄 만 (메뉴 공간 확보) */
+  @media (max-width: 520px) {
+    #menubar .brand { font-size: 0; padding: 0 8px; }
+    #menubar .brand::before { content: "🍄"; font-size: 15px; }
+  }
   .menu { position: relative; }
   .menu > .menu-title {
     height: 100%; padding: 0 14px; background: none; border: 0; color: #ddd;
@@ -42,14 +52,19 @@
   .menu-item input { margin: 0; }
 
   /* ── 게임 스테이지 ── */
+  /* 게임은 가운데 — 상단 버튼류와 하단 스틱이 위아래로 감싸는 배치 */
   #stage { flex: 1 1 auto; display: flex; align-items: center; justify-content: center;
            overflow: hidden; background: #000; position: relative; }
   canvas.emscripten {
     display: block; border: 0; background: #000; outline: none;
     image-rendering: pixelated;
-    /* 기본(창 모드): 화면 높이의 일부만 쓰는 작은 창, 4:3 유지 */
-    height: min(66vh, 480px); width: auto; aspect-ratio: 4 / 3;
-    max-width: 100%;
+    /* 4:3 유지하며 가로·세로 둘 다 안 넘치게 "contain".
+       너비 = min(가로 100%, 세로제한을 4:3로 환산한 폭) → 세로긴 화면서도 폭이 안 넘침(양옆 안잘림).
+       (88dvh = 66dvh×4/3, 640px = 480px×4/3) */
+    width: min(100%, 88dvh, 640px);
+    height: auto;
+    aspect-ratio: 4 / 3;
+    min-width: 0;
   }
   /* 풀스크린: 래퍼가 전체화면일 때 캔버스를 스테이지(메뉴바 제외 영역)에 꽉 채움 */
   #wrapper:fullscreen canvas.emscripten,
@@ -70,47 +85,52 @@
   }
   #gamepad .pad-btn {
     display: flex; align-items: center; justify-content: center;
-    border: 2px solid rgba(255,255,255,.55); border-radius: 50%;
-    color: #fff; font-weight: 700; font-size: clamp(10px, 2.2vmin, 16px);
-    background: rgba(60,60,68,.45); opacity: .78; cursor: pointer;
-    text-shadow: 0 1px 2px rgba(0,0,0,.6); line-height: 1;
-    transition: transform .05s, opacity .05s, filter .05s;
+    border: 2px solid rgba(255,255,255,.6); border-radius: 50%;
+    color: #fff; font-weight: 800; font-size: clamp(12px, 2.6vmin, 20px);
+    background: rgba(60,60,68,.5); opacity: .9; cursor: pointer;
+    text-shadow: 0 1px 2px rgba(0,0,0,.7); line-height: 1;
+    /* 버튼엔 transform·transition 을 아예 안 둔다(→ 안 움직임). 네이티브 드래그/선택만 차단. */
+    -webkit-touch-callout: none; -webkit-user-drag: none; user-drag: none; user-select: none;
   }
-  #gamepad .pad-btn.pressed { opacity: 1; filter: brightness(1.5); transform: scale(.92); }
-  /* 개별 버튼 색/크기/위치 */
-  .a-btn { width: 15vmin; height: 15vmin; max-width: 96px; max-height: 96px;
-           right: 4%; bottom: 7%; background: rgba(46,111,219,.7); }
-  .b-btn { width: 11vmin; height: 11vmin; max-width: 72px; max-height: 72px;
-           right: calc(4% + 16vmin); bottom: 6%; background: rgba(58,170,79,.7); }
-  .z-btn { width: 11vmin; height: 11vmin; max-width: 70px; max-height: 70px;
-           left: calc(3% + 30vmin); bottom: 9%; background: rgba(120,90,190,.7); }
-  .r-btn { width: 12vmin; height: 12vmin; max-width: 74px; max-height: 74px;
-           right: 4%; top: 6%; background: rgba(120,124,132,.7); }
-  .start-btn { width: 13vmin; height: 13vmin; max-width: 78px; max-height: 78px;
-               border-radius: 50%; left: 50%; transform: translateX(-50%); top: 5%;
-               font-size: clamp(8px, 1.8vmin, 12px); background: rgba(211,51,51,.7); }
-  .start-btn.pressed { transform: translateX(-50%) scale(.92); }
-  /* C 버튼 다이아몬드 (방향키) */
-  .c-cluster { position: absolute; right: calc(4% + 3vmin); bottom: calc(7% + 16vmin);
-               width: 26vmin; height: 26vmin; max-width: 168px; max-height: 168px;
-               pointer-events: none; }
-  .c-btn { width: 8vmin; height: 8vmin; max-width: 52px; max-height: 52px;
-           background: rgba(242,194,0,.7); color: #3a2c00; font-size: clamp(8px,1.6vmin,12px); }
-  .c-up    { left: 50%; top: 0;    transform: translateX(-50%); }
-  .c-down  { left: 50%; bottom: 0; transform: translateX(-50%); }
-  .c-left  { left: 0;   top: 50%;  transform: translateY(-50%); }
-  .c-right { right: 0;  top: 50%;  transform: translateY(-50%); }
-  .c-up.pressed    { transform: translateX(-50%) scale(.92); }
-  .c-down.pressed  { transform: translateX(-50%) scale(.92); }
-  .c-left.pressed  { transform: translateY(-50%) scale(.92); }
-  .c-right.pressed { transform: translateY(-50%) scale(.92); }
-  /* 아날로그 스틱 (WASD) */
-  #stick { left: 3%; bottom: 6%; width: 28vmin; height: 28vmin;
-           max-width: 180px; max-height: 180px; border-radius: 50%;
-           background: radial-gradient(circle, rgba(80,80,90,.45), rgba(30,30,36,.5));
-           border: 2px solid rgba(255,255,255,.4); opacity: .8; }
-  #stick-knob { position: absolute; left: 50%; top: 50%; width: 42%; height: 42%;
-                margin: -21% 0 0 -21%; border-radius: 50%;
+  /* 눌림 = 밝아지고 살짝 눌림(scale). transition 없음 → 슬라이딩 아니라 즉시 반응.
+     (버튼은 이제 translate(-50%) 로 중앙정렬 안 하므로 scale 이 위치와 안 충돌) */
+  #gamepad .pad-btn.pressed { filter: brightness(1.7); transform: scale(0.9); }
+  /* ── 배치(모바일, N64 참고) ── 상단: 십자키(좌)·Z|START|R(중앙)·A/B/C(우) / 하단 좌: 스틱
+     버튼류는 위, 스틱은 아래. 반투명으로 게임 위에 겹침. */
+  /* 십자키(D-pad): 상단 왼쪽 — 디지털 이동(스틱과 같은 __vstick 훅) */
+  #dpad { position: absolute; left: 3%; top: 8%;
+          width: clamp(108px,27vmin,176px); height: clamp(108px,27vmin,176px); pointer-events: none; }
+  .d-btn { width: 34%; height: 34%; background: rgba(74,78,88,.85); color: #d5d8de; }
+  .d-up    { left: 33%; top: 0; }
+  .d-down  { left: 33%; bottom: 0; }
+  .d-left  { left: 0;   top: 33%; }
+  .d-right { right: 0;  top: 33%; }
+  /* A/B/C 페이스 묶음(N64 배열): 상단 오른쪽. A(파랑,큰버튼) 아래, B(초록) 좌상, C(노랑 다이아) 우상 */
+  #pad-face { position: absolute; right: 2%; top: 5%;
+              width: clamp(176px, 43vmin, 300px); height: clamp(176px, 43vmin, 300px);
+              pointer-events: none; }
+  .a-btn { width: 40%; height: 40%; right: 5%;  bottom: 3%; background: rgba(38,104,214,.85); }
+  .b-btn { width: 30%; height: 30%; left: 1%;   top: 8%;   background: rgba(52,168,74,.85); }
+  .c-cluster { position: absolute; top: 0; right: 0; width: 50%; height: 50%; pointer-events: none; }
+  .c-btn { width: 36%; height: 36%; background: rgba(242,194,0,.9); color: #3a2c00; font-weight: 800; }
+  .c-up    { left: 32%; top: 0; }
+  .c-down  { left: 32%; bottom: 0; }
+  .c-left  { left: 0;   top: 32%; }
+  .c-right { right: 0;  top: 32%; }
+  /* 상단 중앙 트레이: Z | START | R */
+  .center-tray { position: absolute; left: 0; right: 0; top: 6%; display: flex;
+                 justify-content: center; align-items: center; gap: 3vmin; pointer-events: none; }
+  #gamepad .center-tray .pad-btn { position: static; }
+  .z-btn { width: clamp(44px,10.5vmin,72px); height: clamp(44px,10.5vmin,72px); background: rgba(120,124,134,.85); }
+  .start-btn { width: clamp(56px,13vmin,90px); height: clamp(38px,9vmin,58px);
+               border-radius: 999px; background: rgba(206,54,54,.88); }
+  .r-btn { width: clamp(44px,10.5vmin,72px); height: clamp(44px,10.5vmin,72px); background: rgba(120,124,134,.85); }
+  /* 하단 왼쪽: 아날로그 스틱 */
+  #stick { left: 5%; bottom: 6%; width: clamp(140px,36vmin,240px); height: clamp(140px,36vmin,240px);
+           border-radius: 50%; background: radial-gradient(circle, rgba(80,80,90,.42), rgba(30,30,36,.5));
+           border: 2px solid rgba(255,255,255,.4); opacity: .82; }
+  #stick-knob { position: absolute; left: 50%; top: 50%; width: 44%; height: 44%;
+                margin: -22% 0 0 -22%; border-radius: 50%;
                 background: radial-gradient(circle at 40% 35%, #cfd3da, #6a6e78);
                 border: 2px solid rgba(255,255,255,.5); pointer-events: none; }
   #stick-label { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
@@ -154,17 +174,29 @@
     <!-- 온스크린 게임패드: window 에 합성 KeyboardEvent(code) 를 보내 기존 키 입력 경로를 그대로 탄다 -->
     <div id="gamepad" aria-hidden="true">
       <div id="stick"><div id="stick-knob"></div><span id="stick-label">이동</span></div>
-      <div class="c-cluster">
-        <button class="pad-btn c-btn c-up"    type="button" data-code="ArrowUp">C▲</button>
-        <button class="pad-btn c-btn c-left"  type="button" data-code="ArrowLeft">C◀</button>
-        <button class="pad-btn c-btn c-right" type="button" data-code="ArrowRight">C▶</button>
-        <button class="pad-btn c-btn c-down"  type="button" data-code="ArrowDown">C▼</button>
+      <!-- 십자키 (상단 좌측, 디지털 이동) -->
+      <div id="dpad">
+        <button class="pad-btn d-btn d-up"    type="button" data-dir="up">▲</button>
+        <button class="pad-btn d-btn d-left"  type="button" data-dir="left">◀</button>
+        <button class="pad-btn d-btn d-right" type="button" data-dir="right">▶</button>
+        <button class="pad-btn d-btn d-down"  type="button" data-dir="down">▼</button>
       </div>
-      <button class="pad-btn b-btn"     type="button" data-code="Comma">B</button>
-      <button class="pad-btn a-btn"     type="button" data-code="KeyL">A</button>
-      <button class="pad-btn z-btn"     type="button" data-code="KeyK">Z</button>
-      <button class="pad-btn r-btn"     type="button" data-code="ShiftRight">R</button>
-      <button class="pad-btn start-btn" type="button" data-code="Space">START</button>
+      <!-- 우측 페이스버튼 묶음 (N64 배열) -->
+      <div id="pad-face">
+        <div class="c-cluster">
+          <button class="pad-btn c-btn c-up"    type="button" data-code="ArrowUp">C▲</button>
+          <button class="pad-btn c-btn c-left"  type="button" data-code="ArrowLeft">C◀</button>
+          <button class="pad-btn c-btn c-right" type="button" data-code="ArrowRight">C▶</button>
+          <button class="pad-btn c-btn c-down"  type="button" data-code="ArrowDown">C▼</button>
+        </div>
+        <button class="pad-btn b-btn" type="button" data-code="Comma">B</button>
+        <button class="pad-btn a-btn" type="button" data-code="KeyL">A</button>
+      </div>
+      <div class="center-tray">
+        <button class="pad-btn z-btn"     type="button" data-code="KeyK">Z</button>
+        <button class="pad-btn start-btn" type="button" data-code="Space">START</button>
+        <button class="pad-btn r-btn"     type="button" data-code="ShiftRight">R</button>
+      </div>
     </div>
   </div>
   <div id="controls">
@@ -260,8 +292,8 @@
       window.dispatchEvent(ev);
     }
 
-    // ── 일반 버튼 (A/B/Z/R/START/C) ──
-    var padBtns = Array.prototype.slice.call(document.querySelectorAll('#gamepad .pad-btn'));
+    // ── 일반 버튼 (A/B/Z/R/START/C) — data-code 있는 것만 (십자키는 data-dir 이라 제외) ──
+    var padBtns = Array.prototype.slice.call(document.querySelectorAll('#gamepad .pad-btn[data-code]'));
     padBtns.forEach(function (btn) {
       var code = btn.getAttribute('data-code');
       btn._down = false;
@@ -302,15 +334,20 @@
       var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
       var dx = x - cx, dy = y - cy;
       var dist = Math.sqrt(dx * dx + dy * dy);
-      var maxK = r.width * 0.30, dead = r.width * 0.06;
+      var maxK = r.width * 0.40, dead = r.width * 0.10;   // 넓은 스로우 + 작은 데드존
       var kx = dx, ky = dy;
       if (dist > maxK) { kx = dx / dist * maxK; ky = dy / dist * maxK; }
       knob.style.transform = 'translate(' + kx + 'px,' + ky + 'px)';
       if (dist < dead) { window.__vstickX = 0; window.__vstickY = 0; return; }
-      var mag = (Math.min(dist, maxK) - dead) / (maxK - dead); // 데드존~최대 → 0..1
-      var ux = dx / dist, uy = dy / dist;                      // 단위 방향
-      var sx = Math.round(ux * mag * 127);
-      var sy = Math.round(-uy * mag * 127);                    // 화면 y는 아래로 +, N64는 위가 +
+      // ★미세조정 핵심★ SM64는 raw 스틱을 데드존8 처리 + stickMag를 64로 클램프한다.
+      // 즉 raw 약 8~72 만 유효(그 위는 전부 최대속도). 그래서 throw 전체를 그 범위로 매핑하고,
+      // expo 곡선으로 저속(걷기) 구간을 넓혀 살짝 밀면 천천히, 끝까지 밀면 달리게 한다.
+      // 대각선도 축당 8을 넘도록 하한을 12로(=45°에서 축값 8.5) → 저속 대각 이동 보장.
+      var t = (Math.min(dist, maxK) - dead) / (maxK - dead); // 0..1
+      var mag = 12 + Math.pow(t, 1.6) * 60;                  // raw 12..72
+      var ux = dx / dist, uy = dy / dist;
+      var sx = Math.round(ux * mag);
+      var sy = Math.round(-uy * mag);                        // 화면 y 아래로+, N64 위가+
       window.__vstickX = sx < -128 ? -128 : sx > 127 ? 127 : sx;
       window.__vstickY = sy < -128 ? -128 : sy > 127 ? 127 : sy;
     }
@@ -331,10 +368,40 @@
     stick.addEventListener('pointercancel', endStick);
     stick.addEventListener('lostpointercapture', endStick);
 
+    // ── 십자키 (디지털 이동 — 스틱과 같은 __vstick 훅. 상단 좌측) ──
+    var DPAD_V = 72;  // raw 스틱값(달리기 최대). 게임이 magnitude 를 64 로 클램프.
+    var dpadState = { up: false, down: false, left: false, right: false };
+    function applyDpad() {
+      window.__vstickX = (dpadState.right ? DPAD_V : 0) + (dpadState.left ? -DPAD_V : 0);
+      window.__vstickY = (dpadState.up ? DPAD_V : 0) + (dpadState.down ? -DPAD_V : 0);
+    }
+    var dpadBtns = Array.prototype.slice.call(document.querySelectorAll('#dpad .pad-btn'));
+    dpadBtns.forEach(function (btn) {
+      var dir = btn.getAttribute('data-dir');
+      btn._down = false;
+      function press(e) {
+        e.preventDefault(); if (btn._down) return;
+        btn._down = true; btn.classList.add('pressed');
+        try { btn.setPointerCapture(e.pointerId); } catch (x) {}
+        dpadState[dir] = true; applyDpad();
+      }
+      function release(e) {
+        if (e) e.preventDefault(); if (!btn._down) return;
+        btn._down = false; btn.classList.remove('pressed');
+        dpadState[dir] = false; applyDpad();
+      }
+      btn.addEventListener('pointerdown', press);
+      btn.addEventListener('pointerup', release);
+      btn.addEventListener('pointercancel', release);
+      btn.addEventListener('lostpointercapture', release);
+      btn._release = release;
+    });
+
     // ── 전체 해제 (토글 off / 탭 비활성 / 포커스 상실) ──
     function releaseAll() {
       releaseStick();
       padBtns.forEach(function (b) { if (b._down) b._release(); });
+      dpadBtns.forEach(function (b) { if (b._down) b._release(); });
     }
     document.addEventListener('visibilitychange', function () { if (document.hidden) releaseAll(); });
     window.addEventListener('blur', releaseAll);

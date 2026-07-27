@@ -18,12 +18,12 @@
  * Global Text
  */
 // File Select
-#define TEXT_NEW _("새게임") // New File Text
+#define TEXT_NEW _("NEW") // New File Text
 #define TEXT_4DASHES _("----") // Used in Score File Menu
 
 // Ingame Menu
-#define TEXT_PAUSE _("일시정지") // Pause text, Castle Courses
-#define TEXT_HUD_CONGRATULATIONS _("축하합니다") // Course Complete Text, Bowser Courses
+#define TEXT_PAUSE _("PAUSE") // Pause text, Castle Courses
+#define TEXT_HUD_CONGRATULATIONS _("CONGRATULATIONS") // Course Complete Text, Bowser Courses
 
 #if defined(VERSION_JP) || defined(VERSION_SH)
 
@@ -130,40 +130,40 @@
  * File Select Text
  */
 // Main Screens
-#define TEXT_MARIO _("마리오") // View Score Menu
-#define TEXT_SELECT_FILE _("파일 선택")
-#define TEXT_CHECK_FILE _("파일 확인")
-#define TEXT_COPY_FILE _("파일 복사")
-#define TEXT_ERASE_FILE _("파일 삭제")
-#define TEXT_SOUND_SELECT _("사운드 선택")
-#define TEXT_FILE_MARIO_A _("마리오 A")
-#define TEXT_FILE_MARIO_B _("마리오 B")
-#define TEXT_FILE_MARIO_C _("마리오 C")
-#define TEXT_FILE_MARIO_D _("마리오 D")
+#define TEXT_MARIO _("MARIO") // View Score Menu
+#define TEXT_SELECT_FILE _("SELECT FILE")
+#define TEXT_CHECK_FILE _("CHECK FILE")
+#define TEXT_COPY_FILE _("COPY FILE")
+#define TEXT_ERASE_FILE _("ERASE FILE")
+#define TEXT_SOUND_SELECT _("SOUND SELECT")
+#define TEXT_FILE_MARIO_A _("MARIO A")
+#define TEXT_FILE_MARIO_B _("MARIO B")
+#define TEXT_FILE_MARIO_C _("MARIO C")
+#define TEXT_FILE_MARIO_D _("MARIO D")
 
 // Menu Options
-#define TEXT_SCORE _("점수")
-#define TEXT_COPY _("복사")
-#define TEXT_ERASE _("삭제")
+#define TEXT_SCORE _("SCORE")
+#define TEXT_COPY _("COPY")
+#define TEXT_ERASE _("ERASE")
 
 // Sound Options
-#define TEXT_STEREO _("스테레오")
-#define TEXT_MONO _("모노")
-#define TEXT_HEADSET _("헤드폰")
+#define TEXT_STEREO _("STEREO")
+#define TEXT_MONO _("MONO")
+#define TEXT_HEADSET _("HEADSET")
 
 // Misc Menu Text
-#define TEXT_SAVED_DATA_EXISTS _("저장된 데이터가 있습니다")
-#define TEXT_NO_SAVED_DATA_EXISTS _("저장된 데이터가 없습니다")
+#define TEXT_SAVED_DATA_EXISTS _("SAVED DATA EXITS") // Misspell
+#define TEXT_NO_SAVED_DATA_EXISTS _("NO SAVED DATA EXISTS")
 
 // Inside a Menu
-#define TEXT_RETURN _("돌아가기")
-#define TEXT_CHECK_SCORE _("점수 보기")
-#define TEXT_COPY_FILE_BUTTON _("파일 복사")
-#define TEXT_ERASE_FILE_BUTTON _("파일 삭제")
+#define TEXT_RETURN _("RETURN")
+#define TEXT_CHECK_SCORE _("CHECK SCORE")
+#define TEXT_COPY_FILE_BUTTON _("COPY FILE")
+#define TEXT_ERASE_FILE_BUTTON _("ERASE FILE")
 
 // Score Menu
-#define TEXT_HI_SCORE _("최고 점수")
-#define TEXT_MY_SCORE _("내 점수")
+#define TEXT_HI_SCORE _("HI SCORE")
+#define TEXT_MY_SCORE _("MY SCORE")
 // Score Mario Text ("☺" is the Mario face defined in the US/EU menu char table)
 #define TEXT_SCORE_MARIO_A _("☺A")
 #define TEXT_SCORE_MARIO_B _("☺B")
@@ -171,46 +171,46 @@
 #define TEXT_SCORE_MARIO_D _("☺D")
 
 // Copy Menu
-#define TEXT_COPY_IT_TO_WHERE _("어디에 복사할까요?")
-#define TEXT_COPYING_COMPLETED _("복사 완료")
-#define TEXT_NO_FILE_TO_COPY_FROM _("빈 파일이 없습니다")
+#define TEXT_COPY_IT_TO_WHERE _("COPY IT TO WHERE?")
+#define TEXT_COPYING_COMPLETED _("COPYING COMPLETED")
+#define TEXT_NO_FILE_TO_COPY_FROM _("NO EMPTY FILE")
 
 // Erase Menu
-#define TEXT_SURE _("정말요?")
-#define TEXT_YES _("예")
-#define TEXT_NO _("아니오")
-#define TEXT_FILE_MARIO_A_JUST_ERASED _("마리오 A 삭제됨")
+#define TEXT_SURE _("SURE?")
+#define TEXT_YES _("YES")
+#define TEXT_NO _("NO")
+#define TEXT_FILE_MARIO_A_JUST_ERASED _("MARIO A JUST ERASED")
 
 /**
  * Menus Text (Pause, Course Completed)
  */
 // Main Courses
-#define TEXT_COURSE _("코스")
-#define TEXT_MYSCORE _("내점수")
-#define TEXT_CONTINUE _("계속하기")
-#define TEXT_EXIT_COURSE _("코스 나가기")
+#define TEXT_COURSE _("COURSE")
+#define TEXT_MYSCORE _("MYSCORE")
+#define TEXT_CONTINUE _("CONTINUE")
+#define TEXT_EXIT_COURSE _("EXIT COURSE")
 #ifndef VERSION_EU // "R" text is different in EU
-#define TEXT_CAMERA_ANGLE_R _("R 버튼으로 카메라 조절")
+#define TEXT_CAMERA_ANGLE_R _("SET CAMERA ANGLE WITH R")
 #endif
 
 // Camera Options
-#define TEXT_LAKITU_MARIO _("라키투+마리오")
-#define TEXT_LAKITU_STOP _("라키투+정지")
-#define TEXT_NORMAL_UPCLOSE __("(일반)(가까이)")
-#define TEXT_NORMAL_FIXED __("(일반)(고정)")
+#define TEXT_LAKITU_MARIO _("LAKITU + MARIO")
+#define TEXT_LAKITU_STOP _("LAKITU + STOP")
+#define TEXT_NORMAL_UPCLOSE __("(NORMAL)(UP-CLOSE)")
+#define TEXT_NORMAL_FIXED __("(NORMAL)(FIXED)")
 
 // Course Completed Misc Text
-#define TEXT_CATCH _("잡았다")
-#define TEXT_CLEAR _("클리어")
-#define TEXT_HUD_HI_SCORE _("최고 점수")
+#define TEXT_CATCH _("CATCH")
+#define TEXT_CLEAR _("CLEAR")
+#define TEXT_HUD_HI_SCORE _("HI SCORE")
 
 // Save Options
-#define TEXT_SAVE_AND_CONTINUE _("저장하고 계속")
-#define TEXT_SAVE_AND_QUIT _("저장하고 종료")
-#define TEXT_CONTINUE_WITHOUT_SAVING _("저장 없이 계속")
+#define TEXT_SAVE_AND_CONTINUE _("SAVE & CONTINUE")
+#define TEXT_SAVE_AND_QUIT _("SAVE & QUIT")
+#define TEXT_CONTINUE_WITHOUT_SAVING _("CONTINUE, DON'T SAVE")
 
 /**
- * Ending Peach cutscene text.
+ * Ending Peach cutscene text. (스토리 — 한글 유지)
  */
 #define TEXT_FILE_MARIO_EXCLAMATION _("마리오!")
 #define TEXT_POWER_STARS_RESTORED __("별의 힘이 성으로 돌아왔어요...")
