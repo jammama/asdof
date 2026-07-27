@@ -16,10 +16,17 @@
       <button id="btn-back">← 목록</button>
       <div class="spacer"></div>
       <button id="btn-saves" title="세이브 / 상태저장">💾</button>
-      <button id="btn-ff" title="빨리감기">≫</button>
+      <button id="btn-snap" title="스냅샷 불러오기">🕘</button>
       <button id="btn-rotate" title="가로/세로 전환">⟳</button>
       <button id="btn-settings" title="설정">⚙</button>
       <button id="btn-fs" title="전체화면">⛶</button>
+    </div>
+
+    <!-- 속도 조절 (우측 하단 플로팅): 일시정지 · 빨리감기 · 더 빠르게 -->
+    <div id="speedbar">
+      <button id="btn-pause" title="일시정지">⏸</button>
+      <button id="btn-ff" title="빨리감기">≫</button>
+      <button id="btn-ff2" title="더 빠르게">⏩</button>
     </div>
 
     <!-- 게임 화면: 코어가 이 캔버스에 그린다 (240x160=GBA, 160x144=GBC) -->
@@ -112,25 +119,23 @@
         <input type="checkbox" id="set-haptic" class="toggle">
       </label>
 
-      <div class="settings-cat">속도</div>
+      <div class="settings-cat">속도 (배속 0.01 ~ 100)</div>
       <label class="settings-row" style="cursor:default">
         <span class="label">빨리감기 배속</span>
-        <select id="set-ffspeed" class="select-input">
-          <option value="1.5">1.5×</option>
-          <option value="2" selected>2×</option>
-          <option value="3">3×</option>
-          <option value="4">4×</option>
-          <option value="8">8×</option>
-        </select>
+        <input type="number" id="set-ffspeed-a" class="num-input" min="0.01" max="100" step="0.1" placeholder="2">
+      </label>
+      <label class="settings-row" style="cursor:default">
+        <span class="label">더 빠르게 배속</span>
+        <input type="number" id="set-ffspeed-b" class="num-input" min="0.01" max="100" step="0.1" placeholder="4">
       </label>
 
-      <div class="settings-cat">자동 저장</div>
+      <div class="settings-cat">되돌리기 (분단위 스냅샷)</div>
       <label class="settings-row">
-        <span class="label">자동 상태저장</span>
+        <span class="label">되돌리기 사용</span>
         <input type="checkbox" id="set-autostate" class="toggle" checked>
       </label>
       <label class="settings-row" style="cursor:default">
-        <span class="label">자동 상태저장 주기</span>
+        <span class="label">스냅샷 간격</span>
         <select id="set-autostate-min" class="select-input">
           <option value="1" selected>1분</option>
           <option value="3">3분</option>
@@ -138,6 +143,8 @@
           <option value="10">10분</option>
         </select>
       </label>
+
+      <div class="settings-cat">서버</div>
       <label class="settings-row">
         <span class="label">서버 자동 동기화</span>
         <input type="checkbox" id="set-serversync" class="toggle">
@@ -164,9 +171,22 @@
         <h2>세이브</h2>
         <button class="modal-close" data-close="saves" title="닫기">✕</button>
       </div>
-      <p class="modal-note">게임 내 저장(리포트/세이브)은 자동으로 기기에 보관됩니다. 아래 <b>상태 저장</b>은 어느 지점이든 즉시 저장·복원하는 슬롯이에요.</p>
+      <p class="modal-note">게임 내 저장(리포트)은 자동 보관됩니다. 아래는 <b>수동 상태 저장</b> 슬롯이에요. (자동 스냅샷 되돌리기는 HUD 🕘 버튼)</p>
       <div class="settings-cat">상태 저장 슬롯</div>
       <ul id="slot-list"></ul>
+      <input type="file" id="slot-import-file" accept=".ss,.state,.bin,.sgm" hidden>
+    </div>
+  </div>
+
+  <!-- 스냅샷 불러오기 (자동 되돌리기) 모달 -->
+  <div id="snapshots" class="modal">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h2>스냅샷 불러오기</h2>
+        <button class="modal-close" data-close="snapshots" title="닫기">✕</button>
+      </div>
+      <p class="modal-note">분단위 자동 스냅샷이에요. 누르면 그 순간으로 즉시 돌아갑니다.</p>
+      <ul id="rewind-list" class="file-list"></ul>
     </div>
   </div>
 
@@ -177,7 +197,7 @@
         <h2>저장 데이터 관리</h2>
         <button class="modal-close" data-close="savefiles" title="닫기">✕</button>
       </div>
-      <p class="modal-note">이 기기의 세이브를 서버에 올려두면, 다른 기기에서 받아 이어할 수 있어요. 먼저 아래 <b>서버 주소·토큰</b>을 입력하세요.</p>
+      <p class="modal-note">게임의 <b>상태저장(그 순간 그대로)</b>을 서버에 올려, 다른 기기에서 그 순간으로 <b>즉시</b> 이어할 수 있어요 (재시작 없음). 먼저 아래 서버 주소·토큰을 입력하세요.</p>
       <div class="settings-cat">서버 (asdof-saves)</div>
       <label class="settings-row" style="cursor:default">
         <span class="label">서버 주소</span>
@@ -187,9 +207,13 @@
         <span class="label">서버 토큰</span>
         <input type="password" id="set-token" class="text-input" placeholder="토큰 입력" autocomplete="off">
       </label>
-      <div class="settings-cat">이 기기의 세이브 파일</div>
-      <ul id="local-saves" class="file-list"></ul>
-      <div class="settings-cat">서버에 저장된 세이브</div>
+      <div class="settings-cat">현재 게임</div>
+      <p id="cur-game" class="modal-note"></p>
+      <button id="btn-upload-state" class="secondary">지금 상태를 서버에 저장</button>
+      <label class="secondary">기기 파일에서 불러오기
+        <input type="file" id="import-state-file" accept=".ss,.state,.bin,.sgm" hidden>
+      </label>
+      <div class="settings-cat">서버에 저장된 상태</div>
       <ul id="server-saves" class="file-list"></ul>
     </div>
   </div>

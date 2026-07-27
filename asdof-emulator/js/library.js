@@ -79,18 +79,17 @@ export async function importServerRom(entry) {
 
 // ── 로컬 세이브 파일 (서버 동기화용) ────────────────────
 // /data/saves (배터리 세이브 .sav) + /data/states (상태저장) 를 함께 나열.
+// 배터리 세이브(.sav)만 나열 — 상태저장/되돌리기 스냅샷은 서버동기화 대상 아님.
 export function listSaveFiles() {
   const m = getModule();
   const out = [];
-  for (const dir of [SAVE_DIR, STATE_DIR]) {
-    let files = [];
-    try { files = m.FS.readdir(dir); } catch { files = []; }
-    for (const f of files) {
-      if (f === '.' || f === '..') continue;
-      let size = 0;
-      try { size = m.FS.stat(dir + f).size; } catch {}
-      out.push({ name: f, path: dir + f, size });
-    }
+  let files = [];
+  try { files = m.FS.readdir(SAVE_DIR); } catch { files = []; }
+  for (const f of files) {
+    if (f === '.' || f === '..') continue;
+    let size = 0;
+    try { size = m.FS.stat(SAVE_DIR + f).size; } catch {}
+    out.push({ name: f, path: SAVE_DIR + f, size });
   }
   return out.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
 }

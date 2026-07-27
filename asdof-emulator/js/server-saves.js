@@ -22,6 +22,19 @@ function safeDecode(s) {
   try { return decodeURIComponent(s); } catch { return s; }
 }
 
+// 파일명 안전화 — 경로 분리자/제어문자/금지문자 제거. (서버 safeSeg 는 /,\,..,앞점 거부)
+export function sanitizeName(name) {
+  let n = (name || '').trim()
+    .replace(/[\\/:*?"<>|\x00-\x1f]/g, '-')   // 파일명 금지문자 → '-'
+    .replace(/\.{2,}/g, '.')                   // '..' 제거
+    .replace(/^\.+/, '')                       // 앞 점 제거
+    .replace(/\s+/g, ' ')
+    .replace(/-{2,}/g, '-')
+    .trim();
+  if (n.length > 180) n = n.slice(0, 180);
+  return n || 'save';
+}
+
 export async function listServerSaves() {
   const res = await fetch(apiRoot(), { headers: authHeaders() });
   if (res.status === 401) throw new Error('서버 토큰이 없거나 틀렸어요. 설정 > 서버에서 토큰을 입력하세요.');
@@ -31,7 +44,8 @@ export async function listServerSaves() {
 }
 
 export async function uploadServerSave(name, originName, bytes) {
-  const res = await fetch(`${apiRoot()}/${encodeURIComponent(name)}`, {
+  const safe = sanitizeName(name);
+  const res = await fetch(`${apiRoot()}/${encodeURIComponent(safe)}`, {
     method: 'POST',
     headers: authHeaders({ 'X-Origin-Name': encodeURIComponent(originName || '') }),
     body: bytes,

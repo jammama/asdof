@@ -46,11 +46,11 @@ body[data-orient="portrait"] #stage {
   grid-template-columns: 1fr 1fr;   /* 좌/우 반반 — 방향키·A/B 가 각 칸에 여유있게 */
   grid-template-rows: auto minmax(0, 1fr) auto auto auto;
   grid-template-areas:
-    "hud    hud"
-    "screen screen"
-    "left   right"
-    "sys    sys"
-    "legend legend";
+    "hud     hud"
+    "screen  screen"
+    "left    right"
+    "sys     sys"
+    "legend  legend";
 }
 /* 가로 모드: 방향키 왼쪽 · 화면 가운데 · A/B 오른쪽 (화면을 감싼다) */
 body[data-orient="landscape"] #stage {
@@ -135,6 +135,13 @@ body.no-pad .sysbtns { display: none; }
   user-select: none;
 }
 .pad.active { background: var(--pad-active); color: #fff; border-color: var(--pad-active); }
+/* L/R 고정(래치) — 계속 눌린 상태 표시 */
+.pad.locked {
+  background: var(--pad-active);
+  color: #fff;
+  border-color: var(--pad-active);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.85);
+}
 
 /* 방향키 십자패드 */
 .dpad {
@@ -247,9 +254,34 @@ body.playing #library { display: none; }
   border-radius: 12px;
   font-size: 14px;
   font-weight: 600;
+  text-align: center;
   cursor: pointer;
 }
 .secondary:active { background: var(--line); }
+
+/* 속도 조절 플로팅 클러스터 (우측 하단): 일시정지 · 빨리감기 · 더 빠르게 */
+#speedbar {
+  position: fixed;
+  right: calc(10px + env(safe-area-inset-right));
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  z-index: 35;
+  display: none;
+  gap: 8px;
+}
+body.playing #speedbar { display: flex; }
+#speedbar button {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(30, 34, 44, 0.8);
+  color: var(--text);
+  border: 1px solid var(--line);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(2px);
+}
+#speedbar button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
 
 #rom-list, .shelf-list {
   list-style: none;
@@ -271,8 +303,8 @@ body.playing #library { display: none; }
 #rom-list .rom-play {
   flex: 1;
   text-align: left;
-  padding: 16px;
-  font-size: 16px;
+  padding: 14px 16px;
+  font-size: 14px;
   font-weight: 600;
   background: none;
   border: none;
@@ -426,31 +458,59 @@ body.playing #library { display: none; }
 .modal-note b { color: var(--text); }
 
 /* 세이브 슬롯 */
-#slot-list { list-style: none; padding: 0; margin: 4px 0 0; display: flex; flex-direction: column; gap: 8px; }
-.slot-row {
+#slot-list {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 8px;
-  padding: 10px 12px;
+  max-height: 50vh;      /* 20개 → 목록 자체 스크롤 */
+  overflow-y: auto;
+}
+.slot-item {
+  flex: none;              /* flex 컬럼 스크롤에서 아이템이 0으로 찌그러지지 않게 */
   background: var(--panel-2);
   border: 1px solid var(--line);
   border-radius: 10px;
+  overflow: hidden;
 }
-.slot-label { flex: 1; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-.slot-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
-.slot-empty { color: var(--muted); font-weight: 400; font-size: 12px; }
-.slot-row button {
+.slot-main { display: flex; align-items: center; gap: 8px; padding: 10px 12px; }
+.slot-label { flex: 1; font-size: 13px; font-weight: 600; }
+.slot-when { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 6px; }
+.slot-empty { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 6px; }
+.slot-main button {
+  flex: none;
   border: 1px solid var(--line);
   background: var(--panel);
   color: var(--text);
   border-radius: 8px;
-  padding: 7px 12px;
+  padding: 7px 11px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
 }
-.slot-row .slot-save { background: var(--accent); border-color: var(--accent); color: #fff; }
-.slot-row button:disabled { opacity: 0.4; cursor: default; }
+.slot-main .slot-save { background: var(--accent); border-color: var(--accent); color: #fff; }
+.slot-main .slot-more { padding: 7px 9px; }
+.slot-main button:disabled { opacity: 0.4; cursor: default; }
+.slot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 12px 10px;
+}
+.slot-actions button {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.slot-actions button:disabled { opacity: 0.4; cursor: default; }
+.slot-actions[hidden] { display: none; }   /* display:flex 가 [hidden] 을 덮지 않게 */
 
 /* 텍스트 입력 (설정 > 서버 토큰) */
 .text-input {
@@ -465,6 +525,16 @@ body.playing #library { display: none; }
 }
 
 /* 셀렉트 (배속/주기 등) */
+.num-input {
+  flex: none;
+  width: 90px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 13px;
+}
 .select-input {
   flex: none;
   background: var(--bg);
@@ -504,12 +574,13 @@ body.playing #library { display: none; }
   border: 1px solid var(--line);
   border-radius: 9px;
 }
+.file-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .file-row .file-name {
-  flex: 1;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   word-break: break-all;
 }
+.file-when { color: var(--muted); font-size: 11px; }
 .file-row button {
   flex: none;
   border: 1px solid var(--line);

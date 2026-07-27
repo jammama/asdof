@@ -2,16 +2,17 @@
 import { initCore, persist } from './engine.js';
 import {
   listLocalRoms, addRomFiles, deleteRom, fetchServerShelf, importServerRom,
-  listSaveFiles, readSaveFile, writeSaveFile,
 } from './library.js';
 import {
-  listServerSaves, uploadServerSave, downloadServerSave, deleteServerSave,
+  listServerSaves, uploadServerSave, downloadServerSave, deleteServerSave, sanitizeName,
 } from './server-saves.js';
 import * as player from './player.js';
 import { initTouchControls } from './touch.js';
 
 const $ = (sel) => document.querySelector(sel);
 let playing = false;
+let userPaused = false;
+let ffMode = 'off';   // 'off' | 'a'(빨리감기) | 'b'(더 빠르게)
 
 async function boot() {
   const loading = $('#loading');
@@ -49,8 +50,25 @@ function wireUi() {
 
   $('#btn-back').addEventListener('click', backToLibrary);
   $('#btn-saves').addEventListener('click', () => { renderSlots(); openModal('saves'); });
-  $('#btn-ff').addEventListener('click', (e) => {
-    e.currentTarget.classList.toggle('on', player.toggleFastForward());
+  $('#btn-snap').addEventListener('click', () => { renderRewindList(); openModal('snapshots'); });
+  // ⋯ > 가져오기: 기기 파일 → 지정 슬롯에 넣기
+  $('#slot-import-file').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (!file || !slotImportTarget) return;
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    if (player.saveSlotBytes(slotImportTarget, bytes)) { renderSlots(); toast(`슬롯 ${slotImportTarget}에 넣음`); }
+    else toast('가져오기 실패');
+    slotImportTarget = 0;
+  });
+  $('#btn-ff').addEventListener('click', () => { ffMode = ffMode === 'a' ? 'off' : 'a'; applyFf(); });
+  $('#btn-ff2').addEventListener('click', () => { ffMode = ffMode === 'b' ? 'off' : 'b'; applyFf(); });
+  $('#btn-pause').addEventListener('click', () => {
+    userPaused = !userPaused;
+    const b = $('#btn-pause');
+    b.classList.toggle('on', userPaused);
+    b.textContent = userPaused ? '▶' : '⏸';
+    updateRunState();
   });
   $('#btn-fs').addEventListener('click', () => {
     if (document.fullscreenElement) document.exitFullscreen();
@@ -94,15 +112,27 @@ function wireUi() {
   // 설정 > 저장 데이터 관리 → 관리 모달 열기
   $('#btn-savedata').addEventListener('click', () => {
     closeModal('settings');
-    renderSaveFiles();
+    renderStateSync();
     openModal('savefiles');
+  });
+  $('#btn-upload-state').addEventListener('click', uploadCurrentState);
+  // 기기에 저장된 상태 파일 → 현재 게임에 즉시 불러오기
+  $('#import-state-file').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!playing) { toast('게임 실행 중에 불러오세요'); return; }
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    if (player.loadStateBytes(bytes)) { closeModal('savefiles'); toast('기기 파일에서 불러왔어요'); }
+    else toast('불러오기 실패 (같은 게임 상태 파일인지 확인)');
   });
 
   // 설정: 햅틱 / 배속 / 자동 상태저장 / 서버 자동동기화 (localStorage 연동)
   bindToggle('#set-haptic', 'haptic');
-  bindSelect('#set-ffspeed', 'ff-speed', '2');
-  bindToggle('#set-autostate', 'autostate', true, () => { if (playing) player.applyAutoSaveSettings(); });
-  bindSelect('#set-autostate-min', 'autostate-min', '1', () => { if (playing) player.applyAutoSaveSettings(); });
+  bindNumber('#set-ffspeed-a', 'ff-speed-a', '2', applyFf);
+  bindNumber('#set-ffspeed-b', 'ff-speed-b', '4', applyFf);
+  bindToggle('#set-autostate', 'autostate', true, restartRewind);
+  bindSelect('#set-autostate-min', 'autostate-min', '1', restartRewind);
   bindToggle('#set-serversync', 'serversync', false, restartServerSync);
   bindSelect('#set-serversync-min', 'serversync-min', '5', restartServerSync);
 
@@ -167,7 +197,21 @@ function anyModalOpen() { return !!document.querySelector('.modal.show'); }
 // 플레이 중이면: 모달 안 열림 && 탭 보임 → 실행, 아니면 일시정지(입력·저장 포함)
 function updateRunState() {
   if (!playing) return;
-  player.setRunning(!document.hidden && !anyModalOpen());
+  player.setRunning(!document.hidden && !anyModalOpen() && !userPaused);
+}
+
+// 배속 적용 (ffMode + 설정값, 0.01~100 클램프)
+function speedFor(key, def) {
+  let n = parseFloat(localStorage.getItem(key));
+  if (!isFinite(n)) n = def;
+  return Math.min(100, Math.max(0.01, n));
+}
+function applyFf() {
+  const mult = ffMode === 'a' ? speedFor('ff-speed-a', 2)
+    : ffMode === 'b' ? speedFor('ff-speed-b', 4) : 1;
+  player.setSpeed(mult);
+  $('#btn-ff').classList.toggle('on', ffMode === 'a');
+  $('#btn-ff2').classList.toggle('on', ffMode === 'b');
 }
 
 // localStorage 연동 토글/셀렉트
@@ -188,6 +232,18 @@ function bindSelect(sel, key, def, onChange) {
     if (onChange) onChange();
   });
 }
+function bindNumber(sel, key, def, onChange) {
+  const el = $(sel);
+  el.value = localStorage.getItem(key) || def;
+  el.addEventListener('change', () => {
+    let n = parseFloat(el.value);
+    if (!isFinite(n)) n = parseFloat(def);
+    n = Math.min(100, Math.max(0.01, n));
+    el.value = String(n);
+    localStorage.setItem(key, String(n));
+    if (onChange) onChange();
+  });
+}
 
 // 서버 자동 동기화 (주기별 현재 세이브 업로드)
 let serverSyncTimer = null;
@@ -202,12 +258,13 @@ function stopServerSync() { clearInterval(serverSyncTimer); serverSyncTimer = nu
 function restartServerSync() { stopServerSync(); if (playing) startServerSync(); }
 async function autoServerSync() {
   if (!playing || !localStorage.getItem('save-token')) return;
-  const bytes = player.currentSave();
-  const name = player.currentSaveName();
-  if (!bytes || !bytes.length || !name) return;
+  const rom = player.currentRomName();
+  const bytes = player.captureStateBytes();
+  if (!bytes || !bytes.length || !rom) return;
+  const name = `${labelOf(rom)} (자동)`;   // 게임별 롤링 최신 상태(덮어씀)
   try {
-    await uploadServerSave(name, name, bytes);
-    console.log('[emu] 자동 서버동기화 완료:', name);
+    await uploadServerSave(name, rom, bytes);
+    console.log('[emu] 자동 서버동기화(상태) 완료:', name);
   } catch (e) { console.warn('[emu] 자동 서버동기화 실패:', e.message); }
 }
 
@@ -235,6 +292,40 @@ function renderResume() {
   btn.textContent = `▶ 이어하기: ${labelOf(last)}`;
   btn.addEventListener('click', () => launch(last));
   el.appendChild(btn);
+}
+
+// 되돌리기 목록: 💾 세이브 모달의 '되돌리기' 버튼으로 펼침. 스냅샷 + 저장일시, 클릭 시 그 지점으로.
+function renderRewindList() {
+  const ul = $('#rewind-list');
+  ul.innerHTML = '';
+  const list = player.rewindList();   // [{index, mtime}], 0=최신
+  if (!list.length) {
+    ul.innerHTML = '<li class="empty-sm">아직 자동 스냅샷이 없어요. (되돌리기 켜짐 + 시간 경과 필요)</li>';
+    return;
+  }
+  for (const snap of list) {
+    const li = document.createElement('li');
+    li.className = 'file-row';
+    const info = document.createElement('div');
+    info.className = 'file-info';
+    const when = fmtSlotTime(snap.mtime);
+    const nm = document.createElement('span');
+    nm.className = 'file-name';
+    nm.textContent = when ? `${snap.index}. ${when}` : `${snap.index}.`;
+    info.append(nm);
+    const go = document.createElement('button');
+    go.textContent = '되돌리기';
+    go.addEventListener('click', () => {
+      if (player.rewindTo(snap.index)) { closeModal('snapshots'); toast(snap.index === 0 ? '최신으로' : `${snap.index}칸 전으로`); }
+      else toast('되돌리기 실패');
+    });
+    li.append(info, go);
+    ul.appendChild(li);
+  }
+}
+
+function restartRewind() {
+  if (playing) player.rewindStart();
 }
 
 async function renderLibrary() {
@@ -316,7 +407,8 @@ async function importAndPlay(entry) {
 }
 
 // ── 모달 / 세이브 슬롯 ─────────────────────────────
-const SLOT_COUNT = 6;
+const SLOT_COUNT = 20;
+let slotImportTarget = 0;
 function openModal(id) {
   $('#' + id).classList.add('show');
   updateRunState();   // 모달 열림 → 일시정지 + 입력 차단
@@ -326,23 +418,44 @@ function closeModal(id) {
   updateRunState();   // 모달 닫힘 → (다른 모달 없으면) 재개
 }
 
-// 상태 저장 슬롯 목록 렌더 (채워진 슬롯은 점 표시 · 빈 슬롯은 불러오기 비활성)
+// 저장일시 표시용 포맷 (파일 mtime)
+function fmtSlotTime(mtime) {
+  if (!mtime) return '';
+  const d = mtime instanceof Date ? mtime : new Date(mtime);
+  if (isNaN(d.getTime())) return '';
+  const p2 = (x) => String(x).padStart(2, '0');
+  return `${p2(d.getFullYear() % 100)}/${p2(d.getMonth() + 1)}/${p2(d.getDate())} `
+    + `${p2(d.getHours())}:${p2(d.getMinutes())}:${p2(d.getSeconds())}`;
+}
+function stampNow() {
+  const d = new Date();
+  const p2 = (x) => String(x).padStart(2, '0');
+  return `${p2(d.getFullYear() % 100)}${p2(d.getMonth() + 1)}${p2(d.getDate())}${p2(d.getHours())}${p2(d.getMinutes())}`;
+}
+function mkAction(text, fn) {
+  const b = document.createElement('button');
+  b.textContent = text;
+  b.addEventListener('click', fn);
+  return b;
+}
+
+// 상태 저장 슬롯 렌더 (20개 · 저장일시 · ⋯ 메뉴: 삭제/가져오기/서버저장/슬롯변경)
 function renderSlots() {
-  const filled = player.filledStateSlots();
+  const info = player.stateSlotInfo();
   const ul = $('#slot-list');
   ul.innerHTML = '';
   for (let n = 1; n <= SLOT_COUNT; n++) {
-    const has = filled.has(n);
+    const has = !!info[n];
     const li = document.createElement('li');
-    li.className = 'slot-row';
+    li.className = 'slot-item';
 
+    const main = document.createElement('div');
+    main.className = 'slot-main';
     const label = document.createElement('span');
     label.className = 'slot-label';
-    label.textContent = `슬롯 ${n}`;
-    const mark = document.createElement('span');
-    if (has) { mark.className = 'slot-dot'; }
-    else { mark.className = 'slot-empty'; mark.textContent = '비어있음'; }
-    label.append(mark);
+    label.innerHTML = `슬롯 ${n}` + (has
+      ? ` <span class="slot-when">${fmtSlotTime(info[n].mtime) || '저장됨'}</span>`
+      : ' <span class="slot-empty">비어있음</span>');
 
     const save = document.createElement('button');
     save.className = 'slot-save';
@@ -350,11 +463,10 @@ function renderSlots() {
     save.addEventListener('click', async () => {
       const ok = await player.saveState(n);
       renderSlots();
-      toast(ok ? `슬롯 ${n}에 저장됨` : '저장 실패');
+      toast(ok ? `슬롯 ${n} 저장됨` : '저장 실패');
     });
 
     const load = document.createElement('button');
-    load.className = 'slot-load';
     load.textContent = '불러오기';
     load.disabled = !has;
     load.addEventListener('click', () => {
@@ -362,50 +474,84 @@ function renderSlots() {
       else toast('빈 슬롯이에요');
     });
 
-    li.append(label, save, load);
+    const more = document.createElement('button');
+    more.className = 'slot-more';
+    more.textContent = '⋯';
+    more.title = '더보기';
+
+    main.append(label, save, load, more);
+
+    const actions = document.createElement('div');
+    actions.className = 'slot-actions';
+    actions.hidden = true;
+    more.addEventListener('click', () => { actions.hidden = !actions.hidden; });
+
+    const del = mkAction('삭제', () => {
+      if (!confirm(`슬롯 ${n} 삭제할까요?`)) return;
+      player.deleteSlot(n); renderSlots(); toast(`슬롯 ${n} 삭제`);
+    });
+    const imp = mkAction('가져오기', () => { slotImportTarget = n; $('#slot-import-file').click(); });
+    const up = mkAction('서버저장', async () => {
+      const bytes = player.slotBytes(n);
+      if (!bytes) { toast('빈 슬롯'); return; }
+      const raw = prompt('서버에 저장할 이름:', `슬롯${n} ${stampNow()}`);
+      if (!raw) return;
+      try { await uploadServerSave(sanitizeName(raw), player.currentRomName(), bytes); toast('서버에 저장됨'); }
+      catch (e) { alert(e.message); }
+    });
+    const mv = mkAction('슬롯변경', () => moveSlot(n, info));
+    del.disabled = up.disabled = mv.disabled = !has;
+
+    actions.append(del, imp, up, mv);
+    li.append(main, actions);
     ul.appendChild(li);
   }
+}
+
+function moveSlot(n, info) {
+  const raw = prompt(`슬롯 ${n} 을(를) 옮길 번호 (1-${SLOT_COUNT}):`, '');
+  if (!raw) return;
+  const t = parseInt(raw, 10);
+  if (!(t >= 1 && t <= SLOT_COUNT) || t === n) { toast('잘못된 슬롯 번호'); return; }
+  if (info[t] && !confirm(`슬롯 ${t}에 이미 있어요. 덮어쓸까요?`)) return;
+  const bytes = player.slotBytes(n);
+  if (!bytes) { toast('빈 슬롯'); return; }
+  if (player.saveSlotBytes(t, bytes)) { player.deleteSlot(n); renderSlots(); toast(`슬롯 ${n} → ${t}`); }
+  else toast('이동 실패');
 }
 
 // ── 저장 파일 (서버 동기화) ─────────────────────────
 function fmtSize(n) { return n >= 1024 ? `${Math.round(n / 1024)}KB` : `${n}B`; }
 
-async function renderSaveFiles() {
-  const ul = $('#local-saves');
-  ul.innerHTML = '';
-  const locals = listSaveFiles();
-  if (!locals.length) {
-    ul.innerHTML = '<li class="empty-sm">세이브 파일이 아직 없어요. (게임을 저장하면 생겨요)</li>';
-  }
-  for (const f of locals) {
-    const li = document.createElement('li');
-    li.className = 'file-row';
-    const nm = document.createElement('span');
-    nm.className = 'file-name';
-    nm.textContent = `${f.name} · ${fmtSize(f.size)}`;
-    const up = document.createElement('button');
-    up.textContent = '서버에 올리기';
-    up.addEventListener('click', async () => {
-      const name = prompt('서버에 저장할 이름:', f.name);
-      if (!name) return;
-      up.disabled = true; up.textContent = '올리는 중…';
-      try {
-        await uploadServerSave(name.trim(), f.name, readSaveFile(f.path));
-        toast('서버에 저장됨: ' + name.trim());
-        await renderServerSaves();
-      } catch (e) { alert(e.message); }
-      up.disabled = false; up.textContent = '서버에 올리기';
-    });
-    const dl = document.createElement('button');
-    dl.textContent = '기기에 저장';
-    dl.addEventListener('click', () => downloadToDevice(f.name, readSaveFile(f.path)));
-    li.append(nm, up, dl);
-    ul.appendChild(li);
-  }
-  await renderServerSaves();
+// 저장 데이터 관리(상태저장 서버 동기화) 모달 렌더
+function renderStateSync() {
+  const rom = playing ? player.currentRomName() : '';
+  $('#cur-game').textContent = rom
+    ? `실행 중: ${labelOf(rom)}`
+    : '게임을 실행하면 이 게임의 상태를 저장/불러올 수 있어요.';
+  $('#btn-upload-state').disabled = !playing;
+  renderServerStates();
 }
 
-async function renderServerSaves() {
+// 지금 상태(save-state)를 서버에 업로드
+async function uploadCurrentState() {
+  if (!playing) { toast('게임 실행 중에 저장하세요'); return; }
+  const bytes = player.captureStateBytes();
+  if (!bytes || !bytes.length) { toast('상태 캡처 실패'); return; }
+  const d = new Date();
+  const p2 = (x) => String(x).padStart(2, '0');
+  const stamp = `${p2(d.getFullYear() % 100)}${p2(d.getMonth() + 1)}${p2(d.getDate())}${p2(d.getHours())}${p2(d.getMinutes())}`;
+  const raw = prompt('서버에 저장할 이름:', stamp);
+  if (!raw) return;
+  const name = sanitizeName(raw);
+  try {
+    await uploadServerSave(name, player.currentRomName(), bytes);
+    toast('서버에 저장됨: ' + name);
+    await renderServerStates();
+  } catch (e) { alert(e.message); }
+}
+
+async function renderServerStates() {
   const ul = $('#server-saves');
   ul.innerHTML = '<li class="empty-sm">불러오는 중…</li>';
   let saves;
@@ -417,40 +563,63 @@ async function renderServerSaves() {
   }
   ul.innerHTML = '';
   if (!saves.length) {
-    ul.innerHTML = '<li class="empty-sm">서버에 저장된 세이브가 없어요.</li>';
+    ul.innerHTML = '<li class="empty-sm">서버에 저장된 상태가 없어요.</li>';
     return;
   }
+  const curRom = playing ? player.currentRomName() : '';
   for (const s of saves) {
     const li = document.createElement('li');
     li.className = 'file-row';
+    const finfo = document.createElement('div');
+    finfo.className = 'file-info';
     const nm = document.createElement('span');
     nm.className = 'file-name';
-    nm.textContent = s.origin ? `${s.name}  → ${s.origin}` : s.name;
+    nm.textContent = s.origin ? `${s.name} · ${labelOf(s.origin)}` : s.name;
+    finfo.append(nm);
+    const when = fmtSlotTime(s.mtime);
+    if (when) {
+      const w = document.createElement('span');
+      w.className = 'file-when';
+      w.textContent = when;
+      finfo.append(w);
+    }
+
+    // 불러오기: 같은 게임 실행 중일 때만 그 순간으로 즉시 로드
+    const sameGame = playing && s.origin === curRom;
     const get = document.createElement('button');
-    get.textContent = '받기';
+    get.textContent = '불러오기';
+    get.disabled = !sameGame;
+    get.title = sameGame ? '이 순간으로 즉시 불러오기'
+      : (playing ? '다른 게임의 상태예요' : '먼저 이 게임을 실행하세요');
     get.addEventListener('click', async () => {
       get.disabled = true; get.textContent = '받는 중…';
       try {
-        const { bytes, origin } = await downloadServerSave(s.name);
-        const target = origin || s.origin || s.name;
-        await writeSaveFile(target, bytes);
-        toast(`받아서 저장함: ${target}`);
-        renderSaveFiles();
-      } catch (e) {
-        alert(e.message);
-        get.disabled = false; get.textContent = '받기';
-      }
+        const { bytes } = await downloadServerSave(s.name);
+        if (player.loadStateBytes(bytes)) {
+          closeModal('savefiles');
+          toast('그 순간으로 불러왔어요');
+        } else { toast('불러오기 실패'); get.disabled = false; get.textContent = '불러오기'; }
+      } catch (e) { alert(e.message); get.disabled = false; get.textContent = '불러오기'; }
     });
+
+    const dl = document.createElement('button');
+    dl.textContent = '기기에 저장';
+    dl.addEventListener('click', async () => {
+      try { const { bytes } = await downloadServerSave(s.name); downloadToDevice(s.name + '.ss', bytes); }
+      catch (e) { alert(e.message); }
+    });
+
     const del = document.createElement('button');
     del.className = 'danger-btn';
     del.textContent = '✕';
     del.title = '서버에서 삭제';
     del.addEventListener('click', async () => {
       if (!confirm(`서버에서 "${s.name}" 삭제할까요?`)) return;
-      try { await deleteServerSave(s.name); await renderServerSaves(); }
+      try { await deleteServerSave(s.name); await renderServerStates(); }
       catch (e) { alert(e.message); }
     });
-    li.append(nm, get, del);
+
+    li.append(finfo, get, dl, del);
     ul.appendChild(li);
   }
 }
@@ -464,13 +633,24 @@ function launch(name) {
   document.body.classList.add('playing');
   localStorage.setItem('last-rom', name);   // 탭 사망 대비 (이어하기)
   startServerSync();
+  ffMode = 'off';
+  userPaused = false;
+  applyFf();
+  const pb = $('#btn-pause');
+  pb.classList.remove('on');
+  pb.textContent = '⏸';
 }
 
 async function backToLibrary() {
   await player.quit();
   playing = false;
   document.body.classList.remove('playing');
+  ffMode = 'off';
+  userPaused = false;
   $('#btn-ff').classList.remove('on');
+  $('#btn-ff2').classList.remove('on');
+  $('#btn-pause').classList.remove('on');
+  $('#btn-pause').textContent = '⏸';
   stopServerSync();
   localStorage.removeItem('last-rom');   // 정상 종료 → 이어하기 해제
   await renderLibrary();
