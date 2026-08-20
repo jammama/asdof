@@ -52,9 +52,10 @@
   .menu-item input { margin: 0; }
 
   /* ── 게임 스테이지 ── */
-  /* 게임은 가운데 — 상단 버튼류와 하단 스틱이 위아래로 감싸는 배치 */
-  #stage { flex: 1 1 auto; display: flex; align-items: center; justify-content: center;
+  /* 게임은 위쪽 — 조작키(모두 하단)가 본 화면을 덜 가리게. 풀스크린은 중앙. */
+  #stage { flex: 1 1 auto; display: flex; align-items: flex-start; justify-content: center;
            overflow: hidden; background: #000; position: relative; }
+  #wrapper:fullscreen #stage, #wrapper:-webkit-full-screen #stage { align-items: center; }
   canvas.emscripten {
     display: block; border: 0; background: #000; outline: none;
     image-rendering: pixelated;
@@ -95,40 +96,36 @@
   /* 눌림 = 밝아지고 살짝 눌림(scale). transition 없음 → 슬라이딩 아니라 즉시 반응.
      (버튼은 이제 translate(-50%) 로 중앙정렬 안 하므로 scale 이 위치와 안 충돌) */
   #gamepad .pad-btn.pressed { filter: brightness(1.7); transform: scale(0.9); }
-  /* ── 배치(모바일, N64 참고) ── 상단: 십자키(좌)·Z|START|R(중앙)·A/B/C(우) / 하단 좌: 스틱
-     버튼류는 위, 스틱은 아래. 반투명으로 게임 위에 겹침. */
-  /* 십자키(D-pad): 상단 왼쪽 — 디지털 이동(스틱과 같은 __vstick 훅) */
-  #dpad { position: absolute; left: 3%; top: 8%;
-          width: clamp(108px,27vmin,176px); height: clamp(108px,27vmin,176px); pointer-events: none; }
-  .d-btn { width: 34%; height: 34%; background: rgba(74,78,88,.85); color: #d5d8de; }
-  .d-up    { left: 33%; top: 0; }
-  .d-down  { left: 33%; bottom: 0; }
-  .d-left  { left: 0;   top: 33%; }
-  .d-right { right: 0;  top: 33%; }
-  /* A/B/C 페이스 묶음(N64 배열): 상단 오른쪽. A(파랑,큰버튼) 아래, B(초록) 좌상, C(노랑 다이아) 우상 */
-  #pad-face { position: absolute; right: 2%; top: 5%;
-              width: clamp(176px, 43vmin, 300px); height: clamp(176px, 43vmin, 300px);
+  /* ── 배치(모바일) ── 모든 조작키는 화면 "하단"에 (상단X: 손이 화면 가림).
+     좌하단: 스틱(아래)+십자키(위) 세로스택 · 중앙하단: Z·START·R · 우하단: A/B(나란히)+C(위). */
+  /* 좌하단 묶음 (세로 스택: 스틱 아래, 십자키 위) */
+  #pad-left { position: absolute; left: 3%; bottom: 4%;
+              display: flex; flex-direction: column-reverse; align-items: center; gap: 1.5vmin;
               pointer-events: none; }
-  .a-btn { width: 40%; height: 40%; right: 5%;  bottom: 3%; background: rgba(38,104,214,.85); }
-  .b-btn { width: 30%; height: 30%; left: 1%;   top: 8%;   background: rgba(52,168,74,.85); }
-  .c-cluster { position: absolute; top: 0; right: 0; width: 50%; height: 50%; pointer-events: none; }
+  #gamepad #pad-left #stick, #gamepad #pad-left #dpad { position: relative; }
+  #dpad { width: clamp(88px,20vmin,150px); height: clamp(88px,20vmin,150px); pointer-events: none; }
+  .d-btn { width: 34%; height: 34%; background: rgba(74,78,88,.85); color: #d5d8de; }
+  .d-up{left:33%;top:0} .d-down{left:33%;bottom:0} .d-left{left:0;top:33%} .d-right{right:0;top:33%}
+  /* 우하단 묶음: A(파랑)+B(초록) 같은 높이로 나란히, C(노랑 다이아)는 그 위 */
+  #pad-face { position: absolute; right: 3%; bottom: 4%;
+              width: clamp(150px,36vmin,250px); height: clamp(150px,36vmin,250px); pointer-events: none; }
+  .a-btn { width: 42%; height: 42%; right: 3%;  bottom: 3%; background: rgba(38,104,214,.85); }
+  .b-btn { width: 38%; height: 38%; right: 49%; bottom: 3%; background: rgba(52,168,74,.85); }
+  .c-cluster { position: absolute; top: 0; left: 8%; width: 50%; height: 50%; pointer-events: none; }
   .c-btn { width: 36%; height: 36%; background: rgba(242,194,0,.9); color: #3a2c00; font-weight: 800; }
-  .c-up    { left: 32%; top: 0; }
-  .c-down  { left: 32%; bottom: 0; }
-  .c-left  { left: 0;   top: 32%; }
-  .c-right { right: 0;  top: 32%; }
-  /* 상단 중앙 트레이: Z | START | R */
-  .center-tray { position: absolute; left: 0; right: 0; top: 6%; display: flex;
-                 justify-content: center; align-items: center; gap: 3vmin; pointer-events: none; }
+  .c-up{left:32%;top:0} .c-down{left:32%;bottom:0} .c-left{left:0;top:32%} .c-right{right:0;top:32%}
+  /* 하단 중앙: Z | START | R */
+  .center-tray { position: absolute; left: 0; right: 0; bottom: 4%; display: flex;
+                 justify-content: center; align-items: center; gap: 2.5vmin; pointer-events: none; }
   #gamepad .center-tray .pad-btn { position: static; }
-  .z-btn { width: clamp(44px,10.5vmin,72px); height: clamp(44px,10.5vmin,72px); background: rgba(120,124,134,.85); }
-  .start-btn { width: clamp(56px,13vmin,90px); height: clamp(38px,9vmin,58px);
+  .z-btn { width: clamp(42px,10vmin,68px); height: clamp(42px,10vmin,68px); background: rgba(120,124,134,.85); }
+  .start-btn { width: clamp(54px,12vmin,84px); height: clamp(36px,8vmin,54px);
                border-radius: 999px; background: rgba(206,54,54,.88); }
-  .r-btn { width: clamp(44px,10.5vmin,72px); height: clamp(44px,10.5vmin,72px); background: rgba(120,124,134,.85); }
-  /* 하단 왼쪽: 아날로그 스틱 */
-  #stick { left: 5%; bottom: 6%; width: clamp(140px,36vmin,240px); height: clamp(140px,36vmin,240px);
+  .r-btn { width: clamp(42px,10vmin,68px); height: clamp(42px,10vmin,68px); background: rgba(120,124,134,.85); }
+  /* 아날로그 스틱 */
+  #stick { width: clamp(122px,28vmin,210px); height: clamp(122px,28vmin,210px);
            border-radius: 50%; background: radial-gradient(circle, rgba(80,80,90,.42), rgba(30,30,36,.5));
-           border: 2px solid rgba(255,255,255,.4); opacity: .82; }
+           border: 2px solid rgba(255,255,255,.4); opacity: .85; }
   #stick-knob { position: absolute; left: 50%; top: 50%; width: 44%; height: 44%;
                 margin: -22% 0 0 -22%; border-radius: 50%;
                 background: radial-gradient(circle at 40% 35%, #cfd3da, #6a6e78);
@@ -173,15 +170,17 @@
     <canvas class="emscripten" id="canvas" tabindex="-1" oncontextmenu="event.preventDefault()"></canvas>
     <!-- 온스크린 게임패드: window 에 합성 KeyboardEvent(code) 를 보내 기존 키 입력 경로를 그대로 탄다 -->
     <div id="gamepad" aria-hidden="true">
-      <div id="stick"><div id="stick-knob"></div><span id="stick-label">이동</span></div>
-      <!-- 십자키 (상단 좌측, 디지털 이동) -->
-      <div id="dpad">
-        <button class="pad-btn d-btn d-up"    type="button" data-dir="up">▲</button>
-        <button class="pad-btn d-btn d-left"  type="button" data-dir="left">◀</button>
-        <button class="pad-btn d-btn d-right" type="button" data-dir="right">▶</button>
-        <button class="pad-btn d-btn d-down"  type="button" data-dir="down">▼</button>
+      <!-- 좌하단: 스틱(아래) + 십자키(위) 세로 스택 -->
+      <div id="pad-left">
+        <div id="stick"><div id="stick-knob"></div><span id="stick-label">이동</span></div>
+        <div id="dpad">
+          <button class="pad-btn d-btn d-up"    type="button" data-dir="up">▲</button>
+          <button class="pad-btn d-btn d-left"  type="button" data-dir="left">◀</button>
+          <button class="pad-btn d-btn d-right" type="button" data-dir="right">▶</button>
+          <button class="pad-btn d-btn d-down"  type="button" data-dir="down">▼</button>
+        </div>
       </div>
-      <!-- 우측 페이스버튼 묶음 (N64 배열) -->
+      <!-- 우하단 페이스버튼 묶음 (A/B 나란히, C 위) -->
       <div id="pad-face">
         <div class="c-cluster">
           <button class="pad-btn c-btn c-up"    type="button" data-code="ArrowUp">C▲</button>

@@ -1,10 +1,11 @@
 // app.js — 화면 전환(라이브러리 ↔ 플레이)과 UI 연결
 import { initCore, persist } from './engine.js';
 import {
-  listLocalRoms, addRomFiles, deleteRom, fetchServerShelf, importServerRom,
+  listLocalRoms, addRomFiles, deleteRom, readRomBytes,
 } from './library.js';
 import {
   listServerSaves, uploadServerSave, downloadServerSave, deleteServerSave, sanitizeName,
+  listServerRoms, downloadServerRom, uploadServerRom,
 } from './server-saves.js';
 import * as player from './player.js';
 import { initTouchControls } from './touch.js';
@@ -71,8 +72,9 @@ function wireUi() {
     updateRunState();
   });
   $('#btn-fs').addEventListener('click', () => {
+    // 문서 전체를 전체화면으로 (모달·토스트가 #stage 바깥이라 문서 단위여야 위에 뜸)
     if (document.fullscreenElement) document.exitFullscreen();
-    else $('#stage').requestFullscreen?.();
+    else document.documentElement.requestFullscreen?.();
   });
   $('#btn-rotate').addEventListener('click', () => {
     orientOverride = document.body.dataset.orient !== 'landscape';   // 현재 반대로
@@ -100,11 +102,13 @@ function wireUi() {
     const v = urlInput.value.trim();
     if (v) localStorage.setItem('saves-url', v);
     else localStorage.removeItem('saves-url');
+    renderLibrary();   // 서버 바뀌면 롬 목록 즉시 갱신
   });
   const tokenInput = $('#set-token');
   tokenInput.value = localStorage.getItem('save-token') || '';
   tokenInput.addEventListener('change', () => {
     localStorage.setItem('save-token', tokenInput.value.trim());
+    renderLibrary();   // 토큰 넣으면 서버 롬 목록 뜨게
   });
 
   // 라이브러리: 설정 버튼(게임 진입 전에도 접근)
@@ -330,27 +334,24 @@ function restartRewind() {
 
 async function renderLibrary() {
   renderResume();
-  // 서버 선반과 로컬 롬을 하나의 목록으로 합친다.
-  // 표시 이름은 매니페스트(roms.json)의 name, 저장/실행은 ascii 파일명(file).
-  const shelf = await fetchServerShelf();
-  const nameByFile = new Map(shelf.map((e) => [e.file, e.name || e.file]));
+  // 로컬 롬(IndexedDB) + 서버 롬(asdof-saves, 토큰 필요)을 하나의 목록으로.
   const local = listLocalRoms();
   const localSet = new Set(local);
+  let serverRoms = [];
+  try { serverRoms = await listServerRoms(); }
+  catch (e) { console.warn('[emu] 서버 롬 목록 실패:', e.message); }
+  const pending = serverRoms.filter((r) => !localSet.has(r.name));
 
   const items = [
-    ...local.map((file) => ({
-      file, label: nameByFile.get(file) || labelOf(file), local: true,
-    })),
-    ...shelf.filter((e) => !localSet.has(e.file)).map((e) => ({
-      file: e.file, label: e.name || labelOf(e.file), local: false, entry: e,
-    })),
+    ...local.map((file) => ({ file, label: labelOf(file), local: true })),
+    ...pending.map((r) => ({ file: r.name, label: labelOf(r.name), local: false })),
   ];
 
   const list = $('#rom-list');
   list.innerHTML = '';
   if (!items.length) {
     list.innerHTML =
-      '<li class="empty">아직 롬이 없어요. 파일을 끌어다 놓거나 위에서 올리세요.</li>';
+      '<li class="empty">아직 롬이 없어요. 파일을 끌어다 놓거나, 서버 롬은 설정 > 서버에서 토큰을 넣으면 보여요.</li>';
     return;
   }
 
@@ -368,11 +369,17 @@ async function renderLibrary() {
       play.append(cloud, document.createTextNode(it.label));
     }
     play.addEventListener('click', () =>
-      it.local ? launch(it.file) : importAndPlay(it.entry));
+      it.local ? launch(it.file) : importAndPlay(it.file));
+    li.append(play);
 
-    const del = document.createElement('button');
-    del.className = 'rom-del';
     if (it.local) {
+      const up = document.createElement('button');
+      up.className = 'rom-del';
+      up.title = '서버(개인 저장소)에 올리기';
+      up.textContent = '↑';
+      up.addEventListener('click', () => uploadRomToServer(it.file));
+      const del = document.createElement('button');
+      del.className = 'rom-del';
       del.title = '삭제';
       del.textContent = '✕';
       del.addEventListener('click', async () => {
@@ -381,29 +388,45 @@ async function renderLibrary() {
           await renderLibrary();
         }
       });
+      li.append(up, del);
     } else {
-      del.title = '서버에서 받기';
-      del.textContent = '⭳';
-      del.addEventListener('click', () => importAndPlay(it.entry));
+      const get = document.createElement('button');
+      get.className = 'rom-del';
+      get.title = '받아서 실행';
+      get.textContent = '⭳';
+      get.addEventListener('click', () => importAndPlay(it.file));
+      li.append(get);
     }
 
-    li.append(play, del);
     list.appendChild(li);
   }
 }
 
-// 서버 선반 롬: 받아서(로컬 임포트) 곧바로 실행. (목록 클릭 시)
-async function importAndPlay(entry) {
+// 서버 롬을 받아 로컬 임포트 후 실행
+async function importAndPlay(name) {
   toast('서버에서 받는 중…');
   try {
-    console.log('[emu] 서버 임포트:', entry.file);
-    await importServerRom(entry);
+    console.log('[emu] 서버 롬 임포트:', name);
+    const bytes = await downloadServerRom(name);
+    await addRomFiles([new File([bytes], name)]);
     await renderLibrary();
-    launch(entry.file);
+    launch(name);
   } catch (e) {
     console.warn('[emu] 임포트 실패:', e);
     alert(e.message);
   }
+}
+
+// 로컬 롬을 서버(개인 저장소)에 업로드
+async function uploadRomToServer(name) {
+  toast('서버에 올리는 중…');
+  try {
+    const bytes = readRomBytes(name);
+    if (!bytes || !bytes.length) { toast('롬을 못 읽었어요'); return; }
+    await uploadServerRom(name, bytes);
+    toast('서버에 올림: ' + labelOf(name));
+    await renderLibrary();
+  } catch (e) { alert(e.message); }
 }
 
 // ── 모달 / 세이브 슬롯 ─────────────────────────────

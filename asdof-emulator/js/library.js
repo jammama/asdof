@@ -52,29 +52,9 @@ export async function deleteRom(name) {
   await persist();
 }
 
-// ── 서버 선반 ──────────────────────────────────────────
-// roms/roms.json 매니페스트를 읽어, 아직 로컬에 없는 항목만 돌려준다.
-// 형식: { "roms": [ { "name": "표시이름.gba", "file": "server-file.gba", "system": "GBA" } ] }
-export async function fetchServerShelf() {
-  try {
-    const res = await fetch('roms/roms.json', { cache: 'no-cache' });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return Array.isArray(data.roms) ? data.roms : [];
-  } catch {
-    return [];
-  }
-}
-
-// 서버 롬을 받아 로컬 라이브러리로 가져온다(임포트).
-export async function importServerRom(entry) {
-  const res = await fetch('roms/' + encodeURIComponent(entry.file));
-  if (!res.ok) throw new Error(`서버에서 ${entry.file} 를 못 가져왔어요 (HTTP ${res.status})`);
-  const buf = await res.arrayBuffer();
-  // FS 경로/세이브 매칭 안정성을 위해 저장 파일명은 ascii(entry.file)로 통일.
-  const file = new File([buf], entry.file);
-  await uploadRom(file);
-  await persist();
+// 로컬 롬 바이트 읽기 (서버 업로드용).
+export function readRomBytes(name) {
+  try { return getModule().FS.readFile(GAME_DIR + name); } catch { return null; }
 }
 
 // ── 로컬 세이브 파일 (서버 동기화용) ────────────────────

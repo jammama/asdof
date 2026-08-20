@@ -1,0 +1,21 @@
+asdof-emulator — Third-Party Notices
+====================================
+
+This application bundles and uses the mGBA emulator core.
+
+  mGBA (WebAssembly build, via @thenick775/mgba-wasm)
+  Licensed under the Mozilla Public License, Version 2.0 (MPL-2.0).
+    Full license: https://mozilla.org/MPL/2.0/
+    Source code:  https://github.com/thenick775/mgba  (branch: feature/wasm)
+
+  The mGBA core files (core/mgba.js, core/mgba.wasm) are distributed
+  unmodified. In accordance with MPL-2.0, their source remains available
+  at the URL above.
+
+--------------------------------------------------------------------
+
+This application does NOT include or distribute any game ROMs.
+Users must supply game files that they legally own.
+
+Nintendo, Game Boy, Game Boy Color, and Game Boy Advance are trademarks
+of Nintendo. This project is not affiliated with or endorsed by Nintendo.

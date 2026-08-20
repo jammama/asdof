@@ -13,6 +13,13 @@ function apiRoot() {
   return `${base}/v1/${NS}/saves`;
 }
 
+// 롬은 별도 네임스페이스에 보관 (토큰 필요 → 개인 비공개 저장소)
+const ROM_NS = 'asdof-emulator-roms';
+function romRoot() {
+  const base = (localStorage.getItem('saves-url') || DEFAULT_BASE).replace(/\/+$/, '');
+  return `${base}/v1/${ROM_NS}/saves`;
+}
+
 function authHeaders(extra = {}) {
   const t = localStorage.getItem('save-token') || '';
   return t ? { 'X-Token': t, ...extra } : { ...extra };
@@ -68,4 +75,34 @@ export async function deleteServerSave(name) {
     headers: authHeaders(),
   });
   if (!res.ok) throw new Error(`삭제 실패 (HTTP ${res.status})`);
+}
+
+// ── 롬 저장소 (개인 비공개, 토큰 필요) ──────────────────
+export async function listServerRoms() {
+  const res = await fetch(romRoot(), { headers: authHeaders() });
+  if (res.status === 401) return [];   // 토큰 없거나 틀리면 조용히 빈 목록
+  if (!res.ok) throw new Error(`서버 롬 목록 실패 (HTTP ${res.status})`);
+  const data = await res.json();
+  return data.saves || [];             // [{name, origin, size, mtime}]
+}
+
+export async function downloadServerRom(name) {
+  const res = await fetch(`${romRoot()}/${encodeURIComponent(name)}`, { headers: authHeaders() });
+  if (!res.ok) throw new Error(`롬 다운로드 실패 (HTTP ${res.status})`);
+  return new Uint8Array(await res.arrayBuffer());
+}
+
+export async function uploadServerRom(name, bytes) {
+  const res = await fetch(`${romRoot()}/${encodeURIComponent(sanitizeName(name))}`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: bytes,
+  });
+  if (res.status === 401) throw new Error('서버 토큰 오류 — 설정 > 서버에서 확인하세요.');
+  if (!res.ok) throw new Error(`롬 업로드 실패 (HTTP ${res.status})`);
+}
+
+export async function deleteServerRom(name) {
+  const res = await fetch(`${romRoot()}/${encodeURIComponent(name)}`, { method: 'DELETE', headers: authHeaders() });
+  if (!res.ok) throw new Error(`롬 삭제 실패 (HTTP ${res.status})`);
 }

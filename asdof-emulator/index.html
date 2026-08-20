@@ -90,7 +90,19 @@
 
     <div id="resume"></div>
     <ul id="rom-list"></ul>
-    <section id="shelf"></section>
+
+    <section class="server-config">
+      <div class="settings-cat">서버 저장소 (asdof-saves) — 롬·세이브 공용</div>
+      <label class="settings-row" style="cursor:default">
+        <span class="label">서버 주소</span>
+        <input type="text" id="set-saves-url" class="text-input" placeholder="https://saves.asdof.xyz" autocomplete="off">
+      </label>
+      <label class="settings-row" style="cursor:default">
+        <span class="label">토큰</span>
+        <input type="password" id="set-token" class="text-input" placeholder="토큰 입력" autocomplete="off">
+      </label>
+      <p class="hint">토큰을 넣으면 서버(개인 저장소)에 올려둔 롬·세이브가 목록에 떠요.</p>
+    </section>
 
     <footer>
       세이브·롬은 이 브라우저(IndexedDB)에 저장돼요. 데스크톱 조작: 방향키 · X=A · Z=B · A=L · S=R · Enter=Start · Backspace=Select
@@ -161,6 +173,33 @@
 
       <div class="settings-cat">저장 데이터</div>
       <button id="btn-savedata" class="secondary">저장 데이터 관리 (서버 동기화)</button>
+
+      <div class="settings-cat">정보 · 라이선스</div>
+      <p class="modal-note">코어: <b>mGBA</b> (MPL-2.0). 이 앱은 롬을 제공하지 않아요 — 합법적으로 소유한 롬만 사용하세요. Nintendo·Game Boy는 Nintendo의 상표이며 본 앱과 무관합니다.</p>
+      <details class="license-box">
+        <summary>NOTICE (오픈소스 고지)</summary>
+        <pre>mGBA (WebAssembly build, via @thenick775/mgba-wasm)
+Licensed under the Mozilla Public License 2.0 (MPL-2.0).
+  License: https://mozilla.org/MPL/2.0/
+  Source:  https://github.com/thenick775/mgba (feature/wasm)
+
+core/mgba.js, core/mgba.wasm 는 수정 없이 그대로 포함되며,
+MPL-2.0 에 따라 위 주소에서 소스를 받을 수 있습니다.
+
+이 앱은 게임 롬을 포함/배포하지 않습니다. 사용자가 합법적으로
+소유한 파일만 사용해야 합니다.</pre>
+      </details>
+      <details class="license-box">
+        <summary>LICENSE (앱 코드 · MIT)</summary>
+        <pre>MIT License — Copyright (c) 2026 asdof-emulator authors
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software... (전문은 저장소의 LICENSE 파일)
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+
+* MIT 는 앱 코드에만 적용됩니다. mGBA 코어는 MPL-2.0(위 NOTICE 참고).</pre>
+      </details>
     </div>
   </div>
 
@@ -197,16 +236,7 @@
         <h2>저장 데이터 관리</h2>
         <button class="modal-close" data-close="savefiles" title="닫기">✕</button>
       </div>
-      <p class="modal-note">게임의 <b>상태저장(그 순간 그대로)</b>을 서버에 올려, 다른 기기에서 그 순간으로 <b>즉시</b> 이어할 수 있어요 (재시작 없음). 먼저 아래 서버 주소·토큰을 입력하세요.</p>
-      <div class="settings-cat">서버 (asdof-saves)</div>
-      <label class="settings-row" style="cursor:default">
-        <span class="label">서버 주소</span>
-        <input type="text" id="set-saves-url" class="text-input" placeholder="https://saves.asdof.xyz" autocomplete="off">
-      </label>
-      <label class="settings-row" style="cursor:default">
-        <span class="label">서버 토큰</span>
-        <input type="password" id="set-token" class="text-input" placeholder="토큰 입력" autocomplete="off">
-      </label>
+      <p class="modal-note">게임의 <b>상태저장(그 순간 그대로)</b>을 서버에 올려, 다른 기기에서 그 순간으로 <b>즉시</b> 이어할 수 있어요 (재시작 없음). 서버 주소·토큰은 <b>라이브러리(첫 화면) 하단</b>에서 설정해요.</p>
       <div class="settings-cat">현재 게임</div>
       <p id="cur-game" class="modal-note"></p>
       <button id="btn-upload-state" class="secondary">지금 상태를 서버에 저장</button>

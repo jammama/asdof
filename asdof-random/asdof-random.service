@@ -1,0 +1,30 @@
+[Unit]
+Description=asdof-random (제비뽑기)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/asdof-random
+# localhost 에만 바인딩 — nginx 가 앞단에서 리버스 프록시(외부 포트 개방 불필요)
+Environment=LISTEN_ADDR=127.0.0.1:8770
+Environment=STATIC_DIR=/var/lib/asdof-random/static
+Environment=MEMBERS_FILE=/var/lib/asdof-random/members.md
+# 뽑은 결과 영속화 — StateDirectory 가 /var/lib/asdof-random 을 만들고 쓰기 허용
+# (ProtectSystem=strict 의 예외로 자동 처리)
+StateDirectory=asdof-random
+Environment=DRAW_DB=/var/lib/asdof-random/draws.json
+User=www-data
+Group=www-data
+Restart=always
+RestartSec=2
+
+# --- 최소 권한 / 메모리 보호 ---
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+# RAM 952MB / swap 0 환경 보호
+MemoryMax=128M
+
+[Install]
+WantedBy=multi-user.target
