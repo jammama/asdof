@@ -1,0 +1,37 @@
+[Unit]
+Description=asdof-taker (jointips 회의실 자동 예약)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/asdof-taker
+# localhost 에만 바인딩 — nginx 가 앞단에서 리버스 프록시(외부 포트 개방 불필요)
+Environment=LISTEN_ADDR=127.0.0.1:8780
+Environment=STATE_DIR=/var/lib/asdof-taker
+Environment=LOG_LEVEL=info
+# 발사 시각 계산의 기준 타임존. 서버 시계는 NTP 로 동기돼 있어야 한다.
+Environment=TZ=Asia/Seoul
+# 관리자 비밀번호(최초 1회) 등 비밀은 여기서 읽는다. 없으면 무시된다.
+EnvironmentFile=-/etc/asdof-taker.env
+User=www-data
+Group=www-data
+Restart=always
+RestartSec=3
+
+# --- 최소 권한 ---
+# 설정·암호화 키·실행 기록이 여기 산다. StateDirectory 가 0700 으로 만들어 준다.
+StateDirectory=asdof-taker
+StateDirectoryMode=0700
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+# RAM 952MB / swap 0 환경 보호 (실측 RSS 는 10~20MB 수준)
+MemoryMax=128M
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,58 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>설비검사 목업</title>
+<link rel="stylesheet" href="_style.css">
+<div class="nav"><b>설비검사 · 기획 목업</b>
+<a class="on" href="index.html">개요</a><a href="01_작업목록.html">작업 목록</a><a href="02_작업상세.html">작업 상세</a><a href="03_충전소목록.html">충전소 목록</a><a href="04_외부폼.html">외부 일정 입력</a></div>
+<div class="wrap" style="max-width:900px">
+<h1>화면 목업</h1>
+<p class="sub">「테이블 설계.md」 기준. 데이터는 전부 예시이고 동작하지 않는다. 배치·항목·상태 표기를 확인하는 용도.</p>
+
+<div class="card"><h2>화면 4개</h2><div class="body">
+<table>
+<tr><th style="width:140px">화면</th><th style="width:80px">사용자</th><th>내용</th></tr>
+<tr><td><a href="01_작업목록.html">작업 목록</a></td><td>SE</td><td><b>검사 대상만 뜬다.</b> 목록에 있으면 곧 작업이고 대상이다. 필터 · 다중 선택 발송 · 작업 삭제</td></tr>
+<tr><td><a href="02_작업상세.html">작업 상세</a></td><td>SE</td><td>연락처 · 공문 · 3채널 유입 · 접수 내용 · 업무 진행 체크 · 필증 · 이력</td></tr>
+<tr><td><a href="03_충전소목록.html">충전소 목록</a></td><td>SE</td><td>업로드된 전건의 메타. 판정 확인 · 보류 확정 · 작업 생성 · PMS 충전소 병합. <b>작업 흐름과 별개</b></td></tr>
+<tr><td><a href="04_외부폼.html">외부 일정 입력</a></td><td>건물 담당자</td><td>별도 사이트. 로그인 없이 토큰 링크로만 진입</td></tr>
+</table>
+</div></div>
+
+<div class="card"><h2>충전소와 작업의 관계</h2><div class="body">
+<pre style="margin:0;font-size:12px;line-height:1.8;color:#3b4454">엑셀 업로드 (로그 1건)
+      │ upsert
+  충전소 마스터 ── 전건이 쌓인다. 비대상·보류도 여기 남는다
+      │            기존 PMS 충전소와 별개. 나중에 수동 확인 후 병합
+      │ 판정이 대상인 건에만
+    작업 ── 공문 · 발송 · 접수 · 필증. 삭제 가능
+</pre>
+<div class="note">충전소는 업로드할 때마다 갱신되며 계속 쌓이고, 작업은 검사 회차마다 생겼다 지워진다. 생명주기가 다르므로 테이블을 나눴다. 작업을 지워도 충전소와 판정 이력은 남는다.</div>
+</div></div>
+
+<div class="card"><h2>유입 채널 3개</h2><div class="body">
+<table>
+<tr><th style="width:100px">채널</th><th style="width:130px">토큰 발급 시점</th><th>경로</th></tr>
+<tr><td><b>이메일</b></td><td>발송 시</td><td>본문 링크 클릭. 공문 PDF가 첨부된다</td></tr>
+<tr><td><b>알림톡</b></td><td>발송 시</td><td>웹링크 버튼 클릭</td></tr>
+<tr><td><b>QR</b></td><td><b>공문 생성 시</b></td><td>공문 PDF 안의 QR 스캔. 종이로 전달받은 사람도 들어올 수 있다</td></tr>
+</table>
+<div class="note">QR 토큰은 공문 PDF에 인쇄되므로 작업을 만들 때 이미 발급돼 있어야 한다. 재발송하면 이메일·알림톡 토큰은 갈아끼우지만 QR 토큰은 그대로 둔다. 이미 배포된 종이 공문이 죽으면 안 되기 때문.</div>
+</div></div>
+
+<div class="card"><h2>상태 2축</h2><div class="body">
+<p style="margin:0 0 9px;font-size:12px"><b>시스템 판정</b> — 우리 시스템에 데이터가 생기면 자동으로 바뀐다.</p>
+<span class="tag t-ready">검증완료</span> → <span class="tag t-sent">공문발송</span> → <span class="tag t-recv">정보수신</span> → <span class="tag t-cert">필증수령</span>
+<p style="margin:16px 0 9px;font-size:12px"><b>수동 체크</b> — 시스템 밖에서 벌어진 일을 SE가 눌러 기록한다.</p>
+<span class="tag t-none">미체크</span> → <span class="tag t-work">검토완료</span> → <span class="tag t-work">신청완료</span> → <span class="tag t-work">일정확정</span> → <span class="tag t-work">검사완료</span>
+<div class="note">라벨은 업무흐름 문서 표기를 그대로 쓴다. DB에는 영문 코드로 저장하고 화면에만 한글로 보여준다. 두 축이 따로 움직이므로 "공문은 나갔지만 검토는 안 한" 조합도 그대로 표현된다.</div>
+</div></div>
+
+<div class="card"><h2>확인할 것</h2><div class="body">
+<table>
+<tr><th style="width:190px">항목</th><th>내용</th></tr>
+<tr><td>충전소 upsert 키</td><td>지금은 (CPO + 고객번호). 고객번호가 비거나 겹치면 (CPO + 충전소명 + 주소)로 바꿔야 한다. 엑셀 양식 확정 시 함께 확인</td></tr>
+<tr><td>작업 목록 컬럼</td><td>지금 11개. 빼거나 더할 것</td></tr>
+<tr><td>희망 시간대</td><td>할증 시간대 구분 기준. 지금은 오전·오후·무관 3개</td></tr>
+<tr><td>희망일 개수</td><td>지금은 최대 3개까지 추가</td></tr>
+<tr><td>공문 PDF 양식</td><td>문서번호 규칙, 직인, QR 위치</td></tr>
+</table>
+</div></div>
+</div></html>

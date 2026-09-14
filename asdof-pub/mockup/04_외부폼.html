@@ -1,0 +1,137 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>외부 일정 입력</title>
+<link rel="stylesheet" href="_style.css">
+<style>
+.phones{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.phone{width:390px;border:1px solid #cfd4dc;border-radius:10px;background:#fff;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.phone .cap{background:#eef0f4;padding:7px 12px;font-size:11px;color:#5a6273;border-bottom:1px solid #dfe2e8}
+.ph-body{padding:18px 16px}
+.ph-head{background:#1f4f9c;color:#fff;padding:14px 16px}
+.ph-head b{font-size:14px;display:block}
+.ph-head span{font-size:11px;opacity:.85}
+.sect{font-size:12px;font-weight:600;margin:20px 0 8px;padding-bottom:5px;border-bottom:1px solid #eceef2}
+.fld{margin-bottom:11px}
+.fld label{display:block;font-size:11px;color:#5a6273;margin-bottom:3px}
+.fld label i{color:#d03535;font-style:normal}
+.fld input,.fld select,.fld textarea{width:100%;padding:8px 9px;font-size:13px}
+.info{background:#f7f9fc;border:1px solid #e2e8f2;border-radius:5px;padding:11px 12px;font-size:12px}
+.info div{margin-bottom:3px}
+.info div:last-child{margin-bottom:0}
+.info .l{color:#78808f;display:inline-block;width:64px}
+.big{display:block;width:100%;padding:12px;background:#2f6fdb;color:#fff;border:0;border-radius:5px;font-size:14px;font-weight:600;margin-top:18px;cursor:pointer}
+.datebox{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.datebox input{flex:1}
+.chk{font-size:11px;color:#5a6273;display:flex;gap:6px;align-items:flex-start;margin-top:14px}
+.lock{background:#fff8e6;border:1px solid #f0dfae;border-radius:5px;padding:12px;font-size:12px;color:#6b5a1e;margin-bottom:14px}
+.done{text-align:center;padding:26px 0 10px}
+.done .ic{width:46px;height:46px;border-radius:50%;background:#e7f6ec;color:#1a7038;font-size:22px;line-height:46px;margin:0 auto 10px}
+</style>
+<div class="nav"><b>설비검사 · 기획 목업</b>
+<a href="index.html">개요</a><a href="01_작업목록.html">작업 목록</a><a href="02_작업상세.html">작업 상세</a><a href="03_충전소목록.html">충전소 목록</a><a class="on" href="04_외부폼.html">외부 일정 입력</a></div>
+<div class="wrap">
+<h1>외부 일정 입력 페이지</h1>
+<p class="sub">별도 사이트. PMS 로그인 없이 토큰 링크로만 들어온다. 모바일 우선. 이메일·알림톡·QR 어느 쪽으로 들어와도 같은 화면이다.</p>
+
+<div class="phones">
+
+<div class="phone">
+<div class="cap">① 입력 화면 &nbsp;·&nbsp; https://inspect.example.kr/s/{token}</div>
+<div class="ph-head"><b>전기차 충전설비 안전점검</b><span>검사 희망 일정 접수 · 이브이세상</span></div>
+<div class="ph-body">
+
+<div class="info">
+<div><span class="l">충전소</span>서초아파트</div>
+<div><span class="l">주소</span>서울 서초구 서초대로 77</div>
+<div><span class="l">충전기</span>6대</div>
+<div><span class="l">접수번호</span>SI-2609-0002</div>
+</div>
+<button class="btn" style="width:100%;margin-top:9px">공문 보기 · PDF 내려받기</button>
+
+<div class="sect">담당자 정보</div>
+<div class="fld"><label>관리주체 담당자 성명 <i>*</i></label><input type="text" placeholder="예: 김관리"></div>
+<div class="fld"><label>관리주체 담당자 연락처 <i>*</i></label><input type="tel" placeholder="010-0000-0000"></div>
+<div class="fld"><label>전기안전관리자 성명 <i>*</i></label><input type="text"></div>
+<div class="fld"><label>전기안전관리자 연락처 <i>*</i></label><input type="tel" placeholder="010-0000-0000"></div>
+
+<div class="sect">검사 희망 일정</div>
+<div class="fld">
+<label>희망 날짜 <i>*</i> <span class="mute">최대 3개</span></label>
+<div class="datebox"><input type="date" value="2026-09-22"><button class="btn sm">삭제</button></div>
+<div class="datebox"><input type="date" value="2026-09-24"><button class="btn sm">삭제</button></div>
+<button class="btn sm" style="width:100%">＋ 날짜 추가</button>
+</div>
+<div class="fld">
+<label>희망 시간대 <i>*</i></label>
+<select><option>오전 (09:00~12:00)</option><option>오후 (13:00~18:00)</option><option>무관</option></select>
+<div class="mute" style="font-size:11px;margin-top:4px">※ 야간·휴일은 할증이 발생할 수 있습니다</div>
+</div>
+<div class="fld"><label>특이사항</label><textarea rows="3" placeholder="출입 방법, 주차 위치 등"></textarea></div>
+
+<label class="chk"><input type="checkbox"><span>수집한 성명·연락처는 정기검사 접수 목적으로만 이용하며 업무 종료 후 파기합니다. <a href="#">자세히</a></span></label>
+<button class="big">일정 제출</button>
+</div>
+</div>
+
+<div class="phone">
+<div class="cap">② 접수 완료 후 재진입 · 잠금</div>
+<div class="ph-head"><b>전기차 충전설비 안전점검</b><span>검사 희망 일정 접수 · 이브이세상</span></div>
+<div class="ph-body">
+<div class="lock"><b>이미 접수가 완료되었습니다.</b><br>내용 수정이 필요하시면 아래 연락처로 문의해 주세요.<br>이브이세상 02-000-0000</div>
+
+<div class="info">
+<div><span class="l">충전소</span>서초아파트</div>
+<div><span class="l">접수번호</span>SI-2609-0002</div>
+<div><span class="l">접수일시</span>2026-09-02 11:34</div>
+</div>
+<button class="btn" style="width:100%;margin-top:9px">공문 보기 · PDF 내려받기</button>
+
+<div class="sect">접수하신 내용</div>
+<div class="info">
+<div><span class="l">담당자</span>김관리 · 010-1234-3391</div>
+<div><span class="l">안전관리자</span>박안전 · 010-9876-7742</div>
+<div><span class="l">희망일</span>09-22, 09-24, 09-26</div>
+<div><span class="l">시간대</span>오전</div>
+<div><span class="l">특이사항</span>지하 2층 주차장. 정문 경비실에서 출입증 수령 필요.</div>
+</div>
+
+<div class="mute" style="font-size:11px;margin-top:14px;line-height:1.7">
+· 이메일과 문자를 각각 다른 분이 받으실 수 있어, 먼저 제출된 1건만 접수됩니다.<br>
+· 확정된 검사 일정은 별도로 안내드립니다.
+</div>
+</div>
+</div>
+
+<div class="phone">
+<div class="cap">③ 제출 완료</div>
+<div class="ph-head"><b>전기차 충전설비 안전점검</b><span>검사 희망 일정 접수 · 이브이세상</span></div>
+<div class="ph-body">
+<div class="done">
+<div class="ic">✓</div>
+<b style="font-size:15px">접수가 완료되었습니다</b>
+<div class="mute" style="font-size:12px;margin-top:6px">접수번호 SI-2609-0002</div>
+</div>
+<div class="info" style="margin-top:14px">
+<div><span class="l">희망일</span>09-22, 09-24, 09-26</div>
+<div><span class="l">시간대</span>오전</div>
+</div>
+<div class="mute" style="font-size:11px;margin-top:14px;line-height:1.7">
+· 접수 확인 문자를 보내드렸습니다.<br>
+· 검사 일정이 확정되면 다시 안내드립니다.<br>
+· 문의 이브이세상 02-000-0000
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="card" style="margin-top:20px;max-width:900px"><h2>화면 메모</h2><div class="body">
+<table>
+<tr><th style="width:140px">항목</th><th>내용</th></tr>
+<tr><td>진입 인증</td><td><b>없다.</b> 토큰 링크가 곧 진입이다. 별도 인증·검색 단계를 두지 않기로 확정된 부분</td></tr>
+<tr><td>공문 열람</td><td>알림톡 수신자는 PDF 첨부를 받지 못하므로 이 페이지에서 반드시 열람·다운로드가 되어야 한다</td></tr>
+<tr><td>선착순 1건</td><td>이메일 수신자와 문자 수신자가 다른 사람일 수 있다. 먼저 낸 1건만 접수하고 이후 진입은 ② 화면</td></tr>
+<tr><td>접수 확인 통보</td><td>제출 직후 <b>들어온 채널과 같은 채널</b>로 확인 통보를 보낸다. QR 유입은 입력한 연락처로</td></tr>
+<tr><td>SE 대리 입력</td><td>링크가 끝내 도달하지 않으면 SE가 PMS 안에서 같은 항목을 대신 입력한다. 입력 경로가 구분돼 기록된다</td></tr>
+<tr><td>작업 삭제 시</td><td>작업이 삭제되면 활성 토큰도 폐기되어 이 링크는 열리지 않는다</td></tr>
+</table>
+</div></div>
+</div></html>

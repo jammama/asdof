@@ -1,0 +1,4289 @@
+{
+ "source": "강남구청 업무추진비 집행내역 공개 (역삼1동·역삼2동)",
+ "source_url": "https://www.gangnam.go.kr/board/B_000673/list.do?mid=ID05_04200502",
+ "period": "2024-01 ~ 2026-08",
+ "origin": {
+  "label": "회사 (역삼로 175)",
+  "lat": 37.4957639992118,
+  "lng": 127.038257414174
+ },
+ "radius_m": 2000,
+ "note": "공개된 법인카드 집행내역의 가맹점명을 가게 단위로 집계한 것. 개인별 구분 없음(원자료의 사용자 칸도 직위만 표기). 인당금액 = 승인금액 ÷ 집행인원의 중앙값, 5,000원 단위 구간.",
+ "built_from": {
+  "records": 751,
+  "geocoded": 194,
+  "places": 166
+ },
+ "places": [
+  {
+   "kakao_id": "10188823",
+   "name": "남도랑",
+   "category": "한식",
+   "road_address": "서울 강남구 역삼로5길 5",
+   "lat": 37.494140668473406,
+   "lng": 127.03216695993636,
+   "dist_m": 567,
+   "count": 16,
+   "aliases": [
+    "남도랑"
+   ],
+   "first": "2024-02-07",
+   "last": "2026-04-15",
+   "total_amount": 1552000,
+   "avg_amount": 97000,
+   "per_person": 12800,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 3666,
+   "per_person_max": 28666,
+   "per_person_n": 15,
+   "band_dist": {
+    "10,000~15,000원": 7,
+    "0~5,000원": 3,
+    "15,000~20,000원": 3,
+    "25,000~30,000원": 1,
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1483575393",
+   "name": "속초오징어어시장 역삼점",
+   "category": "한식",
+   "road_address": "서울 강남구 논현로 337",
+   "lat": 37.4952287561053,
+   "lng": 127.039219246369,
+   "dist_m": 104,
+   "count": 13,
+   "aliases": [
+    "속초오징어어시장",
+    "속초오징어어시장 강남점"
+   ],
+   "first": "2024-03-25",
+   "last": "2026-02-24",
+   "total_amount": 1251150,
+   "avg_amount": 96242,
+   "per_person": 13666,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 2175,
+   "per_person_max": 16500,
+   "per_person_n": 9,
+   "band_dist": {
+    "10,000~15,000원": 5,
+    "15,000~20,000원": 3,
+    "0~5,000원": 1
+   }
+  },
+  {
+   "kakao_id": "2011092566",
+   "name": "두껍삼 역삼직영점",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로8길 17",
+   "lat": 37.49784565335923,
+   "lng": 127.0320000503937,
+   "dist_m": 599,
+   "count": 12,
+   "aliases": [
+    "두껍삼",
+    "두껍삼역삼직영점(주)"
+   ],
+   "first": "2024-02-19",
+   "last": "2026-06-22",
+   "total_amount": 1025000,
+   "avg_amount": 85416,
+   "per_person": 12250,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 4333,
+   "per_person_max": 18500,
+   "per_person_n": 10,
+   "band_dist": {
+    "10,000~15,000원": 4,
+    "15,000~20,000원": 4,
+    "0~5,000원": 1,
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "26615114",
+   "name": "무등산수만리염소탕 강남점",
+   "category": "한식",
+   "road_address": "서울 강남구 역삼로2길 13",
+   "lat": 37.49246945850387,
+   "lng": 127.03158049781884,
+   "dist_m": 694,
+   "count": 11,
+   "aliases": [
+    "무등산 수만리 염소탕",
+    "무등산수만리염소탕"
+   ],
+   "first": "2024-01-04",
+   "last": "2026-07-22",
+   "total_amount": 1006500,
+   "avg_amount": 91500,
+   "per_person": 13312,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 9400,
+   "per_person_max": 14666,
+   "per_person_n": 10,
+   "band_dist": {
+    "10,000~15,000원": 9,
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "2077289603",
+   "name": "김태완스시 대치본점",
+   "category": "일식",
+   "road_address": "서울 강남구 선릉로64길 20",
+   "lat": 37.49794579065761,
+   "lng": 127.05394679309214,
+   "dist_m": 1405,
+   "count": 10,
+   "aliases": [
+    "김태완스시",
+    "김태완스시 대치본점"
+   ],
+   "first": "2025-04-16",
+   "last": "2026-06-15",
+   "total_amount": 427000,
+   "avg_amount": 42700,
+   "per_person": 14750,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 14000,
+   "per_person_max": 22500,
+   "per_person_n": 5,
+   "band_dist": {
+    "10,000~15,000원": 3,
+    "20,000~25,000원": 2
+   }
+  },
+  {
+   "kakao_id": "27204005",
+   "name": "우밀가안동국시 역삼점",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로10길 21",
+   "lat": 37.4981094238993,
+   "lng": 127.032817780264,
+   "dist_m": 546,
+   "count": 9,
+   "aliases": [
+    "우밀가 역삼점"
+   ],
+   "first": "2025-07-14",
+   "last": "2025-12-12",
+   "total_amount": 621000,
+   "avg_amount": 69000,
+   "per_person": 11555,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 9000,
+   "per_person_max": 13500,
+   "per_person_n": 9,
+   "band_dist": {
+    "10,000~15,000원": 8,
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "324945437",
+   "name": "청화당 롯데백화점 강남점",
+   "category": "중식",
+   "road_address": "서울 강남구 도곡로 401",
+   "lat": 37.497232342112625,
+   "lng": 127.05362059381564,
+   "dist_m": 1365,
+   "count": 9,
+   "aliases": [
+    "청화당",
+    "청화당 롯데 강남점",
+    "청화당 롯데강남점"
+   ],
+   "first": "2024-01-02",
+   "last": "2024-10-15",
+   "total_amount": 921500,
+   "avg_amount": 102388,
+   "per_person": 16250,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 10071,
+   "per_person_max": 33600,
+   "per_person_n": 9,
+   "band_dist": {
+    "10,000~15,000원": 4,
+    "15,000~20,000원": 2,
+    "20,000~25,000원": 2,
+    "30,000~35,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1466449848",
+   "name": "한티옥",
+   "category": "한식",
+   "road_address": "서울 강남구 도곡로 418",
+   "lat": 37.4970157617711,
+   "lng": 127.05628585494388,
+   "dist_m": 1597,
+   "count": 9,
+   "aliases": [
+    "주식회사 한티옥",
+    "한티옥"
+   ],
+   "first": "2025-02-19",
+   "last": "2026-08-13",
+   "total_amount": 749000,
+   "avg_amount": 83222,
+   "per_person": 21000,
+   "per_person_band": "20,000~25,000원",
+   "per_person_band_lo": 20000,
+   "per_person_min": 13750,
+   "per_person_max": 23000,
+   "per_person_n": 9,
+   "band_dist": {
+    "20,000~25,000원": 6,
+    "15,000~20,000원": 2,
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1830889606",
+   "name": "팡뮤제 강남본점",
+   "category": "간식",
+   "road_address": "서울 강남구 테헤란로8길 40",
+   "lat": 37.4962481668029,
+   "lng": 127.032007284629,
+   "dist_m": 554,
+   "count": 8,
+   "aliases": [
+    "주식회사 팡뮤제 강남 본점"
+   ],
+   "first": "2024-02-15",
+   "last": "2026-06-12",
+   "total_amount": 322020,
+   "avg_amount": 40252,
+   "per_person": 11775,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 800,
+   "per_person_max": 12300,
+   "per_person_n": 7,
+   "band_dist": {
+    "10,000~15,000원": 4,
+    "5,000~10,000원": 2,
+    "0~5,000원": 1
+   }
+  },
+  {
+   "kakao_id": "764402560",
+   "name": "가가솥밥 강남점",
+   "category": "한식",
+   "road_address": "서울 강남구 역삼로5길 19",
+   "lat": 37.4950336492684,
+   "lng": 127.031860890362,
+   "dist_m": 570,
+   "count": 7,
+   "aliases": [
+    "가가솥밥 강남점"
+   ],
+   "first": "2024-01-12",
+   "last": "2026-02-25",
+   "total_amount": 420000,
+   "avg_amount": 60000,
+   "per_person": 10000,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 8750,
+   "per_person_max": 12250,
+   "per_person_n": 3,
+   "band_dist": {
+    "10,000~15,000원": 2,
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "16062979",
+   "name": "통영집",
+   "category": "한식",
+   "road_address": "서울 강남구 논현로 511",
+   "lat": 37.50220356272549,
+   "lng": 127.03602236417748,
+   "dist_m": 743,
+   "count": 7,
+   "aliases": [
+    "통영집"
+   ],
+   "first": "2025-06-04",
+   "last": "2026-07-21",
+   "total_amount": 200000,
+   "avg_amount": 28571,
+   "per_person": 18400,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 14666,
+   "per_person_max": 21333,
+   "per_person_n": 3,
+   "band_dist": {
+    "15,000~20,000원": 1,
+    "20,000~25,000원": 1,
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1461594144",
+   "name": "미시마2",
+   "category": "일식",
+   "road_address": "서울 강남구 논현로63길 15",
+   "lat": 37.4927860509185,
+   "lng": 127.039445257343,
+   "dist_m": 347,
+   "count": 6,
+   "aliases": [
+    "미시마"
+   ],
+   "first": "2024-03-15",
+   "last": "2025-07-22",
+   "total_amount": 197000,
+   "avg_amount": 32833,
+   "per_person": 18166,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 15333,
+   "per_person_max": 21000,
+   "per_person_n": 2,
+   "band_dist": {
+    "20,000~25,000원": 1,
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "805695312",
+   "name": "호랑이다이닝 강남역삼본점",
+   "category": "술집",
+   "road_address": "서울 강남구 테헤란로14길 28",
+   "lat": 37.49748479720245,
+   "lng": 127.03363285570401,
+   "dist_m": 451,
+   "count": 6,
+   "aliases": [
+    "호랑이 다이닝",
+    "호랑이다이닝"
+   ],
+   "first": "2025-07-03",
+   "last": "2025-10-31",
+   "total_amount": 607000,
+   "avg_amount": 101166,
+   "per_person": 13562,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 8400,
+   "per_person_max": 17033,
+   "per_person_n": 6,
+   "band_dist": {
+    "15,000~20,000원": 3,
+    "10,000~15,000원": 2,
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "983220877",
+   "name": "범수산",
+   "category": "한식",
+   "road_address": "서울 강남구 강남대로84길 15",
+   "lat": 37.497003778854335,
+   "lng": 127.02983524237301,
+   "dist_m": 756,
+   "count": 6,
+   "aliases": [
+    "범수산"
+   ],
+   "first": "2024-01-04",
+   "last": "2024-05-28",
+   "total_amount": 378000,
+   "avg_amount": 63000,
+   "per_person": 11952,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 10333,
+   "per_person_max": 17250,
+   "per_person_n": 6,
+   "band_dist": {
+    "10,000~15,000원": 5,
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "2103675760",
+   "name": "옥소반 강남역점",
+   "category": "샤브샤브",
+   "road_address": "서울 서초구 서초대로78길 32",
+   "lat": 37.4949994881015,
+   "lng": 127.028000253747,
+   "dist_m": 909,
+   "count": 6,
+   "aliases": [
+    "옥소반"
+   ],
+   "first": "2025-02-11",
+   "last": "2026-06-23",
+   "total_amount": 447800,
+   "avg_amount": 74633,
+   "per_person": 16900,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 16720,
+   "per_person_max": 20818,
+   "per_person_n": 4,
+   "band_dist": {
+    "15,000~20,000원": 3,
+    "20,000~25,000원": 1
+   }
+  },
+  {
+   "kakao_id": "245815891",
+   "name": "서울깍두기 강남역삼점",
+   "category": "한식",
+   "road_address": "서울 강남구 역삼로7길 17",
+   "lat": 37.4953235679186,
+   "lng": 127.032614143406,
+   "dist_m": 500,
+   "count": 5,
+   "aliases": [
+    "서울깍두기",
+    "서울깍두기(강남역삼점)"
+   ],
+   "first": "2024-10-15",
+   "last": "2025-01-08",
+   "total_amount": 327000,
+   "avg_amount": 65400,
+   "per_person": 12000,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 12000,
+   "per_person_max": 12000,
+   "per_person_n": 3,
+   "band_dist": {
+    "10,000~15,000원": 3
+   }
+  },
+  {
+   "kakao_id": "1106213141",
+   "name": "오봉집 강남역점",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로6길 48",
+   "lat": 37.49548061300931,
+   "lng": 127.03162134470068,
+   "dist_m": 586,
+   "count": 5,
+   "aliases": [
+    "오봉집",
+    "오봉집 강남점"
+   ],
+   "first": "2024-02-26",
+   "last": "2026-05-22",
+   "total_amount": 382000,
+   "avg_amount": 76400,
+   "per_person": 10571,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 8166,
+   "per_person_max": 12846,
+   "per_person_n": 4,
+   "band_dist": {
+    "5,000~10,000원": 2,
+    "10,000~15,000원": 2
+   }
+  },
+  {
+   "kakao_id": "16037604",
+   "name": "청목",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로 124",
+   "lat": 37.4987800776318,
+   "lng": 127.031700766525,
+   "dist_m": 669,
+   "count": 5,
+   "aliases": [
+    "청목"
+   ],
+   "first": "2024-02-23",
+   "last": "2024-03-27",
+   "total_amount": 229000,
+   "avg_amount": 45800,
+   "per_person": 9000,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 3333,
+   "per_person_max": 19000,
+   "per_person_n": 5,
+   "band_dist": {
+    "5,000~10,000원": 2,
+    "15,000~20,000원": 1,
+    "10,000~15,000원": 1,
+    "0~5,000원": 1
+   }
+  },
+  {
+   "kakao_id": "21332166",
+   "name": "원조원주추어탕 강남본점",
+   "category": "한식",
+   "road_address": "서울 강남구 봉은사로2길 3",
+   "lat": 37.50438401791615,
+   "lng": 127.02557105824846,
+   "dist_m": 1474,
+   "count": 5,
+   "aliases": [
+    "강남 원주 추어탕",
+    "강남원조 원주추어탕"
+   ],
+   "first": "2024-01-10",
+   "last": "2026-03-27",
+   "total_amount": 469300,
+   "avg_amount": 93860,
+   "per_person": 11250,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 5333,
+   "per_person_max": 13333,
+   "per_person_n": 5,
+   "band_dist": {
+    "10,000~15,000원": 4,
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "8144397",
+   "name": "강강술래 역삼점",
+   "category": "한식",
+   "road_address": "서울 강남구 논현로 325",
+   "lat": 37.49418343234461,
+   "lng": 127.03968572363503,
+   "dist_m": 216,
+   "count": 4,
+   "aliases": [
+    "(주)전한 강강술래역삼점",
+    "강강술래 역삼점"
+   ],
+   "first": "2025-03-11",
+   "last": "2025-04-30",
+   "total_amount": 301000,
+   "avg_amount": 75250,
+   "per_person": 12545,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 7666,
+   "per_person_max": 28000,
+   "per_person_n": 3,
+   "band_dist": {
+    "10,000~15,000원": 1,
+    "5,000~10,000원": 1,
+    "25,000~30,000원": 1
+   }
+  },
+  {
+   "kakao_id": "904910835",
+   "name": "을밀대컵냉면 역삼점",
+   "category": "한식",
+   "road_address": "서울 강남구 논현로85길 52",
+   "lat": 37.49817766751348,
+   "lng": 127.03364560600396,
+   "dist_m": 487,
+   "count": 4,
+   "aliases": [
+    "주식회사 을밀대"
+   ],
+   "first": "2025-04-24",
+   "last": "2025-07-10",
+   "total_amount": 355500,
+   "avg_amount": 88875,
+   "per_person": 11379,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 9687,
+   "per_person_max": 15285,
+   "per_person_n": 4,
+   "band_dist": {
+    "10,000~15,000원": 2,
+    "15,000~20,000원": 1,
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "12519094",
+   "name": "한방대가삼계탕 강남본점",
+   "category": "한식",
+   "road_address": "서울 강남구 역삼로5길 22",
+   "lat": 37.49538861536362,
+   "lng": 127.03197412382065,
+   "dist_m": 556,
+   "count": 4,
+   "aliases": [
+    "한방 대가삼계탕"
+   ],
+   "first": "2024-04-16",
+   "last": "2026-05-18",
+   "total_amount": 269000,
+   "avg_amount": 67250,
+   "per_person": 13250,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 10000,
+   "per_person_max": 17125,
+   "per_person_n": 4,
+   "band_dist": {
+    "10,000~15,000원": 3,
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "2142723351",
+   "name": "해담채 강남점",
+   "category": "한식",
+   "road_address": "서울 강남구 논현로85길 70",
+   "lat": 37.497775259854485,
+   "lng": 127.03242183211198,
+   "dist_m": 561,
+   "count": 4,
+   "aliases": [
+    "(주)해담채강남"
+   ],
+   "first": "2024-10-02",
+   "last": "2026-05-28",
+   "total_amount": 488000,
+   "avg_amount": 122000,
+   "per_person": 9500,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 8571,
+   "per_person_max": 12923,
+   "per_person_n": 3,
+   "band_dist": {
+    "5,000~10,000원": 2,
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "842576362",
+   "name": "마삼계탕 본점",
+   "category": "한식",
+   "road_address": "서울 강남구 언주로 337",
+   "lat": 37.4979705207346,
+   "lng": 127.044311836831,
+   "dist_m": 588,
+   "count": 4,
+   "aliases": [
+    "마삼계탕 역삼별관"
+   ],
+   "first": "2024-03-26",
+   "last": "2024-10-04",
+   "total_amount": 336000,
+   "avg_amount": 84000,
+   "per_person": 16000,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 16000,
+   "per_person_max": 16000,
+   "per_person_n": 4,
+   "band_dist": {
+    "15,000~20,000원": 4
+   }
+  },
+  {
+   "kakao_id": "569698347",
+   "name": "흑돼지대통령 칼국수대통령",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로4길 35",
+   "lat": 37.4961385962339,
+   "lng": 127.030679634125,
+   "dist_m": 670,
+   "count": 4,
+   "aliases": [
+    "칼국수대통령",
+    "흑돼지대통령 칼국수대통령"
+   ],
+   "first": "2024-03-26",
+   "last": "2026-02-23",
+   "total_amount": 137000,
+   "avg_amount": 34250,
+   "per_person": 8295,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 6466,
+   "per_person_max": 14850,
+   "per_person_n": 4,
+   "band_dist": {
+    "5,000~10,000원": 3,
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "10261293",
+   "name": "다미",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로4길 25",
+   "lat": 37.49685045282879,
+   "lng": 127.03044244711454,
+   "dist_m": 700,
+   "count": 4,
+   "aliases": [
+    "다미"
+   ],
+   "first": "2024-04-04",
+   "last": "2025-11-17",
+   "total_amount": 236000,
+   "avg_amount": 59000,
+   "per_person": 8583,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 6750,
+   "per_person_max": 17250,
+   "per_person_n": 4,
+   "band_dist": {
+    "5,000~10,000원": 3,
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "2031899454",
+   "name": "노모어피자 역삼점",
+   "category": "양식",
+   "road_address": "서울 강남구 논현로94길 32",
+   "lat": 37.50290630546762,
+   "lng": 127.03899141925952,
+   "dist_m": 797,
+   "count": 4,
+   "aliases": [
+    "노모어피자"
+   ],
+   "first": "2025-08-27",
+   "last": "2026-05-20",
+   "total_amount": 159700,
+   "avg_amount": 39925,
+   "per_person": 11280,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 9180,
+   "per_person_max": 11480,
+   "per_person_n": 3,
+   "band_dist": {
+    "10,000~15,000원": 2,
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "7994355",
+   "name": "양촌리 도곡점",
+   "category": "한식",
+   "road_address": "서울 강남구 남부순환로 2720",
+   "lat": 37.48551166094304,
+   "lng": 127.04358762761427,
+   "dist_m": 1233,
+   "count": 4,
+   "aliases": [
+    "양촌리 도곡점",
+    "양촌리화로숯불구이"
+   ],
+   "first": "2024-02-08",
+   "last": "2024-10-15",
+   "total_amount": 133000,
+   "avg_amount": 33250,
+   "per_person": 10166,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 8000,
+   "per_person_max": 12000,
+   "per_person_n": 4,
+   "band_dist": {
+    "10,000~15,000원": 2,
+    "5,000~10,000원": 2
+   }
+  },
+  {
+   "kakao_id": "1932200965",
+   "name": "더롤드 더건강한쌈 대치점",
+   "category": "한식",
+   "road_address": "서울 강남구 선릉로 328",
+   "lat": 37.49904147408192,
+   "lng": 127.05180003709647,
+   "dist_m": 1249,
+   "count": 4,
+   "aliases": [
+    "더롤드 더 건강한 쌈",
+    "더롤드 더 건강한쌈",
+    "더롤드 더건강한쌈"
+   ],
+   "first": "2025-08-11",
+   "last": "2026-03-26",
+   "total_amount": 78200,
+   "avg_amount": 19550,
+   "per_person": 13033,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 9200,
+   "per_person_max": 16866,
+   "per_person_n": 2,
+   "band_dist": {
+    "5,000~10,000원": 1,
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "572227709",
+   "name": "시그니처랩 롯데백화점강남점",
+   "category": "양식",
+   "road_address": "서울 강남구 도곡로 401",
+   "lat": 37.49719004609018,
+   "lng": 127.05350747820262,
+   "dist_m": 1355,
+   "count": 4,
+   "aliases": [
+    "시그니처랩 롯데 강남점"
+   ],
+   "first": "2024-05-13",
+   "last": "2024-09-05",
+   "total_amount": 332600,
+   "avg_amount": 83150,
+   "per_person": 19358,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 13650,
+   "per_person_max": 28450,
+   "per_person_n": 4,
+   "band_dist": {
+    "20,000~25,000원": 1,
+    "10,000~15,000원": 1,
+    "25,000~30,000원": 1,
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1254609565",
+   "name": "매드포갈릭 도곡점",
+   "category": "패밀리레스토랑",
+   "road_address": "서울 강남구 언주로 123",
+   "lat": 37.487550899222,
+   "lng": 127.049778310322,
+   "dist_m": 1366,
+   "count": 4,
+   "aliases": [
+    "매드포갈릭 도곡점"
+   ],
+   "first": "2024-01-03",
+   "last": "2024-07-09",
+   "total_amount": 519930,
+   "avg_amount": 129982,
+   "per_person": 19681,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 12755,
+   "per_person_max": 22950,
+   "per_person_n": 4,
+   "band_dist": {
+    "20,000~25,000원": 2,
+    "10,000~15,000원": 1,
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1421668312",
+   "name": "나따오비까 대치점",
+   "category": "카페",
+   "road_address": "서울 강남구 선릉로64길 26",
+   "lat": 37.49818433941,
+   "lng": 127.054421929553,
+   "dist_m": 1451,
+   "count": 4,
+   "aliases": [
+    "나따오비까",
+    "나따오비까 대치점"
+   ],
+   "first": "2025-04-11",
+   "last": "2026-06-01",
+   "total_amount": 217300,
+   "avg_amount": 54325,
+   "per_person": 14050,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 6300,
+   "per_person_max": 14850,
+   "per_person_n": 3,
+   "band_dist": {
+    "10,000~15,000원": 2,
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1028973505",
+   "name": "카페 밀키",
+   "category": "카페",
+   "road_address": "서울 강남구 논현로79길 61",
+   "lat": 37.495995290491,
+   "lng": 127.034130886289,
+   "dist_m": 365,
+   "count": 3,
+   "aliases": [
+    "카페밀키"
+   ],
+   "first": "2024-02-02",
+   "last": "2024-10-25",
+   "total_amount": 46000,
+   "avg_amount": 15333,
+   "per_person": 3100,
+   "per_person_band": "0~5,000원",
+   "per_person_band_lo": 0,
+   "per_person_min": 3100,
+   "per_person_max": 3100,
+   "per_person_n": 1,
+   "band_dist": {
+    "0~5,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1200603997",
+   "name": "카페베르가모",
+   "category": "카페",
+   "road_address": "서울 강남구 역삼로7길 22",
+   "lat": 37.4956208223574,
+   "lng": 127.032894718543,
+   "dist_m": 473,
+   "count": 3,
+   "aliases": [
+    "카페 베르가모"
+   ],
+   "first": "2025-11-04",
+   "last": "2026-06-15",
+   "total_amount": 86200,
+   "avg_amount": 28733,
+   "per_person": 6400,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 4666,
+   "per_person_max": 11266,
+   "per_person_n": 3,
+   "band_dist": {
+    "5,000~10,000원": 1,
+    "10,000~15,000원": 1,
+    "0~5,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1278803283",
+   "name": "풍년닭도리탕 강남역삼직영점",
+   "category": "한식",
+   "road_address": "서울 강남구 역삼로7길 17",
+   "lat": 37.49505233768928,
+   "lng": 127.03271240693398,
+   "dist_m": 496,
+   "count": 3,
+   "aliases": [
+    "풍년닭도리탕(강남역삼직영점)"
+   ],
+   "first": "2025-04-07",
+   "last": "2026-05-27",
+   "total_amount": 226000,
+   "avg_amount": 75333,
+   "per_person": 10571,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 10142,
+   "per_person_max": 27000,
+   "per_person_n": 3,
+   "band_dist": {
+    "10,000~15,000원": 2,
+    "25,000~30,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1743104792",
+   "name": "그냥찌개집 역삼점",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로10길 21",
+   "lat": 37.4977679167176,
+   "lng": 127.032910361539,
+   "dist_m": 522,
+   "count": 3,
+   "aliases": [
+    "그냥찌개집"
+   ],
+   "first": "2024-03-07",
+   "last": "2024-04-24",
+   "total_amount": 93000,
+   "avg_amount": 31000,
+   "per_person": 13333,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 7333,
+   "per_person_max": 15500,
+   "per_person_n": 3,
+   "band_dist": {
+    "15,000~20,000원": 1,
+    "5,000~10,000원": 1,
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "7900772",
+   "name": "본죽&비빔밥cafe 역삼특허청점",
+   "category": "퓨전요리",
+   "road_address": "서울 강남구 테헤란로14길 8",
+   "lat": 37.498628365709,
+   "lng": 127.032953712424,
+   "dist_m": 566,
+   "count": 3,
+   "aliases": [
+    "본죽",
+    "본죽&비빔밥"
+   ],
+   "first": "2025-10-13",
+   "last": "2025-10-24",
+   "total_amount": 148000,
+   "avg_amount": 49333,
+   "per_person": 11000,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 9833,
+   "per_person_max": 14900,
+   "per_person_n": 3,
+   "band_dist": {
+    "10,000~15,000원": 2,
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1525298028",
+   "name": "노란상소갈비 강남역점",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로8길 11-7",
+   "lat": 37.4983456925222,
+   "lng": 127.032071508657,
+   "dist_m": 617,
+   "count": 3,
+   "aliases": [
+    "노란상 소갈비 강남직영점"
+   ],
+   "first": "2024-09-13",
+   "last": "2024-10-24",
+   "total_amount": 143000,
+   "avg_amount": 47666,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "2129615239",
+   "name": "봄카츠 강남본점",
+   "category": "일식",
+   "road_address": "서울 강남구 테헤란로4길 6",
+   "lat": 37.4976670570902,
+   "lng": 127.029285907809,
+   "dist_m": 819,
+   "count": 3,
+   "aliases": [
+    "봄카츠"
+   ],
+   "first": "2026-07-01",
+   "last": "2026-07-16",
+   "total_amount": 93200,
+   "avg_amount": 31066,
+   "per_person": 13900,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 12533,
+   "per_person_max": 13900,
+   "per_person_n": 3,
+   "band_dist": {
+    "10,000~15,000원": 3
+   }
+  },
+  {
+   "kakao_id": "1626487090",
+   "name": "봄카츠",
+   "category": "일식",
+   "road_address": "서울 강남구 선릉로 334",
+   "lat": 37.4995875574078,
+   "lng": 127.05163191173,
+   "dist_m": 1254,
+   "count": 3,
+   "aliases": [
+    "봄카츠 대치점"
+   ],
+   "first": "2026-05-19",
+   "last": "2026-06-05",
+   "total_amount": 92300,
+   "avg_amount": 30766,
+   "per_person": 14900,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 14900,
+   "per_person_max": 16350,
+   "per_person_n": 3,
+   "band_dist": {
+    "10,000~15,000원": 2,
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1163773154",
+   "name": "김영희강남동태찜 대치직영점",
+   "category": "한식",
+   "road_address": "서울 강남구 선릉로62길 13",
+   "lat": 37.4975071612988,
+   "lng": 127.05359364971,
+   "dist_m": 1367,
+   "count": 3,
+   "aliases": [
+    "김영희 동태찜&코다리냉면",
+    "김영희동태찜코다리냉면"
+   ],
+   "first": "2025-03-13",
+   "last": "2025-09-03",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "1355452582",
+   "name": "효미역 도곡점",
+   "category": "한식",
+   "road_address": "서울 강남구 논현로28길 42",
+   "lat": 37.4841864620291,
+   "lng": 127.045488624034,
+   "dist_m": 1437,
+   "count": 3,
+   "aliases": [
+    "효미역"
+   ],
+   "first": "2024-01-04",
+   "last": "2026-04-30",
+   "total_amount": 231000,
+   "avg_amount": 77000,
+   "per_person": 14666,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 12125,
+   "per_person_max": 22500,
+   "per_person_n": 3,
+   "band_dist": {
+    "10,000~15,000원": 2,
+    "20,000~25,000원": 1
+   }
+  },
+  {
+   "kakao_id": "17662981",
+   "name": "포브라더스 도곡점",
+   "category": "아시아음식",
+   "road_address": "서울 강남구 논현로28길 40",
+   "lat": 37.4839991131454,
+   "lng": 127.045330218763,
+   "dist_m": 1449,
+   "count": 3,
+   "aliases": [
+    "포브라더스"
+   ],
+   "first": "2025-04-04",
+   "last": "2026-03-04",
+   "total_amount": 109500,
+   "avg_amount": 36500,
+   "per_person": 12562,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 9000,
+   "per_person_max": 16125,
+   "per_person_n": 2,
+   "band_dist": {
+    "5,000~10,000원": 1,
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1019285237",
+   "name": "매머드익스프레스 서역삼로점",
+   "category": "카페",
+   "road_address": "서울 강남구 역삼로 166",
+   "lat": 37.49506903939498,
+   "lng": 127.03717011376268,
+   "dist_m": 123,
+   "count": 2,
+   "aliases": [
+    "매머드익스프레스"
+   ],
+   "first": "2025-09-18",
+   "last": "2026-03-18",
+   "total_amount": 21600,
+   "avg_amount": 10800,
+   "per_person": 3085,
+   "per_person_band": "0~5,000원",
+   "per_person_band_lo": 0,
+   "per_person_min": 3085,
+   "per_person_max": 3085,
+   "per_person_n": 1,
+   "band_dist": {
+    "0~5,000원": 1
+   }
+  },
+  {
+   "kakao_id": "596847199",
+   "name": "옛날그맛명동칼국수",
+   "category": "한식",
+   "road_address": "서울 강남구 논현로 412",
+   "lat": 37.4969695426716,
+   "lng": 127.039093501468,
+   "dist_m": 153,
+   "count": 2,
+   "aliases": [
+    "옛날그맛명동칼국수"
+   ],
+   "first": "2025-04-07",
+   "last": "2025-09-18",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "1642483988",
+   "name": "육회바른연어 역삼점",
+   "category": "한식",
+   "road_address": "서울 강남구 논현로79길 69",
+   "lat": 37.495863062819375,
+   "lng": 127.03335959747626,
+   "dist_m": 432,
+   "count": 2,
+   "aliases": [
+    "육회바른연어",
+    "육회바른연어 역삼점"
+   ],
+   "first": "2024-05-02",
+   "last": "2025-02-21",
+   "total_amount": 126700,
+   "avg_amount": 63350,
+   "per_person": 11761,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 9083,
+   "per_person_max": 14440,
+   "per_person_n": 2,
+   "band_dist": {
+    "5,000~10,000원": 1,
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1122763388",
+   "name": "해머스미스커피 역삼초교사거리점",
+   "category": "카페",
+   "road_address": "서울 강남구 역삼로 128",
+   "lat": 37.493975354175,
+   "lng": 127.033709307491,
+   "dist_m": 448,
+   "count": 2,
+   "aliases": [
+    "해머스미스커피 역삼초교사거리점"
+   ],
+   "first": "2024-05-13",
+   "last": "2024-05-31",
+   "total_amount": 26400,
+   "avg_amount": 13200,
+   "per_person": 3775,
+   "per_person_band": "0~5,000원",
+   "per_person_band_lo": 0,
+   "per_person_min": 3750,
+   "per_person_max": 3800,
+   "per_person_n": 2,
+   "band_dist": {
+    "0~5,000원": 2
+   }
+  },
+  {
+   "kakao_id": "13306728",
+   "name": "포몬스 역삼점",
+   "category": "아시아음식",
+   "road_address": "서울 강남구 역삼로7길 8",
+   "lat": 37.494660236743,
+   "lng": 127.03329573678629,
+   "dist_m": 455,
+   "count": 2,
+   "aliases": [
+    "포몬스역삼점"
+   ],
+   "first": "2025-03-07",
+   "last": "2025-11-24",
+   "total_amount": 130000,
+   "avg_amount": 65000,
+   "per_person": 10833,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 10000,
+   "per_person_max": 11666,
+   "per_person_n": 2,
+   "band_dist": {
+    "10,000~15,000원": 2
+   }
+  },
+  {
+   "kakao_id": "1276802054",
+   "name": "대운식당",
+   "category": "한식",
+   "road_address": "서울 강남구 역삼로5길 6",
+   "lat": 37.4943252963182,
+   "lng": 127.03245426501147,
+   "dist_m": 536,
+   "count": 2,
+   "aliases": [
+    "대운식당"
+   ],
+   "first": "2024-01-08",
+   "last": "2024-02-19",
+   "total_amount": 88000,
+   "avg_amount": 44000,
+   "per_person": 15583,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 5500,
+   "per_person_max": 25666,
+   "per_person_n": 2,
+   "band_dist": {
+    "5,000~10,000원": 1,
+    "25,000~30,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1817961708",
+   "name": "백세장수촌",
+   "category": "한식",
+   "road_address": "서울 강남구 언주로71길 11",
+   "lat": 37.4972417018728,
+   "lng": 127.04405696391731,
+   "dist_m": 537,
+   "count": 2,
+   "aliases": [
+    "백세장수촌"
+   ],
+   "first": "2024-09-06",
+   "last": "2026-07-30",
+   "total_amount": 187000,
+   "avg_amount": 93500,
+   "per_person": 18333,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 16500,
+   "per_person_max": 20166,
+   "per_person_n": 2,
+   "band_dist": {
+    "15,000~20,000원": 1,
+    "20,000~25,000원": 1
+   }
+  },
+  {
+   "kakao_id": "2097939613",
+   "name": "심가네칼국수 강남역본점",
+   "category": "한식",
+   "road_address": "서울 강남구 강남대로78길 30",
+   "lat": 37.4953166040244,
+   "lng": 127.031717395722,
+   "dist_m": 579,
+   "count": 2,
+   "aliases": [
+    "심가네칼국수 강남역본점"
+   ],
+   "first": "2024-02-02",
+   "last": "2024-03-04",
+   "total_amount": 150000,
+   "avg_amount": 75000,
+   "per_person": 9000,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 4000,
+   "per_person_max": 14000,
+   "per_person_n": 2,
+   "band_dist": {
+    "0~5,000원": 1,
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "114999525",
+   "name": "뚜레쥬르 카페역삼점",
+   "category": "간식",
+   "road_address": "서울 강남구 테헤란로8길 21",
+   "lat": 37.497510485431114,
+   "lng": 127.0319761593431,
+   "dist_m": 587,
+   "count": 2,
+   "aliases": [
+    "뚜레쥬르 역삼점",
+    "뚜레쥬르 카페역삼점"
+   ],
+   "first": "2024-04-05",
+   "last": "2025-03-24",
+   "total_amount": 97000,
+   "avg_amount": 48500,
+   "per_person": 16150,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 10800,
+   "per_person_max": 21500,
+   "per_person_n": 2,
+   "band_dist": {
+    "20,000~25,000원": 1,
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "375799906",
+   "name": "구스아일랜드 브루하우스",
+   "category": "술집",
+   "road_address": "서울 강남구 역삼로 118",
+   "lat": 37.49348749552262,
+   "lng": 127.0319563513853,
+   "dist_m": 611,
+   "count": 2,
+   "aliases": [
+    "구스아일랜드 브루하우스"
+   ],
+   "first": "2026-06-24",
+   "last": "2026-07-02",
+   "total_amount": 155300,
+   "avg_amount": 77650,
+   "per_person": 15530,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 15480,
+   "per_person_max": 15580,
+   "per_person_n": 2,
+   "band_dist": {
+    "15,000~20,000원": 2
+   }
+  },
+  {
+   "kakao_id": "1174023878",
+   "name": "꼬끼오장작구이",
+   "category": "한식",
+   "road_address": "서울 강남구 강남대로84길 34",
+   "lat": 37.4970853834231,
+   "lng": 127.031330261471,
+   "dist_m": 629,
+   "count": 2,
+   "aliases": [
+    "꼬끼오 장작구이",
+    "꼬끼오장작구이"
+   ],
+   "first": "2025-01-20",
+   "last": "2025-07-10",
+   "total_amount": 262500,
+   "avg_amount": 131250,
+   "per_person": 14750,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 14500,
+   "per_person_max": 15000,
+   "per_person_n": 2,
+   "band_dist": {
+    "15,000~20,000원": 1,
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "968589103",
+   "name": "코코이찌방야 강남역점",
+   "category": "퓨전요리",
+   "road_address": "서울 강남구 테헤란로4길 46",
+   "lat": 37.4955485950433,
+   "lng": 127.030064221769,
+   "dist_m": 723,
+   "count": 2,
+   "aliases": [
+    "코코이찌방야 강남역점"
+   ],
+   "first": "2025-05-14",
+   "last": "2025-05-19",
+   "total_amount": 148900,
+   "avg_amount": 74450,
+   "per_person": 12435,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 12271,
+   "per_person_max": 12600,
+   "per_person_n": 2,
+   "band_dist": {
+    "10,000~15,000원": 2
+   }
+  },
+  {
+   "kakao_id": "2010432832",
+   "name": "국밥쟁이",
+   "category": "한식",
+   "road_address": "서울 강남구 강남대로84길 15",
+   "lat": 37.4970037739976,
+   "lng": 127.029854466838,
+   "dist_m": 754,
+   "count": 2,
+   "aliases": [
+    "국밥쟁이"
+   ],
+   "first": "2024-01-08",
+   "last": "2024-02-28",
+   "total_amount": 96000,
+   "avg_amount": 48000,
+   "per_person": 10916,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 10166,
+   "per_person_max": 11666,
+   "per_person_n": 2,
+   "band_dist": {
+    "10,000~15,000원": 2
+   }
+  },
+  {
+   "kakao_id": "684431321",
+   "name": "차백도 강남역2호점",
+   "category": "카페",
+   "road_address": "서울 서초구 강남대로 359",
+   "lat": 37.494909240012014,
+   "lng": 127.02861538581409,
+   "dist_m": 856,
+   "count": 2,
+   "aliases": [
+    "차백도"
+   ],
+   "first": "2026-01-06",
+   "last": "2026-07-01",
+   "total_amount": 19900,
+   "avg_amount": 9950,
+   "per_person": 3891,
+   "per_person_band": "0~5,000원",
+   "per_person_band_lo": 0,
+   "per_person_min": 3450,
+   "per_person_max": 4333,
+   "per_person_n": 2,
+   "band_dist": {
+    "0~5,000원": 2
+   }
+  },
+  {
+   "kakao_id": "241426052",
+   "name": "신사골감자탕 양재점",
+   "category": "한식",
+   "road_address": "서울 강남구 강남대로 242",
+   "lat": 37.4853733267659,
+   "lng": 127.034083087862,
+   "dist_m": 1213,
+   "count": 2,
+   "aliases": [
+    "신사골감자탕"
+   ],
+   "first": "2025-06-10",
+   "last": "2025-07-03",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "70861934",
+   "name": "카페601",
+   "category": "카페",
+   "road_address": "서울 강남구 선릉로 309",
+   "lat": 37.4971861439105,
+   "lng": 127.052159497863,
+   "dist_m": 1237,
+   "count": 2,
+   "aliases": [
+    "카페601"
+   ],
+   "first": "2025-04-16",
+   "last": "2025-04-17",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "636148314",
+   "name": "남파고택 강남점",
+   "category": "한식",
+   "road_address": "서울 강남구 도곡로 401",
+   "lat": 37.496967258740135,
+   "lng": 127.0540320338082,
+   "dist_m": 1398,
+   "count": 2,
+   "aliases": [
+    "남파고택"
+   ],
+   "first": "2024-01-12",
+   "last": "2024-02-14",
+   "total_amount": 267000,
+   "avg_amount": 133500,
+   "per_person": 10048,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 9187,
+   "per_person_max": 10909,
+   "per_person_n": 2,
+   "band_dist": {
+    "10,000~15,000원": 1,
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "783682960",
+   "name": "후토루 양재역점",
+   "category": "일식",
+   "road_address": "서울 서초구 강남대로 221",
+   "lat": 37.48333414022644,
+   "lng": 127.03478429203255,
+   "dist_m": 1416,
+   "count": 2,
+   "aliases": [
+    "후토루"
+   ],
+   "first": "2026-01-07",
+   "last": "2026-03-16",
+   "total_amount": 189800,
+   "avg_amount": 94900,
+   "per_person": 13130,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 10560,
+   "per_person_max": 15700,
+   "per_person_n": 2,
+   "band_dist": {
+    "10,000~15,000원": 1,
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "27187696",
+   "name": "인평일등추어탕",
+   "category": "한식",
+   "road_address": "서울 강남구 선릉로 555",
+   "lat": 37.5079624691581,
+   "lng": 127.044851582109,
+   "dist_m": 1476,
+   "count": 2,
+   "aliases": [
+    "일등추어탕 선릉점",
+    "일등추어탕(선릉)"
+   ],
+   "first": "2024-03-20",
+   "last": "2024-06-04",
+   "total_amount": 132000,
+   "avg_amount": 66000,
+   "per_person": 16000,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 12000,
+   "per_person_max": 20000,
+   "per_person_n": 2,
+   "band_dist": {
+    "10,000~15,000원": 1,
+    "20,000~25,000원": 1
+   }
+  },
+  {
+   "kakao_id": "23278986",
+   "name": "브라이언스커피",
+   "category": "카페",
+   "road_address": "서울 강남구 논현로26길 46",
+   "lat": 37.4838763981292,
+   "lng": 127.045791451068,
+   "dist_m": 1480,
+   "count": 2,
+   "aliases": [
+    "브라이언스커피"
+   ],
+   "first": "2025-11-26",
+   "last": "2026-05-11",
+   "total_amount": 28200,
+   "avg_amount": 14100,
+   "per_person": 5950,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 4400,
+   "per_person_max": 7500,
+   "per_person_n": 2,
+   "band_dist": {
+    "5,000~10,000원": 1,
+    "0~5,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1593389222",
+   "name": "카페비밀",
+   "category": "카페",
+   "road_address": "서울 강남구 논현로26길 30-8",
+   "lat": 37.4827305936815,
+   "lng": 127.04506714489,
+   "dist_m": 1569,
+   "count": 2,
+   "aliases": [
+    "카페비밀"
+   ],
+   "first": "2026-04-06",
+   "last": "2026-04-06",
+   "total_amount": 100900,
+   "avg_amount": 50450,
+   "per_person": 10090,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 2200,
+   "per_person_max": 17980,
+   "per_person_n": 2,
+   "band_dist": {
+    "15,000~20,000원": 1,
+    "0~5,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1620442639",
+   "name": "퀸즈베리도넛하우스 양재점",
+   "category": "간식",
+   "road_address": "서울 강남구 양재천로 175",
+   "lat": 37.4820115132229,
+   "lng": 127.045264572361,
+   "dist_m": 1649,
+   "count": 2,
+   "aliases": [
+    "퀸즈베리도넛하우스"
+   ],
+   "first": "2025-04-08",
+   "last": "2025-06-05",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "8734422",
+   "name": "강남면옥 대치점",
+   "category": "한식",
+   "road_address": "서울 강남구 도곡로 428",
+   "lat": 37.497519812287,
+   "lng": 127.057352632979,
+   "dist_m": 1696,
+   "count": 2,
+   "aliases": [
+    "강남면옥 대치점"
+   ],
+   "first": "2024-08-16",
+   "last": "2024-09-13",
+   "total_amount": 132000,
+   "avg_amount": 66000,
+   "per_person": 18666,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 17333,
+   "per_person_max": 20000,
+   "per_person_n": 2,
+   "band_dist": {
+    "20,000~25,000원": 1,
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "43090813",
+   "name": "의령전원",
+   "category": "한식",
+   "road_address": "서울 강남구 삼성로85길 33",
+   "lat": 37.50433353953688,
+   "lng": 127.05477812179669,
+   "dist_m": 1741,
+   "count": 2,
+   "aliases": [
+    "의령전원"
+   ],
+   "first": "2025-06-25",
+   "last": "2025-12-15",
+   "total_amount": 220000,
+   "avg_amount": 110000,
+   "per_person": 18333,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 18333,
+   "per_person_max": 18333,
+   "per_person_n": 1,
+   "band_dist": {
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "19901835",
+   "name": "영동소금구이 논현본점",
+   "category": "한식",
+   "road_address": "서울 강남구 강남대로124길 10",
+   "lat": 37.5088480267689,
+   "lng": 127.023502796662,
+   "dist_m": 1952,
+   "count": 2,
+   "aliases": [
+    "영동소금구이 논현본점"
+   ],
+   "first": "2024-11-01",
+   "last": "2025-05-07",
+   "total_amount": 146000,
+   "avg_amount": 73000,
+   "per_person": 16725,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 12200,
+   "per_person_max": 21250,
+   "per_person_n": 2,
+   "band_dist": {
+    "10,000~15,000원": 1,
+    "20,000~25,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1027268546",
+   "name": "우지커피 역삼중앙점",
+   "category": "카페",
+   "road_address": "서울 강남구 논현로75길 16",
+   "lat": 37.4963466014409,
+   "lng": 127.03737769086246,
+   "dist_m": 101,
+   "count": 1,
+   "aliases": [
+    "우지커피"
+   ],
+   "first": "2025-09-11",
+   "last": "2025-09-11",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "27309642",
+   "name": "스파게티스토리",
+   "category": "양식",
+   "road_address": "서울 강남구 논현로67길 11",
+   "lat": 37.493984520498,
+   "lng": 127.039053498147,
+   "dist_m": 210,
+   "count": 1,
+   "aliases": [
+    "스파게티스토리"
+   ],
+   "first": "2025-10-24",
+   "last": "2025-10-24",
+   "total_amount": 45500,
+   "avg_amount": 45500,
+   "per_person": 11375,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 11375,
+   "per_person_max": 11375,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "2111215404",
+   "name": "오히커피",
+   "category": "카페",
+   "road_address": "서울 강남구 도곡로25길 31",
+   "lat": 37.4947300232639,
+   "lng": 127.040627983145,
+   "dist_m": 239,
+   "count": 1,
+   "aliases": [
+    "오히커피"
+   ],
+   "first": "2026-01-30",
+   "last": "2026-01-30",
+   "total_amount": 16000,
+   "avg_amount": 16000,
+   "per_person": 5333,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 5333,
+   "per_person_max": 5333,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "925364307",
+   "name": "더올레비어",
+   "category": "술집",
+   "road_address": "서울 강남구 논현로71길 47",
+   "lat": 37.49390267564724,
+   "lng": 127.03574359161263,
+   "dist_m": 303,
+   "count": 1,
+   "aliases": [
+    "올레비어"
+   ],
+   "first": "2025-04-07",
+   "last": "2025-04-07",
+   "total_amount": 98000,
+   "avg_amount": 98000,
+   "per_person": 12250,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 12250,
+   "per_person_max": 12250,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "972393172",
+   "name": "타우너스에스프레소바 역삼점",
+   "category": "카페",
+   "road_address": "서울 강남구 테헤란로28길 41",
+   "lat": 37.4984604586838,
+   "lng": 127.039840654823,
+   "dist_m": 331,
+   "count": 1,
+   "aliases": [
+    "타우너스"
+   ],
+   "first": "2026-04-22",
+   "last": "2026-04-22",
+   "total_amount": 15800,
+   "avg_amount": 15800,
+   "per_person": 7900,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 7900,
+   "per_person_max": 7900,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "16679651",
+   "name": "소풍나온 산오징어",
+   "category": "한식",
+   "road_address": "서울 강남구 역삼로14길 12",
+   "lat": 37.4937406063804,
+   "lng": 127.035371480594,
+   "dist_m": 340,
+   "count": 1,
+   "aliases": [
+    "소풍"
+   ],
+   "first": "2024-01-03",
+   "last": "2024-01-03",
+   "total_amount": 15000,
+   "avg_amount": 15000,
+   "per_person": 7500,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 7500,
+   "per_person_max": 7500,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "2128698499",
+   "name": "슬로우커피",
+   "category": "카페",
+   "road_address": "서울 강남구 역삼로 136",
+   "lat": 37.49425264963623,
+   "lng": 127.03445350476827,
+   "dist_m": 375,
+   "count": 1,
+   "aliases": [
+    "슬로우커피"
+   ],
+   "first": "2026-06-30",
+   "last": "2026-06-30",
+   "total_amount": 72700,
+   "avg_amount": 72700,
+   "per_person": 12116,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 12116,
+   "per_person_max": 12116,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "8652100",
+   "name": "고래불 강남역삼본점",
+   "category": "한식",
+   "road_address": "서울 강남구 논현로79길 62",
+   "lat": 37.49625663127778,
+   "lng": 127.03396137926865,
+   "dist_m": 383,
+   "count": 1,
+   "aliases": [
+    "(주)고래불"
+   ],
+   "first": "2024-10-25",
+   "last": "2024-10-25",
+   "total_amount": 87000,
+   "avg_amount": 87000,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "299442543",
+   "name": "깐부치킨 역삼본점",
+   "category": "치킨",
+   "road_address": "서울 강남구 논현로85길 37",
+   "lat": 37.49818084603359,
+   "lng": 127.03510782069321,
+   "dist_m": 387,
+   "count": 1,
+   "aliases": [
+    "깐부치킨"
+   ],
+   "first": "2025-10-14",
+   "last": "2025-10-14",
+   "total_amount": 99000,
+   "avg_amount": 99000,
+   "per_person": 11000,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 11000,
+   "per_person_max": 11000,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1631657138",
+   "name": "서울어촌계",
+   "category": "한식",
+   "road_address": "서울 강남구 역삼로9길 27",
+   "lat": 37.495902637876,
+   "lng": 127.033603875305,
+   "dist_m": 411,
+   "count": 1,
+   "aliases": [
+    "서울어촌계"
+   ],
+   "first": "2026-06-26",
+   "last": "2026-06-26",
+   "total_amount": 24000,
+   "avg_amount": 24000,
+   "per_person": 6000,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 6000,
+   "per_person_max": 6000,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "8199914",
+   "name": "굽네치킨 역삼1동점",
+   "category": "치킨",
+   "road_address": "서울 강남구 역삼로 129",
+   "lat": 37.4943393046404,
+   "lng": 127.033906232147,
+   "dist_m": 415,
+   "count": 1,
+   "aliases": [
+    "굽네치킨"
+   ],
+   "first": "2026-07-15",
+   "last": "2026-07-15",
+   "total_amount": 210600,
+   "avg_amount": 210600,
+   "per_person": 12388,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 12388,
+   "per_person_max": 12388,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "16297490",
+   "name": "고갯마루",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로28길 27",
+   "lat": 37.4994012448685,
+   "lng": 127.039436297067,
+   "dist_m": 418,
+   "count": 1,
+   "aliases": [
+    "고갯마루"
+   ],
+   "first": "2024-03-05",
+   "last": "2024-03-05",
+   "total_amount": 66000,
+   "avg_amount": 66000,
+   "per_person": 11000,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 11000,
+   "per_person_max": 11000,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "305834386",
+   "name": "모닝테이블",
+   "category": "간식",
+   "road_address": "서울 강남구 논현로64길 18",
+   "lat": 37.4934455891955,
+   "lng": 127.04205435358128,
+   "dist_m": 423,
+   "count": 1,
+   "aliases": [
+    "모닝테이블"
+   ],
+   "first": "2026-02-12",
+   "last": "2026-02-12",
+   "total_amount": 40800,
+   "avg_amount": 40800,
+   "per_person": 10200,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 10200,
+   "per_person_max": 10200,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "995606255",
+   "name": "만땅스시 역삼점",
+   "category": "일식",
+   "road_address": "서울 강남구 역삼로 128",
+   "lat": 37.4940077665166,
+   "lng": 127.033793001688,
+   "dist_m": 440,
+   "count": 1,
+   "aliases": [
+    "만땅스시 (역삼점)"
+   ],
+   "first": "2026-06-29",
+   "last": "2026-06-29",
+   "total_amount": 46000,
+   "avg_amount": 46000,
+   "per_person": 9200,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 9200,
+   "per_person_max": 9200,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1297016727",
+   "name": "한국집 서울",
+   "category": "한식",
+   "road_address": "서울 강남구 도곡로 213",
+   "lat": 37.4930752576255,
+   "lng": 127.042103900775,
+   "dist_m": 452,
+   "count": 1,
+   "aliases": [
+    "한국집 서울"
+   ],
+   "first": "2025-03-05",
+   "last": "2025-03-05",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "495293596",
+   "name": "BHC치킨 역삼점",
+   "category": "치킨",
+   "road_address": "서울 강남구 논현로85길 52",
+   "lat": 37.4981064259808,
+   "lng": 127.033862700621,
+   "dist_m": 467,
+   "count": 1,
+   "aliases": [
+    "BHC 치킨"
+   ],
+   "first": "2024-01-03",
+   "last": "2024-01-03",
+   "total_amount": 124000,
+   "avg_amount": 124000,
+   "per_person": 6200,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 6200,
+   "per_person_max": 6200,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "2132526653",
+   "name": "김밥천국 강남역삼점",
+   "category": "분식",
+   "road_address": "서울 강남구 역삼로7길 13",
+   "lat": 37.49489376206722,
+   "lng": 127.03270668367274,
+   "dist_m": 499,
+   "count": 1,
+   "aliases": [
+    "김밥천국 강남역삼점"
+   ],
+   "first": "2026-07-13",
+   "last": "2026-07-13",
+   "total_amount": 60000,
+   "avg_amount": 60000,
+   "per_person": 12000,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 12000,
+   "per_person_max": 12000,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "21418834",
+   "name": "생어거스틴 역삼점",
+   "category": "아시아음식",
+   "road_address": "서울 강남구 테헤란로 152",
+   "lat": 37.5000617220211,
+   "lng": 127.036509882777,
+   "dist_m": 502,
+   "count": 1,
+   "aliases": [
+    "생어거스틴 도곡점"
+   ],
+   "first": "2024-04-29",
+   "last": "2024-04-29",
+   "total_amount": 76000,
+   "avg_amount": 76000,
+   "per_person": 25333,
+   "per_person_band": "25,000~30,000원",
+   "per_person_band_lo": 25000,
+   "per_person_min": 25333,
+   "per_person_max": 25333,
+   "per_person_n": 1,
+   "band_dist": {
+    "25,000~30,000원": 1
+   }
+  },
+  {
+   "kakao_id": "548105247",
+   "name": "사오월",
+   "category": "한식",
+   "road_address": "서울 강남구 역삼로7길 17",
+   "lat": 37.495147884082,
+   "lng": 127.032568834088,
+   "dist_m": 507,
+   "count": 1,
+   "aliases": [
+    "사오월"
+   ],
+   "first": "2025-04-29",
+   "last": "2025-04-29",
+   "total_amount": 120000,
+   "avg_amount": 120000,
+   "per_person": 15000,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 15000,
+   "per_person_max": 15000,
+   "per_person_n": 1,
+   "band_dist": {
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "146831394",
+   "name": "소디스에스프레소바 서울역삼점",
+   "category": "카페",
+   "road_address": "서울 강남구 역삼로37길 11",
+   "lat": 37.49859275972504,
+   "lng": 127.04283528188516,
+   "dist_m": 512,
+   "count": 1,
+   "aliases": [
+    "소디스 에스프레소바"
+   ],
+   "first": "2025-04-07",
+   "last": "2025-04-07",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "1989327162",
+   "name": "나이스샤워 역삼점",
+   "category": "일식",
+   "road_address": "서울 강남구 테헤란로10길 25",
+   "lat": 37.49758410889806,
+   "lng": 127.0329193277531,
+   "dist_m": 513,
+   "count": 1,
+   "aliases": [
+    "나이스샤워"
+   ],
+   "first": "2025-09-09",
+   "last": "2025-09-09",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "2110344433",
+   "name": "양산도 역삼점",
+   "category": "일식",
+   "road_address": "서울 강남구 논현로85길 70",
+   "lat": 37.4977752598473,
+   "lng": 127.032421832112,
+   "dist_m": 561,
+   "count": 1,
+   "aliases": [
+    "양산도 역삼점"
+   ],
+   "first": "2025-09-10",
+   "last": "2025-09-10",
+   "total_amount": 94000,
+   "avg_amount": 94000,
+   "per_person": 10444,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 10444,
+   "per_person_max": 10444,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "2045551139",
+   "name": "명륜진사갈비 강남역삼점",
+   "category": "한식",
+   "road_address": "서울 강남구 도곡로7길 17",
+   "lat": 37.4917550963215,
+   "lng": 127.034321188005,
+   "dist_m": 565,
+   "count": 1,
+   "aliases": [
+    "명륜진사갈비"
+   ],
+   "first": "2025-07-24",
+   "last": "2025-07-24",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "1563466700",
+   "name": "아우어베이커리 역삼점",
+   "category": "간식",
+   "road_address": "서울 강남구 언주로85길 29",
+   "lat": 37.5005693683762,
+   "lng": 127.040852804125,
+   "dist_m": 581,
+   "count": 1,
+   "aliases": [
+    "아우어베이커리 역삼점"
+   ],
+   "first": "2026-03-04",
+   "last": "2026-03-04",
+   "total_amount": 22900,
+   "avg_amount": 22900,
+   "per_person": 7633,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 7633,
+   "per_person_max": 7633,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "800602170",
+   "name": "카이 본점",
+   "category": "중식",
+   "road_address": "서울 강남구 테헤란로8길 21",
+   "lat": 37.4976050828303,
+   "lng": 127.0320067329,
+   "dist_m": 588,
+   "count": 1,
+   "aliases": [
+    "카이 본점"
+   ],
+   "first": "2025-09-09",
+   "last": "2025-09-09",
+   "total_amount": 67000,
+   "avg_amount": 67000,
+   "per_person": 9571,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 9571,
+   "per_person_max": 9571,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "596817296",
+   "name": "신복관한우육개장전문점 강남본점",
+   "category": "한식",
+   "road_address": "서울 강남구 역삼로3길 20-5",
+   "lat": 37.4951373352035,
+   "lng": 127.031599714333,
+   "dist_m": 591,
+   "count": 1,
+   "aliases": [
+    "신복관 한우육개장 전문점"
+   ],
+   "first": "2025-10-27",
+   "last": "2025-10-27",
+   "total_amount": 16000,
+   "avg_amount": 16000,
+   "per_person": 4000,
+   "per_person_band": "0~5,000원",
+   "per_person_band_lo": 0,
+   "per_person_min": 4000,
+   "per_person_max": 4000,
+   "per_person_n": 1,
+   "band_dist": {
+    "0~5,000원": 1
+   }
+  },
+  {
+   "kakao_id": "10800261",
+   "name": "조수사",
+   "category": "일식",
+   "road_address": "서울 강남구 테헤란로14길 6",
+   "lat": 37.4989275325047,
+   "lng": 127.032836232373,
+   "dist_m": 594,
+   "count": 1,
+   "aliases": [
+    "조수사"
+   ],
+   "first": "2025-12-15",
+   "last": "2025-12-15",
+   "total_amount": 140000,
+   "avg_amount": 140000,
+   "per_person": 11666,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 11666,
+   "per_person_max": 11666,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "127438589",
+   "name": "두배고기",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로6길 42",
+   "lat": 37.4958825027388,
+   "lng": 127.03146885155,
+   "dist_m": 599,
+   "count": 1,
+   "aliases": [
+    "두배고기"
+   ],
+   "first": "2026-05-23",
+   "last": "2026-05-23",
+   "total_amount": 104000,
+   "avg_amount": 104000,
+   "per_person": 14857,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 14857,
+   "per_person_max": 14857,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "503470628",
+   "name": "중경마라탕 강남2호점",
+   "category": "중식",
+   "road_address": "서울 강남구 강남대로78길 27",
+   "lat": 37.49546533816528,
+   "lng": 127.03146302237013,
+   "dist_m": 600,
+   "count": 1,
+   "aliases": [
+    "중경마라탕"
+   ],
+   "first": "2025-03-18",
+   "last": "2025-03-18",
+   "total_amount": 156860,
+   "avg_amount": 156860,
+   "per_person": 14260,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 14260,
+   "per_person_max": 14260,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "933439724",
+   "name": "팀홀튼 역삼역피나클점",
+   "category": "카페",
+   "road_address": "서울 강남구 테헤란로 145",
+   "lat": 37.500637818701556,
+   "lng": 127.03534646123414,
+   "dist_m": 600,
+   "count": 1,
+   "aliases": [
+    "팀홀튼"
+   ],
+   "first": "2026-07-08",
+   "last": "2026-07-08",
+   "total_amount": 19000,
+   "avg_amount": 19000,
+   "per_person": 9500,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 9500,
+   "per_person_max": 9500,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "16421356",
+   "name": "농민백암순대 강남직영점",
+   "category": "한식",
+   "road_address": "서울 강남구 역삼로3길 20-4",
+   "lat": 37.49491300989233,
+   "lng": 127.03150463098274,
+   "dist_m": 603,
+   "count": 1,
+   "aliases": [
+    "농민백암"
+   ],
+   "first": "2025-08-13",
+   "last": "2025-08-13",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "2126551135",
+   "name": "진상횟집 역삼직영점",
+   "category": "한식",
+   "road_address": "서울 강남구 언주로85길 25",
+   "lat": 37.5006755447682,
+   "lng": 127.041262250062,
+   "dist_m": 607,
+   "count": 1,
+   "aliases": [
+    "진상횟집 역삼직영점"
+   ],
+   "first": "2025-10-20",
+   "last": "2025-10-20",
+   "total_amount": 175000,
+   "avg_amount": 175000,
+   "per_person": 35000,
+   "per_person_band": "35,000~40,000원",
+   "per_person_band_lo": 35000,
+   "per_person_min": 35000,
+   "per_person_max": 35000,
+   "per_person_n": 1,
+   "band_dist": {
+    "35,000~40,000원": 1
+   }
+  },
+  {
+   "kakao_id": "7867818",
+   "name": "목포세발낙지",
+   "category": "한식",
+   "road_address": "서울 강남구 언주로 329",
+   "lat": 37.49719993365905,
+   "lng": 127.04491186492692,
+   "dist_m": 608,
+   "count": 1,
+   "aliases": [
+    "목포세발낙지"
+   ],
+   "first": "2024-11-25",
+   "last": "2024-11-25",
+   "total_amount": 109000,
+   "avg_amount": 109000,
+   "per_person": 18166,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 18166,
+   "per_person_max": 18166,
+   "per_person_n": 1,
+   "band_dist": {
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "33460930",
+   "name": "명품청운러우",
+   "category": "중식",
+   "road_address": "서울 강남구 언주로 323",
+   "lat": 37.4967556776858,
+   "lng": 127.045068786636,
+   "dist_m": 611,
+   "count": 1,
+   "aliases": [
+    "청운러우"
+   ],
+   "first": "2025-10-14",
+   "last": "2025-10-14",
+   "total_amount": 34000,
+   "avg_amount": 34000,
+   "per_person": 5666,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 5666,
+   "per_person_max": 5666,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "401743141",
+   "name": "이엘포레스트",
+   "category": "양식",
+   "road_address": "서울 강남구 언주로 405",
+   "lat": 37.499185212111,
+   "lng": 127.043950671775,
+   "dist_m": 630,
+   "count": 1,
+   "aliases": [
+    "이엘포레스트"
+   ],
+   "first": "2025-12-18",
+   "last": "2025-12-18",
+   "total_amount": 107800,
+   "avg_amount": 107800,
+   "per_person": 17966,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 17966,
+   "per_person_max": 17966,
+   "per_person_n": 1,
+   "band_dist": {
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "16036828",
+   "name": "비어테라스",
+   "category": "술집",
+   "road_address": "서울 강남구 테헤란로8길 20",
+   "lat": 37.4975403570944,
+   "lng": 127.031460500341,
+   "dist_m": 631,
+   "count": 1,
+   "aliases": [
+    "비어테라스"
+   ],
+   "first": "2025-04-23",
+   "last": "2025-04-23",
+   "total_amount": 34000,
+   "avg_amount": 34000,
+   "per_person": 8500,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 8500,
+   "per_person_max": 8500,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "2031536890",
+   "name": "청미나리농장",
+   "category": "한식",
+   "road_address": "서울 강남구 역삼로3길 15",
+   "lat": 37.4944986516399,
+   "lng": 127.031108672303,
+   "dist_m": 646,
+   "count": 1,
+   "aliases": [
+    "청미나리농장"
+   ],
+   "first": "2025-01-09",
+   "last": "2025-01-09",
+   "total_amount": 72000,
+   "avg_amount": 72000,
+   "per_person": 14400,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 14400,
+   "per_person_max": 14400,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "80463812",
+   "name": "제주은희네해장국 강남역점",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로8길 11",
+   "lat": 37.4982214780195,
+   "lng": 127.03161006084,
+   "dist_m": 647,
+   "count": 1,
+   "aliases": [
+    "제주은희네해장국 강남역점"
+   ],
+   "first": "2024-03-29",
+   "last": "2024-03-29",
+   "total_amount": 204000,
+   "avg_amount": 204000,
+   "per_person": 13600,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 13600,
+   "per_person_max": 13600,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "504824260",
+   "name": "라무진 강남역점",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로6길 26",
+   "lat": 37.4968304895636,
+   "lng": 127.030985246231,
+   "dist_m": 652,
+   "count": 1,
+   "aliases": [
+    "라무진 강남역점"
+   ],
+   "first": "2026-07-03",
+   "last": "2026-07-03",
+   "total_amount": 150000,
+   "avg_amount": 150000,
+   "per_person": 12500,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 12500,
+   "per_person_max": 12500,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1614493196",
+   "name": "참치공방 강남점",
+   "category": "일식",
+   "road_address": "서울 강남구 강남대로78길 18",
+   "lat": 37.4950285047535,
+   "lng": 127.03087594291,
+   "dist_m": 656,
+   "count": 1,
+   "aliases": [
+    "참치공방강남지점"
+   ],
+   "first": "2026-06-19",
+   "last": "2026-06-19",
+   "total_amount": 60000,
+   "avg_amount": 60000,
+   "per_person": 7500,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 7500,
+   "per_person_max": 7500,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1466542951",
+   "name": "셀렉티드닉스",
+   "category": "카페",
+   "road_address": "서울 강남구 테헤란로4길 37",
+   "lat": 37.4962223486255,
+   "lng": 127.030837985875,
+   "dist_m": 657,
+   "count": 1,
+   "aliases": [
+    "셀렉티드 닉스"
+   ],
+   "first": "2025-03-21",
+   "last": "2025-03-21",
+   "total_amount": 38800,
+   "avg_amount": 38800,
+   "per_person": 12933,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 12933,
+   "per_person_max": 12933,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "554591168",
+   "name": "뼈탄집 강남역점",
+   "category": "한식",
+   "road_address": "서울 강남구 강남대로78길 16",
+   "lat": 37.49494114394892,
+   "lng": 127.03073455445883,
+   "dist_m": 670,
+   "count": 1,
+   "aliases": [
+    "뼈탄집 강남역점"
+   ],
+   "first": "2024-09-25",
+   "last": "2024-09-25",
+   "total_amount": 64500,
+   "avg_amount": 64500,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "573073244",
+   "name": "오토김밥 강남본점",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로4길 46",
+   "lat": 37.4957088240015,
+   "lng": 127.0306489258655,
+   "dist_m": 671,
+   "count": 1,
+   "aliases": [
+    "오토김밥 강남본점"
+   ],
+   "first": "2024-03-19",
+   "last": "2024-03-19",
+   "total_amount": 126000,
+   "avg_amount": 126000,
+   "per_person": 18000,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 18000,
+   "per_person_max": 18000,
+   "per_person_n": 1,
+   "band_dist": {
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1602357460",
+   "name": "오레노유메 강남역점",
+   "category": "술집",
+   "road_address": "서울 강남구 역삼로3길 17-4",
+   "lat": 37.49475012492635,
+   "lng": 127.03075596170383,
+   "dist_m": 671,
+   "count": 1,
+   "aliases": [
+    "오레노유메"
+   ],
+   "first": "2025-09-01",
+   "last": "2025-09-01",
+   "total_amount": 40000,
+   "avg_amount": 40000,
+   "per_person": 8000,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 8000,
+   "per_person_max": 8000,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1907052666",
+   "name": "교대이층집 강남역점",
+   "category": "한식",
+   "road_address": "서울 강남구 강남대로78길 14",
+   "lat": 37.4948988432773,
+   "lng": 127.030554736864,
+   "dist_m": 686,
+   "count": 1,
+   "aliases": [
+    "교대이층집 강남역점"
+   ],
+   "first": "2026-07-09",
+   "last": "2026-07-09",
+   "total_amount": 293500,
+   "avg_amount": 293500,
+   "per_person": 19566,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 19566,
+   "per_person_max": 19566,
+   "per_person_n": 1,
+   "band_dist": {
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "13061752",
+   "name": "봉추찜닭 역삼점",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로25길 20",
+   "lat": 37.501636948159,
+   "lng": 127.035633055194,
+   "dist_m": 693,
+   "count": 1,
+   "aliases": [
+    "봉추찜닭"
+   ],
+   "first": "2025-08-01",
+   "last": "2025-08-01",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "1735306538",
+   "name": "동경규동 강남점",
+   "category": "일식",
+   "road_address": "서울 강남구 테헤란로4길 25",
+   "lat": 37.4968558565361,
+   "lng": 127.030451496098,
+   "dist_m": 699,
+   "count": 1,
+   "aliases": [
+    "동경(주) 강남지점"
+   ],
+   "first": "2025-11-18",
+   "last": "2025-11-18",
+   "total_amount": 104000,
+   "avg_amount": 104000,
+   "per_person": 14857,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 14857,
+   "per_person_max": 14857,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "678067385",
+   "name": "우지커피 역삼래미안점",
+   "category": "카페",
+   "road_address": "서울 강남구 언주로 314",
+   "lat": 37.49589025878429,
+   "lng": 127.0462398107413,
+   "dist_m": 704,
+   "count": 1,
+   "aliases": [
+    "우지커피 역삼래미안"
+   ],
+   "first": "2025-10-14",
+   "last": "2025-10-14",
+   "total_amount": 20800,
+   "avg_amount": 20800,
+   "per_person": 3466,
+   "per_person_band": "0~5,000원",
+   "per_person_band_lo": 0,
+   "per_person_min": 3466,
+   "per_person_max": 3466,
+   "per_person_n": 1,
+   "band_dist": {
+    "0~5,000원": 1
+   }
+  },
+  {
+   "kakao_id": "232531452",
+   "name": "아트스시",
+   "category": "일식",
+   "road_address": "서울 강남구 테헤란로4길 46",
+   "lat": 37.49528725199381,
+   "lng": 127.0302642730498,
+   "dist_m": 707,
+   "count": 1,
+   "aliases": [
+    "아트스시"
+   ],
+   "first": "2024-09-19",
+   "last": "2024-09-19",
+   "total_amount": 43800,
+   "avg_amount": 43800,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "2010348769",
+   "name": "한촌설렁탕 강남세브란스점",
+   "category": "한식",
+   "road_address": "서울 강남구 도곡로 255",
+   "lat": 37.49436311405957,
+   "lng": 127.0460816864651,
+   "dist_m": 708,
+   "count": 1,
+   "aliases": [
+    "한촌설렁탕 강남세브란스점"
+   ],
+   "first": "2024-07-26",
+   "last": "2024-07-26",
+   "total_amount": 79000,
+   "avg_amount": 79000,
+   "per_person": 13166,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 13166,
+   "per_person_max": 13166,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1804081660",
+   "name": "멜팅피자",
+   "category": "양식",
+   "road_address": "서울 강남구 강남대로62길 22",
+   "lat": 37.4905624372994,
+   "lng": 127.033361763027,
+   "dist_m": 722,
+   "count": 1,
+   "aliases": [
+    "멜팅피자(MELTING PIZZA)"
+   ],
+   "first": "2025-10-29",
+   "last": "2025-10-29",
+   "total_amount": 50000,
+   "avg_amount": 50000,
+   "per_person": 8333,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 8333,
+   "per_person_max": 8333,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "980082251",
+   "name": "윤채네김치찌개생삼겹살",
+   "category": "한식",
+   "road_address": "서울 강남구 언주로 314",
+   "lat": 37.495786546293154,
+   "lng": 127.04648626829933,
+   "dist_m": 726,
+   "count": 1,
+   "aliases": [
+    "윤채네 김치찌개"
+   ],
+   "first": "2025-03-18",
+   "last": "2025-03-18",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "1657903520",
+   "name": "주식회사 엔엠에프강남역2호점",
+   "category": "음식점",
+   "road_address": "서울 강남구 강남대로78길 8",
+   "lat": 37.4946962383354,
+   "lng": 127.030080842338,
+   "dist_m": 731,
+   "count": 1,
+   "aliases": [
+    "주식회사 엔엠에프(강남역2호점)"
+   ],
+   "first": "2026-03-13",
+   "last": "2026-03-13",
+   "total_amount": 100000,
+   "avg_amount": 100000,
+   "per_person": 12500,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 12500,
+   "per_person_max": 12500,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "26307587",
+   "name": "라그릴리아 강남스퀘어점",
+   "category": "양식",
+   "road_address": "서울 강남구 강남대로 352",
+   "lat": 37.49437283454316,
+   "lng": 127.02985341955451,
+   "dist_m": 757,
+   "count": 1,
+   "aliases": [
+    "라그릴리아 강남스퀘어점"
+   ],
+   "first": "2026-03-26",
+   "last": "2026-03-26",
+   "total_amount": 62300,
+   "avg_amount": 62300,
+   "per_person": 12460,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 12460,
+   "per_person_max": 12460,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "17203741",
+   "name": "신촌설렁탕 역삼점",
+   "category": "한식",
+   "road_address": "서울 강남구 강남대로94길 59",
+   "lat": 37.50064323399748,
+   "lng": 127.03216070196916,
+   "dist_m": 764,
+   "count": 1,
+   "aliases": [
+    "신촌설렁탕(역삼점)"
+   ],
+   "first": "2024-05-22",
+   "last": "2024-05-22",
+   "total_amount": 200000,
+   "avg_amount": 200000,
+   "per_person": 14285,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 14285,
+   "per_person_max": 14285,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1105456497",
+   "name": "153구포국수 강남역점",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로4길 6",
+   "lat": 37.4977265207131,
+   "lng": 127.02929723965,
+   "dist_m": 820,
+   "count": 1,
+   "aliases": [
+    "153구포국수 강남역점"
+   ],
+   "first": "2026-07-09",
+   "last": "2026-07-09",
+   "total_amount": 53000,
+   "avg_amount": 53000,
+   "per_person": 8833,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 8833,
+   "per_person_max": 8833,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1413520116",
+   "name": "하르당",
+   "category": "간식",
+   "road_address": "서울 강남구 테헤란로4길 6",
+   "lat": 37.4977274544581,
+   "lng": 127.029164929172,
+   "dist_m": 831,
+   "count": 1,
+   "aliases": [
+    "하르당"
+   ],
+   "first": "2026-02-13",
+   "last": "2026-02-13",
+   "total_amount": 44000,
+   "avg_amount": 44000,
+   "per_person": 11000,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 11000,
+   "per_person_max": 11000,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "26819710",
+   "name": "두두돼지불백",
+   "category": "한식",
+   "road_address": "서울 강남구 도곡로4길 24",
+   "lat": 37.4886304613866,
+   "lng": 127.034116227941,
+   "dist_m": 873,
+   "count": 1,
+   "aliases": [
+    "두두"
+   ],
+   "first": "2024-04-01",
+   "last": "2024-04-01",
+   "total_amount": 35000,
+   "avg_amount": 35000,
+   "per_person": 7000,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 7000,
+   "per_person_max": 7000,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1210393242",
+   "name": "매드포갈릭 강남삼성타운점",
+   "category": "패밀리레스토랑",
+   "road_address": "서울 서초구 서초대로74길 11",
+   "lat": 37.496601724597085,
+   "lng": 127.02694011940008,
+   "dist_m": 1003,
+   "count": 1,
+   "aliases": [
+    "매드포갈릭"
+   ],
+   "first": "2024-02-20",
+   "last": "2024-02-20",
+   "total_amount": 161160,
+   "avg_amount": 161160,
+   "per_person": 8953,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 8953,
+   "per_person_max": 8953,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "12119409",
+   "name": "버거킹 강남대로점",
+   "category": "패스트푸드",
+   "road_address": "서울 강남구 강남대로 406",
+   "lat": 37.498878432916044,
+   "lng": 127.02752560187551,
+   "dist_m": 1008,
+   "count": 1,
+   "aliases": [
+    "버거킹 강남대로점"
+   ],
+   "first": "2024-10-02",
+   "last": "2024-10-02",
+   "total_amount": 100000,
+   "avg_amount": 100000,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "166590741",
+   "name": "남소관 우육도삭면",
+   "category": "중식",
+   "road_address": "서울 강남구 테헤란로1길 19",
+   "lat": 37.4996028439585,
+   "lng": 127.027516820662,
+   "dist_m": 1039,
+   "count": 1,
+   "aliases": [
+    "남소관 우육도삭면"
+   ],
+   "first": "2026-04-02",
+   "last": "2026-04-02",
+   "total_amount": 47400,
+   "avg_amount": 47400,
+   "per_person": 9480,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 9480,
+   "per_person_max": 9480,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "7891890",
+   "name": "별양집",
+   "category": "한식",
+   "road_address": "서울 강남구 테헤란로43길 17",
+   "lat": 37.50435442196001,
+   "lng": 127.04357369867394,
+   "dist_m": 1064,
+   "count": 1,
+   "aliases": [
+    "별양집"
+   ],
+   "first": "2025-03-28",
+   "last": "2025-03-28",
+   "total_amount": 132000,
+   "avg_amount": 132000,
+   "per_person": 13200,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 13200,
+   "per_person_max": 13200,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "27487473",
+   "name": "아랑졸돈까스 선릉직영본점",
+   "category": "일식",
+   "road_address": "서울 강남구 언주로98길 22",
+   "lat": 37.5047517435382,
+   "lng": 127.043632739918,
+   "dist_m": 1106,
+   "count": 1,
+   "aliases": [
+    "아랑졸"
+   ],
+   "first": "2025-01-13",
+   "last": "2025-01-13",
+   "total_amount": 65000,
+   "avg_amount": 65000,
+   "per_person": 13000,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 13000,
+   "per_person_max": 13000,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1152204264",
+   "name": "혜미네떡볶이랑닭발",
+   "category": "분식",
+   "road_address": "서울 강남구 선릉로63길 7",
+   "lat": 37.49719897269,
+   "lng": 127.051670977922,
+   "dist_m": 1194,
+   "count": 1,
+   "aliases": [
+    "혜미네 떡볶이랑 닭발"
+   ],
+   "first": "2026-03-27",
+   "last": "2026-03-27",
+   "total_amount": 55000,
+   "avg_amount": 55000,
+   "per_person": 13750,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 13750,
+   "per_person_max": 13750,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1606153625",
+   "name": "광릉옥 도곡점",
+   "category": "한식",
+   "road_address": "서울 강남구 남부순환로 2753",
+   "lat": 37.4874808614992,
+   "lng": 127.046989939499,
+   "dist_m": 1201,
+   "count": 1,
+   "aliases": [
+    "광릉옥"
+   ],
+   "first": "2025-08-05",
+   "last": "2025-08-05",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "1830318937",
+   "name": "강삼가든",
+   "category": "한식",
+   "road_address": "서울 강남구 강남대로102길 20",
+   "lat": 37.5022608590695,
+   "lng": 127.027311966785,
+   "dist_m": 1206,
+   "count": 1,
+   "aliases": [
+    "강삼가든"
+   ],
+   "first": "2025-11-19",
+   "last": "2025-11-19",
+   "total_amount": 49000,
+   "avg_amount": 49000,
+   "per_person": 12250,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 12250,
+   "per_person_max": 12250,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "423531791",
+   "name": "이름없는 파스타 강남역점",
+   "category": "양식",
+   "road_address": "서울 강남구 봉은사로6길 38",
+   "lat": 37.5025509256314,
+   "lng": 127.027558616199,
+   "dist_m": 1208,
+   "count": 1,
+   "aliases": [
+    "이름없는 파스타"
+   ],
+   "first": "2025-06-17",
+   "last": "2025-06-17",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "1140215039",
+   "name": "뽀모",
+   "category": "양식",
+   "road_address": "서울 강남구 선릉로 334",
+   "lat": 37.4995875574007,
+   "lng": 127.051631911729,
+   "dist_m": 1254,
+   "count": 1,
+   "aliases": [
+    "뽀모"
+   ],
+   "first": "2026-04-10",
+   "last": "2026-04-10",
+   "total_amount": 36100,
+   "avg_amount": 36100,
+   "per_person": 9025,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 9025,
+   "per_person_max": 9025,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "10397965",
+   "name": "미소야 양재점",
+   "category": "일식",
+   "road_address": "서울 서초구 남부순환로356길 15",
+   "lat": 37.4843693519298,
+   "lng": 127.037868083186,
+   "dist_m": 1267,
+   "count": 1,
+   "aliases": [
+    "미소야"
+   ],
+   "first": "2024-11-15",
+   "last": "2024-11-15",
+   "total_amount": 35000,
+   "avg_amount": 35000,
+   "per_person": 11666,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 11666,
+   "per_person_max": 11666,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "16534533",
+   "name": "아구본가첨벙 대치점",
+   "category": "한식",
+   "road_address": "서울 강남구 선릉로64길 5",
+   "lat": 37.49786078886036,
+   "lng": 127.05263040645201,
+   "dist_m": 1289,
+   "count": 1,
+   "aliases": [
+    "아구본가첨벙 대치점"
+   ],
+   "first": "2024-05-14",
+   "last": "2024-05-14",
+   "total_amount": 50000,
+   "avg_amount": 50000,
+   "per_person": 16666,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 16666,
+   "per_person_max": 16666,
+   "per_person_n": 1,
+   "band_dist": {
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1868058600",
+   "name": "소표국수 한티본점",
+   "category": "한식",
+   "road_address": "서울 강남구 선릉로 310",
+   "lat": 37.49725794310799,
+   "lng": 127.05279282645431,
+   "dist_m": 1293,
+   "count": 1,
+   "aliases": [
+    "소표국수"
+   ],
+   "first": "2025-02-04",
+   "last": "2025-02-04",
+   "total_amount": 32000,
+   "avg_amount": 32000,
+   "per_person": 10666,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 10666,
+   "per_person_max": 10666,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1338149995",
+   "name": "주교리3구",
+   "category": "한식",
+   "road_address": "서울 강남구 선릉로 310",
+   "lat": 37.49722188820147,
+   "lng": 127.05282559584454,
+   "dist_m": 1295,
+   "count": 1,
+   "aliases": [
+    "주교리3구"
+   ],
+   "first": "2026-06-08",
+   "last": "2026-06-08",
+   "total_amount": 29000,
+   "avg_amount": 29000,
+   "per_person": 9666,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 9666,
+   "per_person_max": 9666,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "24545891",
+   "name": "소운빙 한티역점",
+   "category": "카페",
+   "road_address": "서울 강남구 선릉로68길 9",
+   "lat": 37.499090739984176,
+   "lng": 127.0524559829081,
+   "dist_m": 1306,
+   "count": 1,
+   "aliases": [
+    "소운빙"
+   ],
+   "first": "2025-06-11",
+   "last": "2025-06-11",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "762864259",
+   "name": "으뜸스시 대치점",
+   "category": "일식",
+   "road_address": "서울 강남구 선릉로64길 12",
+   "lat": 37.4977839021637,
+   "lng": 127.053302084916,
+   "dist_m": 1346,
+   "count": 1,
+   "aliases": [
+    "으뜸스시"
+   ],
+   "first": "2026-05-22",
+   "last": "2026-05-22",
+   "total_amount": 57200,
+   "avg_amount": 57200,
+   "per_person": 19066,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 19066,
+   "per_person_max": 19066,
+   "per_person_n": 1,
+   "band_dist": {
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "614743165",
+   "name": "하나마토 강남점",
+   "category": "술집",
+   "road_address": "서울 서초구 서초대로77길 45",
+   "lat": 37.5017090789745,
+   "lng": 127.02488367635,
+   "dist_m": 1352,
+   "count": 1,
+   "aliases": [
+    "하나마토 논현점"
+   ],
+   "first": "2024-10-28",
+   "last": "2024-10-28",
+   "total_amount": 31900,
+   "avg_amount": 31900,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "1519609589",
+   "name": "만목",
+   "category": "일식",
+   "road_address": "서울 강남구 선릉로82길 9",
+   "lat": 37.502735112787185,
+   "lng": 127.05084355392091,
+   "dist_m": 1354,
+   "count": 1,
+   "aliases": [
+    "만목"
+   ],
+   "first": "2026-01-30",
+   "last": "2026-01-30",
+   "total_amount": 52000,
+   "avg_amount": 52000,
+   "per_person": 13000,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 13000,
+   "per_person_max": 13000,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "791944944",
+   "name": "김밥속으로 강남본점",
+   "category": "분식",
+   "road_address": "서울 강남구 봉은사로2길 17",
+   "lat": 37.5034811221418,
+   "lng": 127.02597562994,
+   "dist_m": 1382,
+   "count": 1,
+   "aliases": [
+    "김밥속으로"
+   ],
+   "first": "2026-03-27",
+   "last": "2026-03-27",
+   "total_amount": 33000,
+   "avg_amount": 33000,
+   "per_person": 8250,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 8250,
+   "per_person_max": 8250,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1285079372",
+   "name": "바다해장집 강남점",
+   "category": "한식",
+   "road_address": "서울 강남구 봉은사로2길 16",
+   "lat": 37.5035631759672,
+   "lng": 127.025690658986,
+   "dist_m": 1408,
+   "count": 1,
+   "aliases": [
+    "바다해장집"
+   ],
+   "first": "2025-12-10",
+   "last": "2025-12-10",
+   "total_amount": 66000,
+   "avg_amount": 66000,
+   "per_person": 22000,
+   "per_person_band": "20,000~25,000원",
+   "per_person_band_lo": 20000,
+   "per_person_min": 22000,
+   "per_person_max": 22000,
+   "per_person_n": 1,
+   "band_dist": {
+    "20,000~25,000원": 1
+   }
+  },
+  {
+   "kakao_id": "2070572711",
+   "name": "해탄 선릉점",
+   "category": "한식",
+   "road_address": "서울 강남구 선릉로86길 15",
+   "lat": 37.50349282365125,
+   "lng": 127.0509243651033,
+   "dist_m": 1410,
+   "count": 1,
+   "aliases": [
+    "해탄"
+   ],
+   "first": "2025-08-06",
+   "last": "2025-08-06",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "420909626",
+   "name": "갓잇 도곡점",
+   "category": "양식",
+   "road_address": "서울 강남구 논현로28길 35",
+   "lat": 37.4841462187239,
+   "lng": 127.044697139653,
+   "dist_m": 1411,
+   "count": 1,
+   "aliases": [
+    "갓잇 도곡점"
+   ],
+   "first": "2026-03-27",
+   "last": "2026-03-27",
+   "total_amount": 79000,
+   "avg_amount": 79000,
+   "per_person": 19750,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 19750,
+   "per_person_max": 19750,
+   "per_person_n": 1,
+   "band_dist": {
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "16621662",
+   "name": "신촌설렁탕 대치점",
+   "category": "한식",
+   "road_address": "서울 강남구 도곡로63길 13",
+   "lat": 37.49780066664336,
+   "lng": 127.05408239224467,
+   "dist_m": 1414,
+   "count": 1,
+   "aliases": [
+    "신촌설렁탕 대치점"
+   ],
+   "first": "2024-04-26",
+   "last": "2024-04-26",
+   "total_amount": 142000,
+   "avg_amount": 142000,
+   "per_person": 14200,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 14200,
+   "per_person_max": 14200,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "56763925",
+   "name": "골목안생태집 도곡본점",
+   "category": "한식",
+   "road_address": "서울 강남구 논현로30길 24",
+   "lat": 37.4838950617445,
+   "lng": 127.04410000507,
+   "dist_m": 1417,
+   "count": 1,
+   "aliases": [
+    "골목안생태집"
+   ],
+   "first": "2026-01-20",
+   "last": "2026-01-20",
+   "total_amount": 112000,
+   "avg_amount": 112000,
+   "per_person": 16000,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 16000,
+   "per_person_max": 16000,
+   "per_person_n": 1,
+   "band_dist": {
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "688308508",
+   "name": "옥소반 대치점",
+   "category": "샤브샤브",
+   "road_address": "서울 강남구 선릉로64길 23",
+   "lat": 37.498297980508,
+   "lng": 127.054173220532,
+   "dist_m": 1432,
+   "count": 1,
+   "aliases": [
+    "옥소반 대치점"
+   ],
+   "first": "2025-11-12",
+   "last": "2025-11-12",
+   "total_amount": 70600,
+   "avg_amount": 70600,
+   "per_person": 17650,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 17650,
+   "per_person_max": 17650,
+   "per_person_n": 1,
+   "band_dist": {
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "13499390",
+   "name": "스위트에삐",
+   "category": "간식",
+   "road_address": "서울 강남구 선릉로64길 23",
+   "lat": 37.498283556120654,
+   "lng": 127.05419130403573,
+   "dist_m": 1433,
+   "count": 1,
+   "aliases": [
+    "스위트 에삐"
+   ],
+   "first": "2025-02-28",
+   "last": "2025-02-28",
+   "total_amount": 17300,
+   "avg_amount": 17300,
+   "per_person": 5766,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 5766,
+   "per_person_max": 5766,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "878735757",
+   "name": "포메인 레드 도곡점",
+   "category": "아시아음식",
+   "road_address": "서울 강남구 언주로30길 21",
+   "lat": 37.4888654077652,
+   "lng": 127.052013501532,
+   "dist_m": 1436,
+   "count": 1,
+   "aliases": [
+    "포메인 레드"
+   ],
+   "first": "2026-07-21",
+   "last": "2026-07-21",
+   "total_amount": 91000,
+   "avg_amount": 91000,
+   "per_person": 11375,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 11375,
+   "per_person_max": 11375,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "764467433",
+   "name": "프레임바이로찌",
+   "category": "카페",
+   "road_address": "서울 강남구 봉은사로2길 12",
+   "lat": 37.503834421735,
+   "lng": 127.025491704022,
+   "dist_m": 1440,
+   "count": 1,
+   "aliases": [
+    "프레임 바이로찌"
+   ],
+   "first": "2026-03-24",
+   "last": "2026-03-24",
+   "total_amount": 59400,
+   "avg_amount": 59400,
+   "per_person": 11880,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 11880,
+   "per_person_max": 11880,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "984589529",
+   "name": "디저트39 대치점",
+   "category": "카페",
+   "road_address": "서울 강남구 선릉로64길 28",
+   "lat": 37.4982455347761,
+   "lng": 127.05458029571,
+   "dist_m": 1466,
+   "count": 1,
+   "aliases": [
+    "디저트 39 대치점"
+   ],
+   "first": "2026-06-23",
+   "last": "2026-06-23",
+   "total_amount": 11200,
+   "avg_amount": 11200,
+   "per_person": 3733,
+   "per_person_band": "0~5,000원",
+   "per_person_band_lo": 0,
+   "per_person_min": 3733,
+   "per_person_max": 3733,
+   "per_person_n": 1,
+   "band_dist": {
+    "0~5,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1455993887",
+   "name": "초록밭",
+   "category": "샐러드",
+   "road_address": "서울 강남구 선릉로 524",
+   "lat": 37.50657996611455,
+   "lng": 127.04806165082881,
+   "dist_m": 1481,
+   "count": 1,
+   "aliases": [
+    "초록밭"
+   ],
+   "first": "2026-07-21",
+   "last": "2026-07-21",
+   "total_amount": 21400,
+   "avg_amount": 21400,
+   "per_person": 7133,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 7133,
+   "per_person_max": 7133,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "26471720",
+   "name": "바르다김선생 논현아크로힐스점",
+   "category": "분식",
+   "road_address": "서울 강남구 언주로 604",
+   "lat": 37.50942083673343,
+   "lng": 127.03818272213476,
+   "dist_m": 1519,
+   "count": 1,
+   "aliases": [
+    "바르다김선생"
+   ],
+   "first": "2024-02-26",
+   "last": "2024-02-26",
+   "total_amount": 146000,
+   "avg_amount": 146000,
+   "per_person": 9733,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 9733,
+   "per_person_max": 9733,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1429820828",
+   "name": "써트커피",
+   "category": "카페",
+   "road_address": "서울 강남구 선릉로100길 26",
+   "lat": 37.50678307148603,
+   "lng": 127.04932736827426,
+   "dist_m": 1567,
+   "count": 1,
+   "aliases": [
+    "써트"
+   ],
+   "first": "2025-08-04",
+   "last": "2025-08-04",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "26965931",
+   "name": "공리특허짬뽕 논현본점",
+   "category": "중식",
+   "road_address": "서울 강남구 논현로115길 10",
+   "lat": 37.5090550674619,
+   "lng": 127.031985607374,
+   "dist_m": 1578,
+   "count": 1,
+   "aliases": [
+    "공리"
+   ],
+   "first": "2025-09-08",
+   "last": "2025-09-08",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "1500281356",
+   "name": "미에뜨",
+   "category": "양식",
+   "road_address": "서울 강남구 양재천로 195",
+   "lat": 37.4828704955127,
+   "lng": 127.046754140653,
+   "dist_m": 1618,
+   "count": 1,
+   "aliases": [
+    "미에뜨"
+   ],
+   "first": "2025-09-22",
+   "last": "2025-09-22",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "1984787707",
+   "name": "르번미 신세계푸드마켓도곡점",
+   "category": "아시아음식",
+   "road_address": "서울 강남구 언주로30길 57",
+   "lat": 37.4899037946048,
+   "lng": 127.055050268787,
+   "dist_m": 1619,
+   "count": 1,
+   "aliases": [
+    "신세계 푸드마켓 도곡점"
+   ],
+   "first": "2024-10-16",
+   "last": "2024-10-16",
+   "total_amount": 44000,
+   "avg_amount": 44000,
+   "per_person": 14666,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 14666,
+   "per_person_max": 14666,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  },
+  {
+   "kakao_id": "23718055",
+   "name": "새벽집",
+   "category": "한식",
+   "road_address": "서울 서초구 사평대로55길 18",
+   "lat": 37.5048477211479,
+   "lng": 127.022700816302,
+   "dist_m": 1704,
+   "count": 1,
+   "aliases": [
+    "새벽집"
+   ],
+   "first": "2026-07-24",
+   "last": "2026-07-24",
+   "total_amount": 32000,
+   "avg_amount": 32000,
+   "per_person": 16000,
+   "per_person_band": "15,000~20,000원",
+   "per_person_band_lo": 15000,
+   "per_person_min": 16000,
+   "per_person_max": 16000,
+   "per_person_n": 1,
+   "band_dist": {
+    "15,000~20,000원": 1
+   }
+  },
+  {
+   "kakao_id": "618107514",
+   "name": "해화옥 신논현직영점",
+   "category": "한식",
+   "road_address": "서울 강남구 봉은사로1길 29",
+   "lat": 37.5066187884544,
+   "lng": 127.024255341122,
+   "dist_m": 1727,
+   "count": 1,
+   "aliases": [
+    "해화옥"
+   ],
+   "first": "2025-09-04",
+   "last": "2025-09-04",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "595415713",
+   "name": "제타리움비스트로",
+   "category": "양식",
+   "road_address": "서울 강남구 선릉로 607",
+   "lat": 37.5110868350124,
+   "lng": 127.043289190926,
+   "dist_m": 1761,
+   "count": 1,
+   "aliases": [
+    "제타리움비스트로"
+   ],
+   "first": "2025-03-20",
+   "last": "2025-03-20",
+   "total_amount": 0,
+   "avg_amount": 0,
+   "per_person": null,
+   "per_person_band": "인원 미상",
+   "per_person_band_lo": null,
+   "per_person_n": 0
+  },
+  {
+   "kakao_id": "10419505",
+   "name": "미소야 대치2호점",
+   "category": "일식",
+   "road_address": "서울 강남구 삼성로61길 22",
+   "lat": 37.4990437105662,
+   "lng": 127.058584197688,
+   "dist_m": 1830,
+   "count": 1,
+   "aliases": [
+    "미소야 일원점"
+   ],
+   "first": "2024-06-04",
+   "last": "2024-06-04",
+   "total_amount": 19500,
+   "avg_amount": 19500,
+   "per_person": 9750,
+   "per_person_band": "5,000~10,000원",
+   "per_person_band_lo": 5000,
+   "per_person_min": 9750,
+   "per_person_max": 9750,
+   "per_person_n": 1,
+   "band_dist": {
+    "5,000~10,000원": 1
+   }
+  },
+  {
+   "kakao_id": "1620928944",
+   "name": "영동포차",
+   "category": "술집",
+   "road_address": "서울 강남구 학동로2길 51",
+   "lat": 37.5083938797023,
+   "lng": 127.023706238381,
+   "dist_m": 1903,
+   "count": 1,
+   "aliases": [
+    "영동포차"
+   ],
+   "first": "2025-10-22",
+   "last": "2025-10-22",
+   "total_amount": 61500,
+   "avg_amount": 61500,
+   "per_person": 10250,
+   "per_person_band": "10,000~15,000원",
+   "per_person_band_lo": 10000,
+   "per_person_min": 10250,
+   "per_person_max": 10250,
+   "per_person_n": 1,
+   "band_dist": {
+    "10,000~15,000원": 1
+   }
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+[Unit]
+Description=asdof-momu (식당 방문 기록 — 뭐 먹었지?)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/asdof-momu
+# localhost 에만 바인딩 — nginx 가 앞단에서 리버스 프록시(외부 포트 개방 불필요)
+Environment=LISTEN_ADDR=127.0.0.1:8790
+Environment=STATIC_DIR=/var/lib/asdof-momu/static
+Environment=DATA_FILE=/var/lib/asdof-momu/data.json
+# 관리자 비밀번호는 배포 스크립트가 여기에 써 넣는다(EnvironmentFile 이 이 줄을 덮어씀)
+EnvironmentFile=-/etc/asdof-momu.env
+# StateDirectory 가 /var/lib/asdof-momu 를 만들고 ProtectSystem=strict 의 예외로 쓰기 허용
+StateDirectory=asdof-momu
+User=www-data
+Group=www-data
+Restart=always
+RestartSec=2
+
+# --- 최소 권한 / 메모리 보호 ---
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+# RAM 952MB / swap 0 환경 보호
+MemoryMax=96M
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,124 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>작업 상세</title>
+<link rel="stylesheet" href="_style.css">
+<div class="nav"><b>설비검사 · 기획 목업</b>
+<a href="index.html">개요</a><a href="01_작업목록.html">작업 목록</a><a class="on" href="02_작업상세.html">작업 상세</a><a href="03_충전소목록.html">충전소 목록</a><a href="04_외부폼.html">외부 일정 입력</a></div>
+<div class="wrap">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px">
+<div>
+<h1>서초아파트 <span style="font-size:13px;color:#78808f;font-weight:400">SI-2609-0002</span></h1>
+<div class="sub" style="margin:0">플러그링크 · 서울 서초구 서초대로 77 · 고객번호 7500-01390021</div>
+</div>
+<div style="text-align:right">
+<span class="tag t-recv">정보수신</span> <span class="tag t-work">검토완료</span><br>
+<span style="display:inline-block;margin-top:8px">
+<a href="01_작업목록.html" class="btn sm">목록</a>
+<button class="btn sm">작업 삭제</button>
+</span>
+</div>
+</div>
+
+<div class="cols">
+<div>
+
+<div class="card"><h2>충전소 정보 <span class="mute" style="font-size:11px;font-weight:400">충전소 마스터에서 가져옴</span></h2><div class="body">
+<dl class="kv">
+<dt>CPO</dt><dd>플러그링크</dd>
+<dt>충전소명</dt><dd>서초아파트</dd>
+<dt>도로명 주소</dt><dd>서울 서초구 서초대로 77</dd>
+<dt>고객번호</dt><dd>7500-01390021 <span class="mute">(리스트 원문 그대로)</span></dd>
+<dt>충전기</dt><dd>6대 · 대당 7kW · 모자분할</dd>
+<dt>작업묶음</dt><dd>2026-09-04 업로드 · 플러그링크_정기검사_2609.xlsx</dd>
+</dl>
+</div></div>
+
+<div class="card"><h2>연락처 <span><button class="btn sm">수정</button></span></h2><div class="body">
+<dl class="kv">
+<dt>담당자</dt><dd>김관리</dd>
+<dt>이메일</dt><dd>manage@seocho-apt.kr</dd>
+<dt>휴대폰</dt><dd>010-****-3391</dd>
+</dl>
+<h2 style="font-size:11px;color:#5a6273;margin:14px 0 4px">수정 이력</h2>
+<table style="border:1px solid #eceef2">
+<tr><th>일시</th><th>항목</th><th>이전 → 변경</th><th>확보 경로</th><th>수정자</th></tr>
+<tr><td>09-01 14:20</td><td>휴대폰</td><td class="mute">(없음) → 010-****-3391</td><td>유선 확보</td><td>김운영</td></tr>
+<tr><td>09-04 10:12</td><td>이메일</td><td class="mute">리스트 원본</td><td>리스트</td><td class="mute">시스템</td></tr>
+</table>
+<div class="note">연락처는 충전소에 붙는다. 고치면 해당 채널 토큰이 폐기되고 재발송 시 새 링크가 나간다. QR 토큰은 유지된다.</div>
+</div></div>
+
+<div class="card"><h2>공문</h2><div class="body">
+<dl class="kv">
+<dt>문서번호</dt><dd>SI-2609-0002 <span class="mute">(작업번호와 동일)</span></dd>
+<dt>생성일</dt><dd>2026-09-04 10:12 <span class="mute">· 작업 생성과 동시</span></dd>
+<dt>파일</dt><dd><button class="btn sm">PDF 보기</button> <button class="btn sm">내려받기</button></dd>
+<dt>QR</dt><dd>PDF 안에 인쇄됨 · 진입 1회</dd>
+</dl>
+</div></div>
+
+</div>
+<div>
+
+<div class="card"><h2>발송 · 유입 <span><button class="btn sm">재발송</button></span></h2><div class="body p0">
+<table>
+<tr><th>채널</th><th>수신처</th><th>발송</th><th>결과</th><th>진입</th></tr>
+<tr>
+<td><b>이메일</b></td><td>manage@seocho-apt.kr</td><td>09-01 15:02</td>
+<td><span class="tag t-recv">성공</span></td><td>09-02 09:14 <span class="mute">(2회)</span></td>
+</tr>
+<tr>
+<td><b>알림톡</b></td><td>010-****-3391</td><td>09-01 15:02</td>
+<td><span class="tag t-recv">성공</span> <span class="mute">09-01 15:44 확정</span></td><td class="mute">미진입</td>
+</tr>
+<tr>
+<td><b>QR</b></td><td class="mute">공문 PDF 인쇄</td><td class="mute">-</td><td class="mute">-</td><td>09-02 11:30 <span class="mute">(1회)</span></td>
+</tr>
+</table>
+</div>
+<div class="body" style="padding-top:12px">
+<div class="note" style="margin:0">알림톡은 읽음 여부를 알 수 없어 <b>열람 = 링크 진입</b>으로 판단한다. 발송 결과는 최대 24시간까지 미확정이라 에스컬레이션 타이머는 <b>결과 확정 시각</b>부터 센다.</div>
+</div></div>
+
+<div class="card"><h2>접수 내용 <span class="mute" style="font-size:11px;font-weight:400">QR 유입 · 09-02 11:34 제출</span></h2><div class="body">
+<dl class="kv">
+<dt>관리주체 담당자</dt><dd>김관리 · 010-****-3391</dd>
+<dt>전기안전관리자</dt><dd>박안전 · 010-****-7742</dd>
+<dt>희망 검사일</dt><dd>2026-09-22 · 2026-09-24 · 2026-09-26</dd>
+<dt>희망 시간대</dt><dd>오전</dd>
+<dt>특이사항</dt><dd>지하 2층 주차장. 정문 경비실에서 출입증 수령 필요.</dd>
+<dt>입력 경로</dt><dd>외부 폼 (QR) <span class="mute">· IP 121.xxx.xxx.14</span></dd>
+</dl>
+<div style="margin-top:10px"><button class="btn sm">접수 해제</button> <span class="mute" style="font-size:11px">해제하면 링크가 다시 열리고 새 접수를 받는다</span></div>
+</div></div>
+
+<div class="card"><h2>업무 진행 <span class="mute" style="font-size:11px;font-weight:400">SE 수동 체크</span></h2><div class="body">
+<div class="step">
+<div class="done">검토완료</div><div class="now">신청완료</div><div>일정확정</div><div>검사완료</div>
+</div>
+<dl class="kv">
+<dt>검토완료</dt><dd>09-02 16:40 · 김운영</dd>
+<dt>신청완료</dt><dd><input type="text" placeholder="KESCO 접수번호 (선택)" style="width:180px"> <button class="btn sm pri">체크</button></dd>
+<dt>일정확정</dt><dd class="mute">확정 검사일 입력</dd>
+<dt>검사완료</dt><dd class="mute">검사일 입력</dd>
+</dl>
+<div class="note">고객사가 KESCO에서 처리한 결과를 SE가 눌러 기록한다. 결제·정산은 관리하지 않는다.</div>
+</div></div>
+
+<div class="card"><h2>검사필증</h2><div class="body">
+<p class="mute" style="margin:0 0 10px;font-size:12px">등록된 필증이 없다.</p>
+<button class="btn">파일 선택</button> <input type="text" placeholder="발급일" style="width:110px"> <button class="btn pri">등록</button>
+<div class="note">필증을 등록하면 시스템 상태가 <b>필증수령</b>으로 바뀐다. 검사 완료 후 보관하는 정보는 필증이 전부다.</div>
+</div></div>
+
+<div class="card"><h2>상태 이력</h2><div class="body p0">
+<table>
+<tr><th>일시</th><th>축</th><th>변경</th><th>주체</th></tr>
+<tr><td>09-02 16:40</td><td>수동</td><td>미체크 → 검토완료</td><td>김운영</td></tr>
+<tr><td>09-02 11:34</td><td>시스템</td><td>공문발송 → 정보수신</td><td class="mute">시스템</td></tr>
+<tr><td>09-01 15:44</td><td>시스템</td><td>검증완료 → 공문발송</td><td class="mute">시스템</td></tr>
+<tr><td>09-04 10:12</td><td>시스템</td><td class="mute">(작업 생성) → 검증완료</td><td class="mute">시스템</td></tr>
+</table>
+</div></div>
+
+</div>
+</div>
+</div></html>

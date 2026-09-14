@@ -1,0 +1,81 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>충전소 목록</title>
+<link rel="stylesheet" href="_style.css">
+<div class="nav"><b>설비검사 · 기획 목업</b>
+<a href="index.html">개요</a><a href="01_작업목록.html">작업 목록</a><a href="02_작업상세.html">작업 상세</a><a class="on" href="03_충전소목록.html">충전소 목록</a><a href="04_외부폼.html">외부 일정 입력</a></div>
+<div class="wrap">
+<h1>충전소 목록</h1>
+<p class="sub">업로드된 전건의 메타 정보. 비대상·보류도 여기 남는다. <b>기존 PMS 충전소와는 별개 테이블</b>이고 병합은 수동으로 진행한다. 작업 흐름과 별개로 관리된다.</p>
+
+<div class="card"><h2>업로드 이력 <span><button class="btn sm pri">엑셀 업로드</button></span></h2><div class="body p0">
+<table>
+<tr><th>업로드 일시</th><th>CPO</th><th>파일</th><th>행 수</th><th>업로더</th></tr>
+<tr><td>2026-09-04 10:12</td><td>플러그링크</td><td>플러그링크_정기검사_2609.xlsx</td><td>128</td><td>김운영</td></tr>
+<tr><td>2026-08-12 09:40</td><td>에버온</td><td>에버온_정기검사_2608.xlsx</td><td>64</td><td>김운영</td></tr>
+</table>
+</div>
+<div class="body" style="padding-top:12px">
+<div class="note" style="margin:0">업로드는 <b>어떤 파일이 언제 올라왔는지</b>만 기록한다. 이 key로 충전소 마스터를 upsert하고, 판정이 대상인 건에 작업을 만든다. 작업묶음 단위로도 쓰인다.</div>
+</div></div>
+
+<div class="card">
+<div class="body" style="border-bottom:1px solid #eceef2">
+<div class="filter">
+<span><label>CPO</label><select><option>전체</option><option selected>플러그링크</option><option>에버온</option></select></span>
+<span><label>판정</label><select><option>전체</option><option>대상</option><option>비대상</option><option selected>보류</option></select></span>
+<span><label>작업</label><select><option>전체</option><option>생성됨</option><option>미생성</option></select></span>
+<span><label>PMS 충전소</label><select><option>전체</option><option>연결됨</option><option>미연결</option></select></span>
+<input type="text" placeholder="충전소명 · 주소 · 고객번호" style="width:220px">
+<button class="btn">조회</button>
+</div>
+</div>
+<div class="body p0" style="overflow-x:auto">
+<table>
+<tr><th>CPO</th><th>충전소명</th><th>도로명 주소</th><th>고객번호</th><th>대수</th><th>용량</th><th>수전방식</th><th>판정</th><th>작업</th><th>PMS 충전소</th><th>최근 업로드</th></tr>
+<tr>
+<td>플러그링크</td><td>서초아파트</td><td>서울 서초구 서초대로 77</td><td>7500-01390021</td><td>6</td><td>7kW</td><td>모자분할</td>
+<td><span class="tag t-tgt">대상</span></td><td><a href="02_작업상세.html">SI-2609-0002</a></td><td class="mute">미연결 <button class="btn sm">연결</button></td><td>09-04</td>
+</tr>
+<tr>
+<td>플러그링크</td><td>강남타워</td><td>서울 강남구 테헤란로 152</td><td>7500-01384478</td><td>4</td><td>7kW</td><td>모자분할</td>
+<td><span class="tag t-tgt">대상</span></td><td><a href="02_작업상세.html">SI-2609-0001</a></td><td>강남타워 <span class="mute">#3821</span></td><td>09-04</td>
+</tr>
+<tr style="background:#fffdf7">
+<td>플러그링크</td><td>청담상가</td><td>서울 강남구 도산대로 442</td><td>01371009</td><td>1</td><td>7kW</td><td>한전불입</td>
+<td><span class="tag t-hold">보류</span></td>
+<td colspan="3"><span class="mute" style="font-size:11px">용량 정보 불충분 · 원본 PDF 확인 필요</span> &nbsp; <button class="btn sm pri">대상 확정</button> <button class="btn sm">비대상 확정</button></td>
+</tr>
+<tr style="background:#fffdf7">
+<td>플러그링크</td><td>신사빌딩</td><td>서울 강남구 압구정로 210</td><td class="mute">(없음)</td><td>3</td><td>7kW</td><td>한전불입</td>
+<td><span class="tag t-hold">보류</span></td>
+<td colspan="3"><span class="mute" style="font-size:11px">고객번호 누락</span> &nbsp; <button class="btn sm pri">대상 확정</button> <button class="btn sm">비대상 확정</button></td>
+</tr>
+<tr>
+<td>플러그링크</td><td>대치오피스</td><td>서울 강남구 남부순환로 2933</td><td>01358742</td><td>1</td><td>42kW</td><td>한전불입</td>
+<td><span class="tag t-not">비대상</span></td><td class="mute" colspan="2">총 용량 42kW · 기준 75kW 미만</td><td>09-04</td>
+</tr>
+<tr>
+<td>에버온</td><td>잠실타워</td><td>서울 송파구 올림픽로 300</td><td>7500-01288001</td><td>8</td><td>7kW</td><td>모자분할</td>
+<td><span class="tag t-tgt">대상</span></td><td>SI-2608-0117</td><td>잠실타워 <span class="mute">#2914</span></td><td>08-12</td>
+</tr>
+<tr>
+<td>에버온</td><td>강동센터</td><td>서울 강동구 천호대로 1077</td><td>01291882</td><td>4</td><td>7kW</td><td>모자분할</td>
+<td><span class="tag t-tgt">대상</span></td><td class="mute">삭제됨 <button class="btn sm">작업 생성</button></td><td class="mute">미연결</td><td>08-12</td>
+</tr>
+</table>
+</div>
+<div class="bar" style="border-bottom:0;border-top:1px solid #eceef2;justify-content:center">
+<span class="mute">1 2 3 4 5 · 총 192건</span>
+</div>
+</div>
+
+<div class="card" style="max-width:900px"><h2>화면 메모</h2><div class="body">
+<table>
+<tr><th style="width:150px">항목</th><th>내용</th></tr>
+<tr><td>upsert</td><td>재업로드하면 같은 충전소는 갱신된다. 지금 키는 <b>CPO + 고객번호</b>. 고객번호가 비거나 겹치는 리스트가 나오면 충전소명·주소 조합으로 바꿔야 한다</td></tr>
+<tr><td>연락처 보호</td><td>upsert 때 연락처는 덮어쓰지 않는다. 비어 있을 때만 채운다. SE가 유선으로 확보한 값이 재업로드로 날아가면 안 된다</td></tr>
+<tr><td>보류 확정</td><td>대상으로 확정하면 그 자리에서 작업이 생성되고 공문 PDF가 만들어진다</td></tr>
+<tr><td>작업 재생성</td><td>작업을 삭제해도 충전소는 남는다. 여기서 다시 만들 수 있다</td></tr>
+<tr><td>PMS 충전소 병합</td><td>수동으로 확인해 연결한다. <b>작업 흐름과 무관하게 별개로 진행</b>되므로 미연결이어도 검사 업무는 돌아간다</td></tr>
+</table>
+</div></div>
+</div></html>

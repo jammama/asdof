@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>즐겨찾기 맵렛</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <div id="map"></div>
+    <aside id="sidebar">
+      <header id="sidebar-header">
+        <div id="title-row">
+          <h1>즐겨찾기 맵렛 <span id="count"></span></h1>
+          <button id="bounds-btn">표시된 곳만 검색</button>
+        </div>
+        <div id="controls">
+          <input type="search" id="search" placeholder="식당명 / 지역 / 메뉴 검색">
+          <button id="filter-btn">필터</button>
+        </div>
+        <div id="filter-panel" class="hidden">
+          <section class="f-sec">
+            <label class="f-check"><input type="checkbox" id="f-instant"> 바로예약 가능만 보기</label>
+          </section>
+          <section class="f-sec">
+            <h4>시도 <small>(다중선택)</small></h4>
+            <div id="f-sido" class="chips"></div>
+          </section>
+          <section class="f-sec">
+            <h4>카테고리 <small>(다중선택)</small></h4>
+            <div id="f-cat" class="chips"></div>
+          </section>
+          <section class="f-sec">
+            <h4>예약 일자 <small>(여러 날짜 추가 · 하나라도 가능하면 표시)</small></h4>
+            <div class="date-add">
+              <input type="date" id="f-date-input">
+              <button id="f-date-add" type="button">추가</button>
+            </div>
+            <div id="f-dates" class="chips"></div>
+          </section>
+          <section class="f-sec">
+            <h4>예약 시간 <small>(다중선택 · 하나라도 열려있으면 표시)</small></h4>
+            <div id="f-hours" class="chips"></div>
+          </section>
+          <section class="f-sec">
+            <h4>가격대 (1인 기준) <span id="f-price-label"></span></h4>
+            <div class="range-wrap">
+              <div class="range-track"><div class="range-fill" id="range-fill"></div></div>
+              <input type="range" id="f-price-lo" min="0" max="11" step="1" value="0">
+              <input type="range" id="f-price-hi" min="0" max="11" step="1" value="11">
+            </div>
+          </section>
+          <button id="f-reset">초기화</button>
+        </div>
+      </header>
+      <div id="split">
+        <div id="list-wrap">
+          <table id="list">
+            <thead>
+              <tr>
+                <th data-key="name">식당명 <span class="arrow"></span></th>
+                <th data-key="sido">시도 <span class="arrow"></span></th>
+                <th data-key="gungu">군구 <span class="arrow"></span></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <section id="mini-menu">
+          <div id="mini-menu-head">
+            <div>
+              <button id="mini-detail-btn">상세</button>
+              <button id="mini-naver-btn">네이버검색</button>
+            </div>
+            <button id="mini-menu-close" aria-label="닫기">&times;</button>
+          </div>
+          <div id="mini-menu-name"></div>
+          <div id="mini-menu-body"></div>
+        </section>
+      </div>
+    </aside>
+    <section id="detail">
+      <button id="detail-close" aria-label="닫기">&times;</button>
+      <div id="detail-placeholder">식당을 선택하면<br>상세정보와 메뉴가 표시됩니다</div>
+      <div id="detail-body"></div>
+    </section>
+  </div>
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=f828a7fc8b831cd61ef2df06a93d4b11&libraries=clusterer,services&autoload=false"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1228 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>회의실 자동 예약</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232f6f4e'/%3E%3Cpath d='M9 14h14M9 19h9' stroke='%23fff' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='23' cy='10' r='3.2' fill='%23ffd166'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f6f7f5; --panel:#ffffff; --panel-2:#f0f2ef; --line:#dfe3dd;
+  --ink:#1c211d; --ink-2:#5c655e; --ink-3:#8b948c;
+  --accent:#2f6f4e; --accent-ink:#ffffff; --accent-soft:#e4efe8;
+  --warn:#a8631a; --warn-soft:#fbf0e0; --danger:#a83232; --danger-soft:#fbe6e6;
+  --ok:#2f6f4e; --free:#dcefe3; --busy:#e7e3dd; --pick:#2f6f4e;
+  --radius:10px; --shadow:0 1px 2px rgba(0,0,0,.05), 0 6px 18px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#141715; --panel:#1c201d; --panel-2:#232824; --line:#2e342f;
+    --ink:#e7ece8; --ink-2:#a3ada6; --ink-3:#727c75;
+    --accent:#5fb287; --accent-ink:#0f1411; --accent-soft:#22302a;
+    --warn:#d99a4e; --warn-soft:#332a1c; --danger:#e08585; --danger-soft:#33211f;
+    --ok:#5fb287; --free:#25392f; --busy:#2a2e2b; --pick:#5fb287;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.25);
+  }
+}
+*{box-sizing:border-box}
+/* 작성자 스타일시트의 display 지정이 UA 의 [hidden]{display:none} 을 이겨 버린다.
+   .gate(grid) · .badge(inline-flex) 처럼 display 를 가진 요소를 hidden 으로 감출 수 있게 못 박는다. */
+[hidden]{display:none !important}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:15px/1.55 -apple-system,BlinkMacSystemFont,"Pretendard","Apple SD Gothic Neo","Segoe UI",Roboto,"Noto Sans KR",sans-serif;}
+h1,h2,h3{margin:0;font-weight:650;letter-spacing:-.01em}
+a{color:var(--accent)}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 18px 64px}
+
+/* 헤더 */
+header.top{display:flex;align-items:center;gap:12px;padding:6px 0 18px;flex-wrap:wrap}
+.logo{width:30px;height:30px;border-radius:8px;background:var(--accent);color:var(--accent-ink);
+  display:grid;place-items:center;font-size:16px;flex:none}
+header.top h1{font-size:18px}
+header.top .sp{flex:1}
+
+/* 카드 */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden}
+.card>h2{font-size:14px;padding:13px 16px;border-bottom:1px solid var(--line);
+  background:var(--panel-2);display:flex;align-items:center;gap:8px}
+.card>h2 .sp{flex:1}
+.card .body{padding:16px}
+.card .body.tight{padding:12px 16px}
+
+/* 폼 */
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+label{display:block;font-size:12px;color:var(--ink-2);margin-bottom:5px;font-weight:550}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;
+  background:var(--bg);color:var(--ink);font:inherit;font-size:14px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+input[type=checkbox]{width:auto;margin:0}
+.check{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink);margin:0}
+.check input{flex:none}
+.hint{font-size:12px;color:var(--ink-3);margin-top:5px}
+table.kv{border-collapse:collapse;font-size:12px;width:100%}
+table.kv th,table.kv td{padding:6px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.kv th{color:var(--ink-3);font-weight:600}
+table.kv td.name{white-space:nowrap;font-weight:600}
+table.kv td.miss{color:var(--danger)}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:12px;margin:0}
+legend{font-size:12px;color:var(--ink-2);padding:0 6px;font-weight:550}
+
+/* 버튼 */
+button{font:inherit;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);
+  background:var(--panel-2);color:var(--ink);cursor:pointer;font-weight:550}
+button:hover{border-color:var(--ink-3)}
+button:disabled{opacity:.5;cursor:not-allowed}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+button.danger{background:transparent;color:var(--danger);border-color:var(--danger)}
+button.small{padding:5px 10px;font-size:13px}
+button.day{display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 9px;line-height:1.15}
+button.day .to{font-size:10px;font-weight:600;opacity:.72}
+button.link{background:none;border:none;color:var(--accent);padding:4px 6px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row.end{justify-content:flex-end}
+
+/* 배지·상태 */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;
+  padding:3px 9px;border-radius:999px;background:var(--panel-2);color:var(--ink-2);border:1px solid var(--line)}
+.badge.on{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.badge.off{background:var(--busy);color:var(--ink-3)}
+.badge.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.badge.err{background:var(--danger-soft);color:var(--danger);border-color:transparent}
+.dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.pulse{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+
+/* 상태 요약 */
+.status{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+.stat .k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-3);margin-bottom:3px}
+.stat .v{font-size:17px;font-weight:650;font-variant-numeric:tabular-nums}
+.stat .s{font-size:12px;color:var(--ink-2)}
+
+/* 탭 */
+nav.tabs{display:flex;gap:2px;flex-wrap:wrap;margin-bottom:14px;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:4px}
+nav.tabs button{background:none;border:none;padding:7px 13px;border-radius:7px;color:var(--ink-2);font-weight:550}
+nav.tabs button[aria-selected=true]{background:var(--accent-soft);color:var(--accent)}
+section[hidden]{display:none}
+
+/* 대상 목록 */
+.target{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;
+  padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);margin-bottom:8px}
+.target .n{width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);
+  display:grid;place-items:center;font-size:11px;font-weight:700}
+.target .t{font-weight:600;font-size:14px}
+.target .m{font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.empty{padding:22px;text-align:center;color:var(--ink-3);font-size:13px;
+  border:1px dashed var(--line);border-radius:8px}
+
+/* 시간표 */
+.tt-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+table.tt{border-collapse:separate;border-spacing:0;font-size:12px;min-width:900px}
+table.tt th,table.tt td{padding:0;border-bottom:1px solid var(--line)}
+table.tt thead th{position:sticky;top:0;background:var(--panel-2);z-index:2;
+  font-weight:600;color:var(--ink-2);font-size:10.5px;padding:6px 0;text-align:center;white-space:nowrap}
+table.tt th.room{position:sticky;left:0;z-index:3;background:var(--panel-2);text-align:left;
+  padding:6px 10px;min-width:190px;max-width:190px}
+table.tt td.room{position:sticky;left:0;z-index:1;background:var(--panel);padding:7px 10px;
+  min-width:190px;max-width:190px;border-right:1px solid var(--line)}
+table.tt td.room .rn{font-weight:600}
+table.tt td.room .rp{font-size:11px;color:var(--ink-3)}
+td.slot{width:30px;height:26px;border-right:1px solid var(--panel);cursor:pointer;background:var(--busy)}
+td.slot.free{background:var(--free)}
+td.slot.free:hover{background:var(--pick);opacity:.55}
+td.slot.sel{background:var(--pick)}
+td.slot.hh{border-right-color:var(--line)}
+/* 호버한 예약이 차지한 구간을 '한 덩어리'로 감싼다.
+   칸마다 outline 을 두르면 낱개 상자처럼 보이므로, 위·아래는 모든 칸에 긋고
+   좌·우는 양 끝 칸에만 그어 하나의 브래킷이 되게 한다. */
+td.slot.grp{box-shadow:inset 0 2px 0 var(--ink-2),inset 0 -2px 0 var(--ink-2)}
+td.slot.grp.gf{box-shadow:inset 0 2px 0 var(--ink-2),inset 0 -2px 0 var(--ink-2),inset 2px 0 0 var(--ink-2)}
+td.slot.grp.gl{box-shadow:inset 0 2px 0 var(--ink-2),inset 0 -2px 0 var(--ink-2),inset -2px 0 0 var(--ink-2)}
+td.slot.grp.gf.gl{box-shadow:inset 0 2px 0 var(--ink-2),inset 0 -2px 0 var(--ink-2),
+  inset 2px 0 0 var(--ink-2),inset -2px 0 0 var(--ink-2)}
+.tip{position:fixed;z-index:60;max-width:290px;padding:9px 11px;border-radius:8px;
+  background:var(--ink);color:var(--bg);font-size:12.5px;line-height:1.55;
+  box-shadow:0 6px 24px rgba(0,0,0,.3);pointer-events:none}
+.tip .tt{font-weight:650;margin-bottom:2px;word-break:break-all}
+.tip .tm{opacity:.8;font-variant-numeric:tabular-nums}
+.tip .tr{opacity:.6;font-size:11.5px;margin-top:3px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--ink-2);margin-top:9px;flex-wrap:wrap}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
+
+/* 로그 */
+.runs{display:flex;flex-direction:column;gap:8px}
+.run{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel-2)}
+.run>summary{padding:10px 12px;cursor:pointer;display:flex;gap:9px;align-items:center;font-size:13px;list-style:none}
+.run>summary::-webkit-details-marker{display:none}
+.run>summary .when{color:var(--ink-3);font-size:12px;font-variant-numeric:tabular-nums}
+.run>summary .msg{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.log{margin:0;padding:10px 12px;background:var(--panel);border-top:1px solid var(--line);
+  font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;max-height:340px;overflow:auto;white-space:pre-wrap}
+.log .l{display:flex;gap:9px}
+.log .l time{color:var(--ink-3);flex:none;font-variant-numeric:tabular-nums}
+.log .l.warn span{color:var(--warn)}
+.log .l.error span{color:var(--danger)}
+.log .l.success span{color:var(--ok);font-weight:600}
+
+/* 하단 각주 */
+.note{margin:22px 2px 0;padding:13px 15px;border:1px solid var(--line);border-left:3px solid var(--warn);
+  border-radius:8px;background:var(--panel);color:var(--ink-2);font-size:12.5px;line-height:1.7}
+.note b{color:var(--ink)}
+.note code{background:var(--panel-2);padding:1px 5px;border-radius:4px;font-size:12px}
+.note .dim{color:var(--ink-3)}
+
+/* 로그인 */
+.gate{min-height:78vh;display:grid;place-items:center;padding:20px}
+.gate .card{width:100%;max-width:340px;margin:0}
+.gate .body{padding:22px}
+.gate .logo{width:40px;height:40px;font-size:20px;margin:0 auto 14px}
+.gate h2{text-align:center;font-size:16px;margin-bottom:4px}
+.gate p{text-align:center;color:var(--ink-3);font-size:13px;margin:0 0 18px}
+
+/* 토스트 */
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(12px);
+  background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:13.5px;
+  font-weight:550;opacity:0;pointer-events:none;transition:.22s;z-index:50;max-width:88vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.err{background:var(--danger);color:#fff}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+
+<!-- ── 로그인 ── -->
+<div class="gate" id="gate" hidden>
+  <div class="card">
+    <div class="body">
+      <div class="logo">🗓</div>
+      <h2>회의실 자동 예약</h2>
+      <p>관리자 비밀번호를 입력하세요</p>
+      <form id="loginForm">
+        <input type="password" id="loginPw" autocomplete="current-password" placeholder="비밀번호" required>
+        <div style="height:10px"></div>
+        <button class="primary" style="width:100%" type="submit">로그인</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ── 본체 ── -->
+<div class="wrap" id="app" hidden>
+  <header class="top">
+    <div class="logo">🗓</div>
+    <h1>회의실 자동 예약</h1>
+    <span class="badge" id="modeBadge"></span>
+    <span class="sp"></span>
+    <button class="link" id="logoutBtn">로그아웃</button>
+  </header>
+
+  <!-- 상태 -->
+  <div class="card">
+    <div class="body">
+      <div class="status">
+        <div class="stat">
+          <div class="k">자동 예약</div>
+          <div class="v" id="stEnabled">—</div>
+          <div class="s" id="stEnabledSub"></div>
+        </div>
+        <div class="stat">
+          <div class="k">다음 실행</div>
+          <div class="v" id="stNext">—</div>
+          <div class="s" id="stNextSub"></div>
+        </div>
+        <div class="stat">
+          <div class="k">예약 대상 날짜</div>
+          <div class="v" id="stDate">—</div>
+          <div class="s" id="stDateSub"></div>
+        </div>
+        <div class="stat">
+          <div class="k">최근 결과</div>
+          <div class="v" id="stLast">—</div>
+          <div class="s" id="stLastSub"></div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:16px">
+        <button id="runDry">드라이런 실행</button>
+        <button id="runNow" class="primary">지금 예약 시도</button>
+        <button id="runCancel" class="danger" hidden>실행 중단</button>
+        <span class="sp" style="flex:1"></span>
+        <span id="readyWarn" class="badge warn" hidden></span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="booking" aria-selected="true">예약 설정</button>
+    <button role="tab" data-tab="schedule" aria-selected="false">스케줄</button>
+    <button role="tab" data-tab="account" aria-selected="false">계정·보안</button>
+    <button role="tab" data-tab="notion" aria-selected="false">Notion</button>
+    <button role="tab" data-tab="timetable" aria-selected="false">현황 조회</button>
+    <button role="tab" data-tab="logs" aria-selected="false">실행 기록</button>
+  </nav>
+
+  <!-- 예약 설정 -->
+  <section id="tab-booking">
+    <div class="card">
+      <h2>예약 내용</h2>
+      <div class="body">
+        <div class="grid g2">
+          <div><label for="bkSubject">회의명 <span class="hint" style="display:inline">wr_subject</span></label>
+            <input id="bkSubject" placeholder="주간 정기 회의">
+            <div class="hint">사이트가 앞에 <code>[회사명]</code>을 <b>자동으로</b> 붙입니다 —
+              여기엔 회의명만 쓰세요. 직접 <code>[앰버로드]</code>를 넣으면 <code>[앰버로드][앰버로드]…</code>가 됩니다.
+              <span id="bkSubjectPreview"></span></div></div>
+          <div><label for="bkManager">담당자명 <span class="hint" style="display:inline">wr_17</span></label>
+            <input id="bkManager" placeholder="홍길동"></div>
+          <div><label for="bkContact">연락처 <span class="hint" style="display:inline">wr_15</span></label>
+            <input id="bkContact" placeholder="010-0000-0000"></div>
+          <div><label for="bkCount">예약 건수</label>
+            <select id="bkCount"></select>
+            <div class="hint">사이트는 팀당 하루 2건까지 받습니다. 아래 대상을 위에서부터 시도해 이 건수를 채웁니다.</div></div>
+          <div id="bkGapBox"><label for="bkGap">연속 신청 간격</label>
+            <select id="bkGap"></select>
+            <div class="hint">사이트가 같은 계정의 연속 등록을 막습니다(gnuboard 도배 방지, 기본 30초).
+              한 건을 잡은 뒤 이만큼 기다렸다가 다음 건을 신청합니다.</div></div>
+          <div><label for="bkOffset">대상 날짜</label>
+            <select id="bkOffset"></select>
+            <div class="hint" id="bkOffsetHint">실행일 기준.</div></div>
+        </div>
+        <div style="height:12px"></div>
+        <label for="bkContent">본문 내용 <span class="hint" style="display:inline">wr_content</span></label>
+        <input id="bkContent" placeholder="회의할 내용">
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>지정 대상 <span class="sp"></span><span class="hint" id="tgCount"></span></h2>
+      <div class="body">
+        <div class="hint" style="margin:0 0 10px">
+          위에서부터 순서대로 시도해 <b id="tgWant">1건</b>을 확보하면 멈춥니다.
+          실패한 항목은 건너뛰고 다음으로 넘어가므로, 예비 자리를 뒤에 더 넣어두면 폴백 역할을 합니다.
+          조회 없이 곧바로 신청하므로 가장 빠릅니다. 「현황 조회」 탭에서 빈 시간을 클릭해 추가할 수도 있습니다.
+        </div>
+        <div id="targets"></div>
+        <fieldset style="margin-top:12px">
+          <legend>대상 추가</legend>
+          <div class="grid g3">
+            <div><label for="ntBuilding">빌딩</label><select id="ntBuilding"></select></div>
+            <div><label for="ntFloor">층</label><select id="ntFloor"></select></div>
+            <div><label for="ntRoom">회의실</label><select id="ntRoom"></select></div>
+            <div><label for="ntStart">시작</label><select id="ntStart"></select></div>
+            <div><label for="ntSlots">길이</label><select id="ntSlots"></select></div>
+            <div style="display:flex;align-items:flex-end"><button id="ntAdd" style="width:100%">추가</button></div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>폴백 탐색</h2>
+      <div class="body">
+        <label class="check" style="margin-bottom:12px">
+          <input type="checkbox" id="fbEnabled"> 지정 대상이 모두 실패하면 빈 자리를 자동으로 찾는다
+        </label>
+        <div class="grid g3" id="fbFields">
+          <div><label for="fbBuilding">빌딩</label><select id="fbBuilding"></select></div>
+          <div><label for="fbFloor">선호 층</label><select id="fbFloor"></select></div>
+          <div><label for="fbStart">희망 시작</label><select id="fbStart"></select></div>
+          <div><label for="fbWindow">시작 허용 범위</label><select id="fbWindow"></select></div>
+          <div><label for="fbMin">최소 길이</label><select id="fbMin"></select></div>
+          <div><label for="fbMax">최대 길이</label><select id="fbMax"></select></div>
+        </div>
+      </div>
+    </div>
+    <div class="row end"><button class="primary" data-save="booking">예약 설정 저장</button></div>
+  </section>
+
+  <!-- 스케줄 -->
+  <section id="tab-schedule" hidden>
+    <div class="card">
+      <h2>실행 시각</h2>
+      <div class="body">
+        <label class="check" style="margin-bottom:14px">
+          <input type="checkbox" id="scEnabled"> 자동 예약 켜기
+        </label>
+        <div class="grid g2">
+          <div><label for="scFireAt">발사 시각</label>
+            <input id="scFireAt" placeholder="00:00:01.000">
+            <div class="hint">밀리초까지 씁니다. 예약 창은 <b>자정</b>에 롤링되므로 기본값은 <code>00:00:01.000</code> —
+              날짜 경계 직후 1초를 두어 사이트가 창을 다시 계산할 여유를 줍니다. 실행 기록의 「발사 오차」를 보고 조정하세요.</div></div>
+          <div><label>실행 요일</label>
+            <div class="row" id="scDays" style="gap:6px"></div>
+            <div class="hint">아무것도 고르지 않으면 매일 실행합니다.
+              작은 글씨는 그 요일에 실행했을 때 <b>실제로 잡히는 요일</b>입니다 (예약 내용의 「대상 날짜」 기준).</div></div>
+        </div>
+        <div style="height:14px"></div>
+        <div class="grid g3">
+          <div><label for="scWarmup">워밍업 선행</label><select id="scWarmup"></select>
+            <div class="hint">로그인·uid 확보를 끝내 둘 시간</div></div>
+          <div><label for="scUid">uid 풀 크기</label><input id="scUid" type="number" min="1" max="20"></div>
+          <div><label for="scDry">모드</label><select id="scDry">
+            <option value="false">실제 예약</option><option value="true">드라이런(신청 안 함)</option></select></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>재시도</h2>
+      <div class="body">
+        <div class="grid g3">
+          <div><label for="rtInterval">간격 (ms)</label><input id="rtInterval" type="number" min="50" max="5000" step="50"></div>
+          <div><label for="rtDuration">총 시간 (초)</label><input id="rtDuration" type="number" min="1" max="120"></div>
+          <div><label for="rtAttempts">최대 횟수</label><input id="rtAttempts" type="number" min="1" max="200"></div>
+        </div>
+        <div class="hint" style="margin-top:9px">공용 서버이므로 상한을 넘겨 요청하지 않습니다. 3회 연속 실패하면 현황을 다시 조회해 대상을 고쳐 잡습니다.</div>
+      </div>
+    </div>
+    <div class="row end"><button class="primary" data-save="schedule">스케줄 저장</button></div>
+  </section>
+
+  <!-- 계정 -->
+  <section id="tab-account" hidden>
+    <div class="card">
+      <h2>jointips 로그인 <span class="sp"></span><span class="badge" id="siteBadge"></span></h2>
+      <div class="body">
+        <div class="grid g2">
+          <div><label for="acUser">아이디</label><input id="acUser" autocomplete="off"></div>
+          <div><label for="acPw">비밀번호</label><input id="acPw" type="password" autocomplete="new-password" placeholder="변경할 때만 입력">
+            <div class="hint">저장된 비밀번호는 서버에서 암호화되며 이 화면으로 다시 내려오지 않습니다.</div></div>
+        </div>
+        <div class="row" style="margin-top:14px">
+          <button class="primary" id="acSave">자격증명 저장</button>
+          <button id="acTest">로그인 테스트</button>
+          <span class="sp" style="flex:1"></span>
+          <button class="danger small" id="acClear">저장된 비밀번호 지우기</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>이 관리 페이지의 비밀번호</h2>
+      <div class="body">
+        <div class="grid g3">
+          <div><label for="pwCur">현재 비밀번호</label><input id="pwCur" type="password" autocomplete="current-password"></div>
+          <div><label for="pwNew">새 비밀번호</label><input id="pwNew" type="password" autocomplete="new-password"></div>
+          <div style="display:flex;align-items:flex-end"><button id="pwSave" style="width:100%">변경</button></div>
+        </div>
+        <div class="hint" style="margin-top:9px">8자 이상. 변경하면 다른 기기의 로그인 세션이 모두 끊깁니다.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>사이트 접속 설정</h2>
+      <div class="body">
+        <div class="grid g2">
+          <div><label for="stBase">사이트 주소</label><input id="stBase"></div>
+          <div><label for="stTimeout">HTTP 타임아웃 (초)</label><input id="stTimeout" type="number" min="1" max="120"></div>
+        </div>
+        <div style="height:12px"></div>
+        <label for="stUA">User-Agent</label><input id="stUA">
+        <div class="row end" style="margin-top:14px"><button data-save="site">저장</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Notion -->
+  <section id="tab-notion" hidden>
+    <div class="card">
+      <h2>Notion 기록 <span class="sp"></span><span class="badge" id="notionBadge"></span></h2>
+      <div class="body">
+        <label class="check" style="margin-bottom:14px">
+          <input type="checkbox" id="noEnabled"> 예약 결과를 Notion 데이터베이스에 기록
+        </label>
+        <div class="grid g2">
+          <div><label for="noToken">통합 토큰</label><input id="noToken" type="password" placeholder="변경할 때만 입력 (ntn_…)">
+            <div class="hint">암호화 저장되며 화면으로 다시 내려오지 않습니다.</div></div>
+          <div><label for="noDB">데이터베이스 ID 또는 링크</label><input id="noDB" placeholder="https://notion.so/… 를 붙여넣어도 됩니다"></div>
+        </div>
+        <div style="height:12px"></div>
+        <label class="check"><input type="checkbox" id="noFail"> 실패했을 때도 기록 남기기 (회의명 앞에 [실패] 표시)</label>
+        <div class="row" style="margin-top:14px">
+          <button class="primary" id="noSave">저장</button>
+          <button id="noTest">연결 테스트</button>
+          <button id="noWrite">등록 테스트</button>
+          <label class="check" style="margin:0 0 0 4px"><input type="checkbox" id="noKeep"> 테스트 행 남기기</label>
+        </div>
+        <div id="noSchema" class="hint" style="margin-top:12px"></div>
+        <div id="noWriteResult" style="margin-top:12px"></div>
+        <div class="hint" style="margin-top:10px">
+          Notion 에서 해당 DB → ⋯ → 연결 → 통합을 추가해야 API 가 DB 를 볼 수 있습니다.
+          속성은 이름으로 알아서 매칭합니다: <b>현황 / 회의실·장소 / 시간 / 예약자·담당 / 날짜(date) / 제목(title)</b>.
+        </div>
+        <div class="hint" style="margin-top:6px">
+          <b>연결 테스트</b>는 DB 를 읽을 수 있는지만 봅니다. <b>등록 테스트</b>는 실제로 행 하나를 만들어
+          어느 칸에 무엇이 들어갔는지 되읽어 보여주고, 기본적으로 그 행을 휴지통으로 되돌립니다.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 현황 조회 -->
+  <section id="tab-timetable" hidden>
+    <div class="card">
+      <h2>회의실 현황</h2>
+      <div class="body">
+        <div class="row">
+          <div style="width:170px"><label for="ttDate">날짜</label><input id="ttDate" type="date"></div>
+          <div style="width:170px"><label for="ttBuilding">빌딩</label><select id="ttBuilding"></select></div>
+          <div style="display:flex;align-items:flex-end"><button class="primary" id="ttLoad">조회</button></div>
+        </div>
+        <div class="hint" style="margin-top:10px">빈 칸을 클릭하면 시작 시각, 한 번 더 클릭하면 끝 시각이 되어 지정 대상으로 추가됩니다.</div>
+        <div id="ttResult" style="margin-top:14px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 하단 각주 -->
+  <div class="note" id="skewNote" hidden>
+    <b>참고 · jointips 서버 시계</b>
+    예약 창(오늘 ~ +6일)은 jointips 서버가 <b>자기 시계로</b> 계산합니다. 그런데 그 시계가 실제보다
+    <b id="skAmount">—</b> (지금 그쪽은 <b id="skSiteNow">—</b>). 그래서 새 날짜가 실제로 열리는 건
+    우리 자정이 아니라 <b id="skOpen">—</b>이고, 발사 시각 기본값 <code id="skFire">—</code>은 여기에 맞춘 값입니다.
+    <br>
+    jointips 가 시계를 고치면 이 숫자가 0에 가까워집니다 — 그때는 발사 시각을 <code>00:00:01</code> 근처로
+    되돌리세요. <span class="dim">마지막 측정 <span id="skWhen">—</span></span>
+  </div>
+
+  <!-- 실행 기록 -->
+  <section id="tab-logs" hidden>
+    <div class="card">
+      <h2>실행 기록 <span class="sp"></span><button class="link small" id="logRefresh">새로고침</button></h2>
+      <div class="body tight"><div class="runs" id="runs"></div></div>
+    </div>
+  </section>
+</div>
+
+<div id="toast"></div>
+<div id="tip" class="tip" hidden></div>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const el = (tag, cls, txt) => { const n = document.createElement(tag); if (cls) n.className = cls; if (txt != null) n.textContent = txt; return n; };
+
+let STATE = null, CODES = { buildings: [], floors: [], rooms: [] }, TARGETS = [], poll = null, pollMs = 0;
+
+/* ── 공통 ─────────────────────────────────────────── */
+function toast(msg, isErr) {
+  const t = $("toast");
+  t.textContent = msg; t.className = "show" + (isErr ? " err" : "");
+  clearTimeout(t._t); t._t = setTimeout(() => (t.className = ""), isErr ? 4600 : 2600);
+}
+async function api(path, body) {
+  const opt = { method: body === undefined ? "GET" : "POST", headers: { "Content-Type": "application/json" } };
+  if (body !== undefined) opt.body = JSON.stringify(body);
+  const res = await fetch(path, opt);
+  let data = {};
+  try { data = await res.json(); } catch (_) {}
+  if (res.status === 401 && path !== "/api/login") { showGate(); throw new Error("로그인이 필요합니다"); }
+  if (!res.ok) throw new Error(data.error || ("요청 실패 (" + res.status + ")"));
+  return data;
+}
+const SLOTS = (() => { const a = []; for (let m = 9 * 60; m <= 20 * 60 + 30; m += 30) a.push(hhmm(m)); return a; })();
+function hhmm(m) { return String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0"); }
+function toMin(s) { const [h, m] = s.split(":").map(Number); return h * 60 + m; }
+function endOf(start, slots) { return hhmm(toMin(start) + slots * 30); }
+function fill(sel, items, value) {
+  sel.innerHTML = "";
+  for (const it of items) { const o = el("option", null, it.label); o.value = it.value; sel.appendChild(o); }
+  if (value !== undefined && value !== null) sel.value = String(value);
+}
+// "8.26(수) 00:00:01" — 24시간 표기. ko-KR 로케일의 "오전 12:00" 은 자정인지 정오인지 헷갈린다.
+function fmtTime(iso) {
+  if (!iso) return "—";
+  const d = new Date(iso), p = (n) => String(n).padStart(2, "0");
+  return (d.getMonth() + 1) + "." + d.getDate() + "(" + "일월화수목금토"[d.getDay()] + ") " +
+    p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
+}
+// "2026-09-07 (일)" — new Date("2026-09-07") 은 UTC 로 읽혀 하루 밀릴 수 있어서
+// 연·월·일을 직접 넘긴다.
+function withWeekday(ymd) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd);
+  if (!m) return ymd;
+  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  return ymd + " (" + "일월화수목금토"[d.getDay()] + ")";
+}
+function fmtClock(iso) { const d = new Date(iso);
+  return d.toLocaleTimeString("ko-KR", { hour12: false }) + "." + String(d.getMilliseconds()).padStart(3, "0"); }
+
+/* ── 로그인 ───────────────────────────────────────── */
+function showGate() { $("gate").hidden = false; $("app").hidden = true; if (poll) { clearInterval(poll); poll = null; } }
+function showApp() { $("gate").hidden = true; $("app").hidden = false; }
+
+// 로그인/로그아웃 뒤에는 페이지를 다시 띄운다.
+// 화면을 만드는 경로가 "최초 진입" 하나로 통일되므로 로그인 직후에만 생기는 반쯤 초기화된 상태가 없고,
+// formLoaded·TARGETS·STATE 같은 이전 세션의 잔여 상태도 함께 정리된다.
+$("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  try { await api("/api/login", { password: $("loginPw").value }); $("loginPw").value = ""; location.reload(); }
+  catch (err) { toast(err.message, true); }
+});
+$("logoutBtn").addEventListener("click", async () => {
+  try { await api("/api/logout", {}); } finally { location.reload(); }
+});
+
+/* ── 탭 ───────────────────────────────────────────── */
+document.querySelectorAll("nav.tabs button").forEach((b) => b.addEventListener("click", () => {
+  document.querySelectorAll("nav.tabs button").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
+  document.querySelectorAll("#app > section").forEach((s) => (s.hidden = s.id !== "tab-" + b.dataset.tab));
+  hideTip(null);
+}));
+
+/* ── 선택지 채우기 ────────────────────────────────── */
+function buildingOptions(withAll) {
+  const a = withAll ? [{ value: "", label: "전체" }] : [];
+  return a.concat(CODES.buildings.map((b) => ({ value: b.code, label: b.name })));
+}
+function floorOptions(building, withAll) {
+  const a = withAll ? [{ value: "", label: "층 무관" }] : [];
+  return a.concat(CODES.floors.filter((f) => !building || f.building === building)
+    .map((f) => ({ value: f.code, label: f.name })));
+}
+function roomOptions(building, floor) {
+  return CODES.rooms.filter((r) => (!building || r.building === building) && (!floor || r.floor === floor))
+    .map((r) => ({ value: String(r.room_id), label: r.name + " (" + r.capacity + ")" }));
+}
+const slotOptions = SLOTS.map((s) => ({ value: s, label: s }));
+const lenOptions = Array.from({ length: 8 }, (_, i) => ({ value: String(i + 1), label: (i + 1) * 30 + "분" + (i >= 1 ? " (" + ((i + 1) / 2) + "시간)" : "") }));
+
+function wireCascade(bSel, fSel, rSel) {
+  const sync = () => {
+    const b = bSel.value;
+    const prevF = fSel.value;
+    fill(fSel, floorOptions(b, false));
+    if ([...fSel.options].some((o) => o.value === prevF)) fSel.value = prevF;
+    const prevR = rSel.value;
+    fill(rSel, roomOptions(b, fSel.value));
+    if ([...rSel.options].some((o) => o.value === prevR)) rSel.value = prevR;
+  };
+  bSel.addEventListener("change", sync);
+  fSel.addEventListener("change", () => {
+    const prevR = rSel.value;
+    fill(rSel, roomOptions(bSel.value, fSel.value));
+    if ([...rSel.options].some((o) => o.value === prevR)) rSel.value = prevR;
+  });
+  return sync;
+}
+
+/* ── 지정 대상 ────────────────────────────────────── */
+function roomInfo(id) { return CODES.rooms.find((r) => r.room_id === Number(id)); }
+function renderTargets() {
+  const box = $("targets"); box.innerHTML = "";
+  const want = Number($("bkCount").value || 1);
+  $("tgWant").textContent = want + "건";
+  $("tgCount").textContent = TARGETS.length ? TARGETS.length + "개" : "";
+  if (!TARGETS.length) { box.appendChild(el("div", "empty", "지정 대상이 없습니다. 아래에서 추가하거나 폴백 탐색을 켜세요.")); return; }
+  if (TARGETS.length < want && !$("fbEnabled").checked) {
+    const w = el("div", "empty", "⚠ " + want + "건을 확보하려는데 대상이 " + TARGETS.length +
+      "개뿐입니다 — 대상을 더 넣거나 폴백 탐색을 켜세요.");
+    w.style.color = "var(--warn)"; w.style.borderColor = "var(--warn)";
+    box.appendChild(w);
+  }
+  TARGETS.forEach((t, i) => {
+    const info = roomInfo(t.room_id);
+    const row = el("div", "target");
+    const n = el("div", "n", String(i + 1));
+    if (i >= want) { n.style.background = "var(--busy)"; n.style.color = "var(--ink-3)"; n.title = "예비 — 앞 항목이 실패할 때만 쓰입니다"; }
+    row.appendChild(n);
+    const mid = el("div");
+    mid.appendChild(el("div", "t", info ? info.place + " " + info.name : "회의실 " + t.room_id));
+    mid.appendChild(el("div", "m", t.start + "~" + endOf(t.start, t.duration_slots) +
+      " · " + (t.duration_slots * 30 / 60) + "시간 · wr_8=" + t.room_id));
+    row.appendChild(mid);
+    const act = el("div", "row");
+    if (i > 0) { const up = el("button", "small", "↑"); up.title = "위로";
+      up.onclick = () => { [TARGETS[i - 1], TARGETS[i]] = [TARGETS[i], TARGETS[i - 1]]; renderTargets(); }; act.appendChild(up); }
+    const del = el("button", "small", "삭제");
+    del.onclick = () => { TARGETS.splice(i, 1); renderTargets(); };
+    act.appendChild(del);
+    row.appendChild(act);
+    box.appendChild(row);
+  });
+}
+function addTarget(t) {
+  if (TARGETS.some((x) => x.room_id === t.room_id && x.start === t.start)) { toast("이미 같은 대상이 있습니다", true); return; }
+  if (toMin(t.start) + t.duration_slots * 30 > 21 * 60) { toast("종료 시각이 21:00 을 넘습니다", true); return; }
+  TARGETS.push(t); renderTargets(); toast("대상을 추가했습니다 — 저장을 눌러 반영하세요");
+}
+$("ntAdd").addEventListener("click", () => {
+  const id = Number($("ntRoom").value);
+  if (!id) { toast("회의실을 고르세요", true); return; }
+  const info = roomInfo(id);
+  addTarget({ room_id: id, building: info ? info.building : $("ntBuilding").value,
+    floor: info ? info.floor : $("ntFloor").value, start: $("ntStart").value, duration_slots: Number($("ntSlots").value) });
+});
+
+/* ── 폼 ↔ 상태 ────────────────────────────────────── */
+const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+function renderDayToggles(selected) {
+  const box = $("scDays"); box.innerHTML = "";
+  WEEKDAYS.forEach((name, i) => {
+    const b = el("button", "small day");
+    b.type = "button"; b.dataset.day = String(i);
+    b.appendChild(el("span", null, name));
+    b.appendChild(el("span", "to"));           // 실제 예약되는 요일 (refreshDayArrows 가 채운다)
+    const paint = (on) => {
+      b.setAttribute("aria-pressed", String(on));
+      b.style.background = on ? "var(--accent)" : "var(--panel-2)";
+      b.style.color = on ? "var(--accent-ink)" : "var(--ink-2)";
+      b.style.borderColor = on ? "transparent" : "var(--line)";
+    };
+    paint(selected.includes(i));
+    b.onclick = () => { paint(b.getAttribute("aria-pressed") !== "true"); offsetHint(); };
+    box.appendChild(b);
+  });
+  refreshDayArrows();
+}
+// 이 요일에 발사하면 실제로 잡히는 날은 「대상 날짜」만큼 뒤다(스케줄러는 발사일
+// 기준으로 요일을 거르고, 러너는 발사 시각 + offset 을 대상 날짜로 쓴다).
+// 그 어긋남이 요일 선택에서 가장 헷갈리는 지점이라 버튼에 바로 붙여 둔다.
+function refreshDayArrows() {
+  const n = Number($("bkOffset").value) || 0;
+  $("scDays").querySelectorAll("button.day").forEach((b) => {
+    const to = b.querySelector(".to");
+    if (!to) return;
+    to.textContent = n === 0 ? "당일" : "→" + WEEKDAYS[(Number(b.dataset.day) + n) % 7];
+  });
+}
+function selectedDays() {
+  return [...$("scDays").querySelectorAll("button")]
+    .filter((b) => b.getAttribute("aria-pressed") === "true").map((b) => Number(b.dataset.day));
+}
+
+function loadForm(c) {
+  // 예약
+  $("bkSubject").value = c.booking.subject || "";
+  $("bkSubject").oninput = subjectPreview; subjectPreview();
+  $("bkManager").value = c.booking.manager || "";
+  $("bkContact").value = c.booking.contact || "";
+  $("bkContent").value = c.booking.content || "";
+  fill($("bkCount"), [{ value: "1", label: "1건" }, { value: "2", label: "2건 (하루 상한)" }],
+    String(c.booking.count || 1));
+  fill($("bkGap"), [0, 20, 30, 35, 45, 60, 90].map((n) => ({ value: String(n),
+    label: n === 0 ? "기다리지 않음" : n + "초" })), String(c.booking.gap_seconds ?? 35));
+  const syncGap = () => { $("bkGapBox").style.display = Number($("bkCount").value) > 1 ? "" : "none"; };
+  $("bkCount").onchange = () => { renderTargets(); syncGap(); };
+  syncGap();
+  fill($("bkOffset"), Array.from({ length: 8 }, (_, i) => ({ value: String(i),
+    label: i === 0 ? "당일" : i + "일 뒤" })), c.booking.date_offset_days);
+  $("bkOffset").onchange = offsetHint; offsetHint();
+  TARGETS = (c.booking.targets || []).map((t) => ({ ...t }));
+  renderTargets();
+
+  const fb = c.booking.fallback || {};
+  $("fbEnabled").checked = !!fb.enabled;
+  $("fbEnabled").onchange = () => renderTargets();
+  fill($("fbBuilding"), buildingOptions(true), fb.building || "");
+  fill($("fbFloor"), floorOptions(fb.building || "", true), fb.prefer_floor || "");
+  fill($("fbStart"), slotOptions, fb.start || "13:00");
+  fill($("fbWindow"), [0, 30, 60, 90, 120, 180, 240, 360, 720].map((m) => ({ value: String(m),
+    label: m === 0 ? "정확히 그 시각" : "+" + m + "분까지" })), fb.start_window_minutes ?? 60);
+  fill($("fbMin"), lenOptions, String(fb.min_slots || 4));
+  fill($("fbMax"), lenOptions, String(fb.max_slots || 8));
+
+  // 스케줄
+  $("scEnabled").checked = !!c.schedule.enabled;
+  $("scFireAt").value = c.schedule.fire_at || "";
+  renderDayToggles(c.schedule.weekdays || []);
+  offsetHint(); // 요일 토글이 그려진 뒤라야 "월·수 실행 → 일·화 예약" 문구를 만들 수 있다
+  fill($("scWarmup"), [60, 120, 180, 300, 600, 900].map((s) => ({ value: String(s),
+    label: s < 60 ? s + "초" : (s / 60) + "분 전" })), c.schedule.warmup_lead_s || 180);
+  $("scUid").value = c.schedule.uid_pool_size || 4;
+  $("scDry").value = String(!!c.runtime.dry_run);
+  $("rtInterval").value = c.schedule.retry.interval_ms;
+  $("rtDuration").value = c.schedule.retry.max_duration_s;
+  $("rtAttempts").value = c.schedule.retry.max_attempts;
+
+  // 계정
+  $("acUser").value = c.site.username || "";
+  $("stBase").value = c.site.base_url || "";
+  $("stTimeout").value = c.site.timeout_s || 10;
+  $("stUA").value = c.site.user_agent || "";
+  const sb = $("siteBadge");
+  sb.className = "badge " + (c.site.password_set && c.site.username ? "on" : "warn");
+  sb.textContent = c.site.password_set && c.site.username ? "자격증명 저장됨" : "자격증명 미설정";
+
+  // Notion
+  $("noEnabled").checked = !!c.notion.enabled;
+  $("noDB").value = c.notion.database_id || "";
+  $("noFail").checked = !!c.notion.record_failure;
+  const nb = $("notionBadge");
+  nb.className = "badge " + (!c.notion.enabled ? "off" : c.notion.token_set ? "on" : "warn");
+  nb.textContent = !c.notion.enabled ? "사용 안 함" : c.notion.token_set ? "토큰 저장됨" : "토큰 미설정";
+}
+
+// 실제로 사이트에 어떻게 보일지 미리 보여준다. 중복 대괄호를 눈으로 잡으라는 것.
+function subjectPreview() {
+  const v = $("bkSubject").value.trim();
+  const el2 = $("bkSubjectPreview");
+  if (!v) { el2.textContent = ""; return; }
+  el2.innerHTML = "<br>실제 표시: <b>[회사명]" + v.replace(/[<>&]/g, "") + "</b>";
+  el2.style.color = /^\s*\[/.test(v) ? "var(--warn)" : "var(--ink-2)";
+}
+
+// 사이트의 예약 창은 "오늘 <= 날짜 < 오늘+7" 이다. +7 이 경계에 걸리는지는
+// 실측으로만 확정할 수 있어서, 고르면 경고만 띄우고 막지는 않는다.
+function offsetHint() {
+  const n = Number($("bkOffset").value);
+  const d = new Date(Date.now() + n * 864e5);
+  const when = d.toLocaleDateString("ko-KR", { month: "numeric", day: "numeric", weekday: "short" });
+  const h = $("bkOffsetHint");
+  if (n === 7) {
+    h.innerHTML = "오늘 실행하면 <b>" + when + "</b> — ⚠ 사이트 예약 창은 오늘부터 7일 <b>미만</b>이라 " +
+      "+7일은 아직 안 열려 있을 수 있습니다. 드라이런 로그로 확인하고, 비어 있으면 6일로 줄이세요.";
+    h.style.color = "var(--warn)";
+  } else {
+    h.textContent = "오늘 실행하면 " + when + " 예약을 시도합니다." + shiftNote(n);
+    h.style.color = "";
+  }
+  refreshDayArrows();
+}
+// 「스케줄」탭에서 고른 실행 요일이 실제로는 무슨 요일 예약이 되는지 한 줄로 덧붙인다.
+// 요일과 대상 날짜가 다른 탭에 나뉘어 있어서 둘을 머릿속에서 더해야 하는 게 헷갈리는 지점이다.
+function shiftNote(n) {
+  if (n === 0) return "";
+  const days = selectedDays();
+  if (!days.length) return " 실행 요일보다 " + n + "일 뒤 요일이 잡힙니다.";
+  const from = days.map((d) => WEEKDAYS[d]).join("·");
+  const to = days.map((d) => WEEKDAYS[(d + n) % 7]).join("·");
+  return " " + from + " 실행 → " + to + " 예약.";
+}
+
+function collectBooking() {
+  return {
+    date_offset_days: Number($("bkOffset").value),
+    count: Number($("bkCount").value),
+    gap_seconds: Number($("bkGap").value),
+    subject: $("bkSubject").value.trim(),
+    manager: $("bkManager").value.trim(),
+    contact: $("bkContact").value.trim(),
+    content: $("bkContent").value.trim(),
+    targets: TARGETS,
+    fallback: {
+      enabled: $("fbEnabled").checked,
+      building: $("fbBuilding").value,
+      prefer_floor: $("fbFloor").value,
+      start: $("fbStart").value,
+      start_window_minutes: Number($("fbWindow").value),
+      min_slots: Number($("fbMin").value),
+      max_slots: Number($("fbMax").value),
+    },
+  };
+}
+function collectSchedule() {
+  return {
+    enabled: $("scEnabled").checked,
+    fire_at: $("scFireAt").value.trim(),
+    weekdays: selectedDays(),
+    warmup_lead_s: Number($("scWarmup").value),
+    uid_pool_size: Number($("scUid").value),
+    retry: { interval_ms: Number($("rtInterval").value),
+      max_duration_s: Number($("rtDuration").value), max_attempts: Number($("rtAttempts").value) },
+  };
+}
+
+document.querySelectorAll("[data-save]").forEach((b) => b.addEventListener("click", async () => {
+  const what = b.dataset.save;
+  const body = {};
+  if (what === "booking") body.booking = collectBooking();
+  if (what === "schedule") {
+    body.schedule = collectSchedule();
+    body.runtime = { ...STATE.config.runtime, dry_run: $("scDry").value === "true" };
+  }
+  if (what === "site") body.site = { base_url: $("stBase").value.trim(),
+    user_agent: $("stUA").value.trim(), timeout_s: Number($("stTimeout").value) };
+  b.disabled = true;
+  try { await api("/api/config", body); toast("저장했습니다"); await refresh(); }
+  catch (e) { toast(e.message, true); }
+  finally { b.disabled = false; }
+}));
+
+/* ── 자격증명 ─────────────────────────────────────── */
+$("acSave").addEventListener("click", async () => {
+  const body = { username: $("acUser").value.trim() };
+  if ($("acPw").value) body.password = $("acPw").value;
+  if (!body.username) { toast("아이디를 입력하세요", true); return; }
+  try { await api("/api/secrets", body); $("acPw").value = ""; toast("저장했습니다"); await refresh(); }
+  catch (e) { toast(e.message, true); }
+});
+$("acClear").addEventListener("click", async () => {
+  if (!confirm("저장된 jointips 비밀번호를 지웁니다. 자동 예약이 멈춥니다.")) return;
+  try { await api("/api/secrets", { clear_password: true }); toast("지웠습니다"); await refresh(); }
+  catch (e) { toast(e.message, true); }
+});
+$("acTest").addEventListener("click", async (e) => {
+  e.target.disabled = true; toast("로그인 시도 중…");
+  try { const r = await api("/api/test/site", {}); toast(r.message); }
+  catch (err) { toast(err.message, true); }
+  finally { e.target.disabled = false; }
+});
+$("pwSave").addEventListener("click", async () => {
+  try {
+    await api("/api/admin/password", { current: $("pwCur").value, next: $("pwNew").value });
+    $("pwCur").value = ""; $("pwNew").value = ""; toast("비밀번호를 변경했습니다");
+  } catch (e) { toast(e.message, true); }
+});
+
+/* ── Notion ───────────────────────────────────────── */
+$("noSave").addEventListener("click", async () => {
+  try {
+    await api("/api/config", { notion: { enabled: $("noEnabled").checked,
+      database_id: $("noDB").value.trim(), record_failure: $("noFail").checked } });
+    if ($("noToken").value) { await api("/api/secrets", { notion_token: $("noToken").value }); $("noToken").value = ""; }
+    toast("저장했습니다"); await refresh();
+  } catch (e) { toast(e.message, true); }
+});
+$("noTest").addEventListener("click", async (e) => {
+  e.target.disabled = true;
+  try {
+    const r = await api("/api/test/notion", {});
+    toast(r.message);
+    const s = r.schema, pick = (v) => v || "(없음)";
+    $("noSchema").innerHTML = "";
+    $("noSchema").appendChild(el("div", null,
+      "매칭 결과 — 제목: " + pick(s.title) + " · 현황: " + pick(s.usage) + " · 회의실: " + pick(s.room) +
+      " · 시간: " + pick(s.period) + " · 예약자: " + pick(s.booker) + " · 날짜: " + pick(s.date)));
+  } catch (err) { toast(err.message, true); }
+  finally { e.target.disabled = false; }
+});
+$("noWrite").addEventListener("click", async (e) => {
+  const box = $("noWriteResult");
+  e.target.disabled = true;
+  box.innerHTML = ""; box.appendChild(el("div", "hint", "등록 중…"));
+  try {
+    const r = await api("/api/test/notion/write", { keep: $("noKeep").checked });
+    toast(r.message);
+    renderWriteTest(box, r);
+  } catch (err) {
+    toast(err.message, true);
+    box.innerHTML = ""; box.appendChild(el("div", "hint", "등록 실패 — " + err.message));
+  } finally { e.target.disabled = false; }
+});
+// 보낸 값과 Notion 에 실제로 남은 값을 나란히 보여준다. 값이 사라진 칸이
+// 어디인지가 이 표의 요점이므로, 보냈는데 비어 있는 칸은 빨갛게 표시한다.
+function renderWriteTest(box, r) {
+  box.innerHTML = "";
+  box.appendChild(el("div", "hint", r.message));
+  const sent = r.sent || {}, stored = r.stored || {};
+  const names = Array.from(new Set(Object.keys(stored).concat(Object.keys(sent)))).sort();
+  const table = el("table", "kv"), thead = el("thead"), htr = el("tr");
+  ["속성", "보낸 값", "Notion 에 남은 값"].forEach((h) => htr.appendChild(el("th", null, h)));
+  thead.appendChild(htr); table.appendChild(thead);
+  const tbody = el("tbody");
+  names.forEach((n) => {
+    const tr = el("tr");
+    tr.appendChild(el("td", "name", n));
+    tr.appendChild(el("td", null, sent[n] || "—"));
+    const got = stored[n] || "";
+    tr.appendChild(el("td", sent[n] && !got ? "miss" : null, got || "—"));
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody); box.appendChild(table);
+  if (r.url) {
+    const p = el("div", "hint");
+    const a = el("a", null, r.kept ? "만든 행 열기" : "만든 행 (휴지통) 열기");
+    a.href = r.url; a.target = "_blank"; a.rel = "noreferrer";
+    p.appendChild(a); box.appendChild(p);
+  }
+}
+
+/* ── 현황 조회 ────────────────────────────────────── */
+let pick = null;
+$("ttLoad").addEventListener("click", async () => {
+  const btn = $("ttLoad"); btn.disabled = true;
+  $("ttResult").innerHTML = ""; $("ttResult").appendChild(el("div", "empty", "조회 중…"));
+  try {
+    const r = await api("/api/query", { date: $("ttDate").value, building: $("ttBuilding").value });
+    renderTimetable(r.rows || []);
+  } catch (e) { $("ttResult").innerHTML = ""; $("ttResult").appendChild(el("div", "empty", e.message)); }
+  finally { btn.disabled = false; }
+});
+function renderTimetable(rows) {
+  const box = $("ttResult"); box.innerHTML = ""; pick = null; hideTip(null);
+  if (!rows.length) {
+    box.appendChild(el("div", "empty", "표시할 회의실이 없습니다. 날짜가 예약 가능 범위(오늘~7일 미만) 밖일 수 있습니다."));
+    return;
+  }
+  const scroll = el("div", "tt-scroll"), table = el("table", "tt");
+  const thead = el("thead"), htr = el("tr");
+  htr.appendChild(el("th", "room", "회의실"));
+  SLOTS.forEach((s, i) => { const th = el("th", null, i % 2 === 0 ? s : ""); htr.appendChild(th); });
+  thead.appendChild(htr); table.appendChild(thead);
+
+  const tbody = el("tbody");
+  rows.forEach((row) => {
+    const tr = el("tr");
+    const rc = el("td", "room");
+    rc.appendChild(el("div", "rn", row.name));
+    rc.appendChild(el("div", "rp", (row.place || "") + " · " + (row.capacity || "")));
+    tr.appendChild(rc);
+    const groups = bookingGroups(row);
+    (row.cells || []).forEach((cell, i) => {
+      const td = el("td", "slot" + (cell.available ? " free" : "") + (i % 2 === 1 ? " hh" : ""));
+      td.dataset.room = row.room_id; td.dataset.idx = String(i);
+      if (cell.available) {
+        td.addEventListener("click", () => onSlotClick(row, i, tbody));
+        td.addEventListener("mouseenter", () => showTip(td, row, null, i, tbody));
+      } else {
+        const g = groups.find((x) => i >= x.from && i <= x.to) || null;
+        td.addEventListener("mouseenter", () => showTip(td, row, g, i, tbody));
+      }
+      td.addEventListener("mouseleave", () => hideTip(tbody));
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody); scroll.appendChild(table); box.appendChild(scroll);
+
+  const lg = el("div", "legend");
+  lg.innerHTML = '<span><i style="background:var(--free)"></i>빈 시간</span>' +
+    '<span><i style="background:var(--busy)"></i>예약됨</span>' +
+    '<span><i style="background:var(--pick)"></i>선택</span>';
+  box.appendChild(lg);
+}
+// bookingGroups 는 연속된 기예약 칸을 하나의 예약으로 묶는다.
+// 같은 예약은 share_id 가 같다(§3.4). share_id 가 없으면 회의명으로 대신 묶는다.
+function bookingGroups(row) {
+  const out = [];
+  let cur = null;
+  (row.cells || []).forEach((c, i) => {
+    if (c.available) { cur = null; return; }
+    const key = c.share_id || c.title || "";
+    if (cur && cur.key === key && cur.to === i - 1) { cur.to = i; return; }
+    cur = { key: key, from: i, to: i, title: c.title, shareId: c.share_id };
+    out.push(cur);
+  });
+  return out;
+}
+
+// 빈 칸에서 연속으로 비어 있는 길이 (몇 슬롯 잡을 수 있는지)
+function freeRun(row, i) {
+  let n = 0;
+  for (let j = i; j < row.cells.length && row.cells[j].available; j++) n++;
+  return n;
+}
+
+// showTip — 기예약 칸이면 회의명·시간·회의실을, 빈 칸이면 잡을 수 있는 길이를 띄운다.
+// 기예약이면 그 예약이 차지한 칸 전체를 함께 테두리로 표시해 범위가 눈에 들어오게 한다.
+function showTip(td, row, g, i, tbody) {
+  const tip = $("tip");
+  tip.innerHTML = "";
+  tbody.querySelectorAll("td.slot.grp").forEach((x) => x.classList.remove("grp", "gf", "gl"));
+
+  if (g) {
+    const span = SLOTS[g.from] + "~" + hhmm(toMin(SLOTS[g.to]) + 30);
+    const slots = g.to - g.from + 1;
+    tip.appendChild(el("div", "tt", g.title || "예약됨 (회의명 비공개)"));
+    tip.appendChild(el("div", "tm", span + " · " + (slots * 30 / 60) + "시간"));
+    tip.appendChild(el("div", "tr", row.name + " · " + (row.place || "")));
+    // 같은 예약이 차지한 칸 전체 표시
+    tbody.querySelectorAll('td.slot[data-room="' + row.room_id + '"]').forEach((x) => {
+      const k = Number(x.dataset.idx);
+      if (k < g.from || k > g.to) return;
+      x.classList.add("grp");
+      if (k === g.from) x.classList.add("gf");
+      if (k === g.to) x.classList.add("gl");
+    });
+  } else {
+    const n = freeRun(row, i);
+    const cap = Math.min(n, 8);
+    tip.appendChild(el("div", "tt", SLOTS[i] + " 비어 있음"));
+    tip.appendChild(el("div", "tm", "여기서 연속 " + n + "칸 (" + (n * 30 / 60) + "시간)"
+      + (n > 8 ? " · 최대 4시간까지 예약 가능" : "")));
+    tip.appendChild(el("div", "tr", "클릭해서 시작, 한 번 더 클릭해 끝 지정 → " +
+      SLOTS[i] + "~" + hhmm(toMin(SLOTS[i]) + cap * 30) + " 까지"));
+  }
+
+  tip.hidden = false;
+  const r = td.getBoundingClientRect(), t = tip.getBoundingClientRect();
+  let x = r.left + r.width / 2 - t.width / 2;
+  x = Math.max(8, Math.min(x, window.innerWidth - t.width - 8));
+  let y = r.top - t.height - 8;
+  if (y < 8) y = r.bottom + 8; // 위가 좁으면 아래로
+  tip.style.left = x + "px";
+  tip.style.top = y + "px";
+}
+
+function hideTip(tbody) {
+  $("tip").hidden = true;
+  if (tbody) tbody.querySelectorAll("td.slot.grp").forEach((x) => x.classList.remove("grp", "gf", "gl"));
+}
+
+function onSlotClick(row, idx, tbody) {
+  if (!pick || pick.room !== row.room_id) { pick = { room: row.room_id, from: idx, row }; paintPick(tbody); return; }
+  const a = Math.min(pick.from, idx), b = Math.max(pick.from, idx);
+  const slots = b - a + 1;
+  if (slots > 8) { toast("최대 8슬롯(4시간)까지만 예약할 수 있습니다", true); pick = null; paintPick(tbody); return; }
+  for (let i = a; i <= b; i++) if (!row.cells[i].available) { toast("선택 구간에 이미 예약된 시간이 있습니다", true); pick = null; paintPick(tbody); return; }
+  addTarget({ room_id: Number(row.room_id), building: row.building, floor: row.floor, start: row.cells[a].time, duration_slots: slots });
+  pick = null; paintPick(tbody);
+}
+function paintPick(tbody) {
+  tbody.querySelectorAll("td.slot.sel").forEach((td) => td.classList.remove("sel"));
+  if (pick) tbody.querySelectorAll('td.slot[data-room="' + pick.room + '"][data-idx="' + pick.from + '"]')
+    .forEach((td) => td.classList.add("sel"));
+}
+
+/* ── 실행 ─────────────────────────────────────────── */
+$("runDry").addEventListener("click", () => startRun(true));
+$("runNow").addEventListener("click", () => {
+  if (!confirm("지금 실제로 예약을 신청합니다. 계속할까요?\n(하루 예약 건수를 소모합니다)")) return;
+  startRun(false);
+});
+$("runCancel").addEventListener("click", async () => {
+  try { await api("/api/run/cancel", {}); toast("중단을 요청했습니다"); } catch (e) { toast(e.message, true); }
+});
+async function startRun(dry) {
+  try { await api("/api/run", { dry_run: dry }); toast(dry ? "드라이런을 시작했습니다" : "예약을 시도합니다");
+    document.querySelector('nav.tabs button[data-tab="logs"]').click(); await refresh(); }
+  catch (e) { toast(e.message, true); }
+}
+
+/* ── 렌더 ─────────────────────────────────────────── */
+function renderStatus(s) {
+  const c = s.config;
+  const running = !!s.current;
+  $("runCancel").hidden = !running;
+  $("runNow").disabled = running; $("runDry").disabled = running;
+
+  $("stEnabled").textContent = c.schedule.enabled ? "켜짐" : "꺼짐";
+  const off = c.booking.date_offset_days || 0;
+  const days = c.schedule.weekdays.length ? c.schedule.weekdays : [0, 1, 2, 3, 4, 5, 6];
+  $("stEnabledSub").textContent = c.runtime.dry_run ? "드라이런 모드 — 실제 신청 안 함"
+    : (c.schedule.weekdays.length ? c.schedule.weekdays.map((d) => WEEKDAYS[d]).join("·") : "매일") +
+      " " + c.schedule.fire_at +
+      (off ? " → " + days.map((d) => WEEKDAYS[(d + off) % 7]).join("·") + " 예약" : "");
+  $("stNext").textContent = s.next_fire ? fmtTime(s.next_fire) : "예정 없음";
+  $("stNextSub").textContent = s.next_why ||
+    (s.next_fire ? "워밍업은 " + (c.schedule.warmup_lead_s / 60) + "분 전 시작" : "");
+  $("stDate").textContent = s.next_target_date ? withWeekday(s.next_target_date) : "—";
+  const want = c.booking.count || 1;
+  $("stDateSub").textContent = want + "건 목표 · " +
+    (TARGETS.length ? TARGETS.length + "개 대상" + (c.booking.fallback.enabled ? " + 폴백" : "")
+                    : (c.booking.fallback.enabled ? "폴백 탐색만" : "대상 없음"));
+
+  const last = (s.history || [])[0];
+  const lv = $("stLast"), ls = $("stLastSub");
+  if (running) { lv.textContent = "실행 중"; lv.style.color = "var(--accent)";
+    ls.textContent = (s.current.logs.slice(-1)[0] || {}).msg || ""; }
+  else if (last) {
+    lv.textContent = { success: "성공", partial: "부분 성공", failed: "실패", skipped: "건너뜀", running: "실행 중" }[last.status] || last.status;
+    lv.style.color = last.status === "success" ? "var(--ok)"
+      : last.status === "failed" ? "var(--danger)" : last.status === "partial" ? "var(--warn)" : "var(--ink)";
+    const n = (last.bookings || []).length;
+    ls.textContent = fmtTime(last.started_at) + " · " + (n ? n + "건 · " : "") + (last.message || "");
+  } else { lv.textContent = "—"; lv.style.color = ""; ls.textContent = "아직 실행한 적이 없습니다"; }
+
+  const mb = $("modeBadge");
+  mb.className = "badge " + (running ? "on" : c.runtime.dry_run ? "warn" : c.schedule.enabled ? "on" : "off");
+  mb.innerHTML = "";
+  if (running) mb.appendChild(el("span", "dot pulse"));
+  mb.appendChild(document.createTextNode(running ? "실행 중" : c.runtime.dry_run ? "드라이런" : c.schedule.enabled ? "자동 예약 켜짐" : "대기"));
+
+  renderSkewNote(s);
+
+  const rw = $("readyWarn");
+  if (s.ready) { rw.hidden = false; rw.textContent = "⚠ " + s.ready; } else rw.hidden = true;
+}
+
+// 하단 각주: jointips 서버 시계가 얼마나 어긋나 있는지.
+// 예약 창을 여닫는 건 그쪽 시계라, 발사 시각을 정하는 근거가 된다.
+function renderSkewNote(s) {
+  const ms = s.site_offset_ms;
+  const box = $("skewNote");
+  if (ms == null) { box.hidden = true; return; }
+  box.hidden = false;
+  const late = ms < 0, abs = Math.abs(ms);
+  const amount = abs >= 60000 ? (abs / 60000).toFixed(1) + "분" : (abs / 1000).toFixed(1) + "초";
+  // 사이트 시계가 자정이 되는 우리 시각 = 자정 - offset
+  const openMs = -ms, p = (n) => String(Math.floor(n)).padStart(2, "0");
+  const openAt = p(openMs / 3600000) + ":" + p((openMs % 3600000) / 60000) + ":" + p((openMs % 60000) / 1000);
+  $("skAmount").textContent = amount + " " + (late ? "느립니다" : "빠릅니다");
+  $("skSiteNow").textContent = fmtTime(s.site_now);
+  $("skOpen").textContent = abs < 30000 ? "우리 자정 무렵" : "우리 시각 " + openAt + " 무렵";
+  $("skFire").textContent = (s.config && s.config.schedule.fire_at) || "—";
+  $("skWhen").textContent = fmtTime(s.site_offset_at);
+}
+
+function renderRuns(s) {
+  const box = $("runs"); box.innerHTML = "";
+  const list = [];
+  if (s.current) list.push(s.current);
+  list.push(...(s.history || []));
+  if (!list.length) { box.appendChild(el("div", "empty", "실행 기록이 없습니다.")); return; }
+  list.forEach((r, i) => {
+    const d = el("details", "run"); d.open = i === 0;
+    const sum = el("summary");
+    const badge = el("span", "badge " + ({ success: "on", partial: "warn", failed: "err", skipped: "warn", running: "on" }[r.status] || ""));
+    if (r.status === "running") badge.appendChild(el("span", "dot pulse"));
+    badge.appendChild(document.createTextNode(
+      { success: "성공", partial: "부분", failed: "실패", skipped: "건너뜀", running: "실행 중" }[r.status] || r.status));
+    if (r.want > 1 && r.status !== "running") badge.appendChild(document.createTextNode(" " + (r.bookings || []).length + "/" + r.want));
+    sum.appendChild(badge);
+    sum.appendChild(el("span", "when", fmtTime(r.started_at)));
+    sum.appendChild(el("span", "msg", (r.dry_run ? "[드라이런] " : "") +
+      (r.mode === "scheduled" ? "자동" : "수동") + " · " + (r.message || "…") +
+      (r.attempts ? " · 시도 " + r.attempts + "회" : "") + (r.offset_ms ? " · 오차 " + r.offset_ms + "ms" : "")));
+    d.appendChild(sum);
+    const log = el("div", "log");
+    (r.logs || []).forEach((l) => {
+      const line = el("div", "l " + l.level);
+      line.appendChild(el("time", null, fmtClock(l.at)));
+      line.appendChild(el("span", null, l.msg));
+      log.appendChild(line);
+    });
+    d.appendChild(log);
+    box.appendChild(d);
+  });
+}
+$("logRefresh").addEventListener("click", refresh);
+
+/* ── 부팅 / 폴링 ──────────────────────────────────── */
+let formLoaded = false;
+async function refresh() {
+  const s = await api("/api/state");
+  STATE = s;
+  CODES = { buildings: s.buildings || [], floors: s.floors || [], rooms: s.rooms || [] };
+  if (!formLoaded) {
+    fill($("ntBuilding"), buildingOptions(false), CODES.buildings[0] && CODES.buildings[0].code);
+    fill($("ttBuilding"), buildingOptions(true), "");
+    fill($("ntStart"), slotOptions, "13:00");
+    fill($("ntSlots"), lenOptions, "8");
+    const sync = wireCascade($("ntBuilding"), $("ntFloor"), $("ntRoom")); sync();
+    $("fbBuilding").addEventListener("change", () => {
+      const prev = $("fbFloor").value;
+      fill($("fbFloor"), floorOptions($("fbBuilding").value, true), prev);
+    });
+    loadForm(s.config);
+    if (s.next_target_date) $("ttDate").value = s.next_target_date;
+    else $("ttDate").value = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
+    formLoaded = true;
+  }
+  renderStatus(s);
+  renderRuns(s);
+  // 실행 중이면 촘촘히, 아니면 느슨하게 폴링한다.
+  // setInterval 은 핸들을 '숫자'로 돌려주므로 주기를 그 위에 얹을 수 없다 — 따로 들고 있는다.
+  const want = s.current ? 1500 : 15000;
+  if (poll && pollMs !== want) { clearInterval(poll); poll = null; }
+  if (!poll) { poll = setInterval(() => refresh().catch(() => {}), want); pollMs = want; }
+}
+async function boot() {
+  try { await refresh(); showApp(); }
+  catch (e) {
+    // 로그인은 됐는데 화면을 못 그린 경우까지 "로그인 실패"처럼 보이면 안 된다 — 이유를 드러낸다.
+    showGate();
+    toast(e && e.message ? e.message : "화면을 그리지 못했습니다", true);
+    console.error("boot 실패:", e);
+  }
+}
+(async () => {
+  const s = await fetch("/api/session").then((r) => r.json()).catch(() => ({ authed: false }));
+  if (s.authed) boot(); else showGate();
+})();
+</script>
+</body>
+</html>
