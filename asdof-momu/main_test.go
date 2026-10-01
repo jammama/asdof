@@ -393,3 +393,46 @@ func TestIsDigits(t *testing.T) {
 		}
 	}
 }
+
+func TestVisitAddsNewMenusAndReorder(t *testing.T) {
+	s, _ := newTestServer(t)
+	rec := do(t, s, "POST", "/api/restaurants", "asdof1234", map[string]any{
+		"name": "가게", "menus": []string{"국수", "수육"},
+	})
+	var r Restaurant
+	_ = json.Unmarshal(rec.Body.Bytes(), &r)
+	base := "/api/restaurants/" + r.ID
+	_ = do(t, s, "PUT", base+"/menus/"+r.Menus[0].ID, "asdof1234", map[string]any{"rating": 4})
+
+	// 방문 기록에 처음 나온 메뉴(만두)는 식당 메뉴 끝에 붙는다. 이미 있는 건 중복 안 됨.
+	if got := do(t, s, "POST", base+"/visits", "asdof1234", map[string]any{
+		"date": "2026-10-01", "menus": []string{"수육", "만두"},
+	}).Code; got != http.StatusCreated {
+		t.Fatalf("방문 기록: %d", got)
+	}
+	names := func() (out []string) {
+		for _, m := range s.st.list()[0].Menus {
+			out = append(out, m.Name)
+		}
+		return
+	}
+	if got := names(); len(got) != 3 || got[2] != "만두" {
+		t.Fatalf("메뉴 흡수: %v", got)
+	}
+
+	// 순서 변경 — 모르는 이름은 무시, 빠진 메뉴(국수)는 뒤에 남는다. 별점 유지.
+	if got := do(t, s, "PUT", base+"/menus", "asdof1234", map[string]any{
+		"names": []string{"만두", "없는메뉴", "수육"},
+	}).Code; got != http.StatusOK {
+		t.Fatalf("순서 변경: %d", got)
+	}
+	if got := names(); len(got) != 3 || got[0] != "만두" || got[1] != "수육" || got[2] != "국수" {
+		t.Fatalf("순서: %v", got)
+	}
+	if s.st.list()[0].Menus[2].Rating != 4 {
+		t.Errorf("순서 바꿔도 별점 유지돼야 함")
+	}
+	if got := do(t, s, "PUT", base+"/menus", "", map[string]any{"names": []string{}}).Code; got != http.StatusUnauthorized {
+		t.Errorf("인증 없이 순서 변경: %d", got)
+	}
+}

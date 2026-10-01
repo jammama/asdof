@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#14161a">
   <title>모무 — 뭐 먹었지?</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="css/style.css?v=7">
+  <link rel="stylesheet" href="css/style.css?v=17">
 </head>
 <body>
 <div id="app">
@@ -15,101 +15,74 @@
     <div id="map-badge" class="hidden"></div>
   </div>
 
+  <div id="resizer" title="드래그해서 목록 넓이 조절 (더블클릭: 기본값)"></div>
+
   <aside id="sidebar">
     <header id="head">
       <div id="title-row">
         <h1>모무 <span id="count"></span></h1>
         <div id="head-btns">
+          <button id="gov-btn" class="ghost" title="강남·종로구 업무추진비로 본 공무원 단골집">💳 공무원 픽</button>
+          <button id="rec-open" class="ghost rec-btn" title="조건에 맞는 식당 중 룰렛으로 뽑기">🎲 오늘 뭐 먹지?</button>
           <button id="admin-btn" class="ghost" title="관리자 로그인">🔒</button>
         </div>
       </div>
 
       <div id="tabs">
-        <button class="tab on" data-tab="mine">내 기록</button>
-        <button class="tab" data-tab="rec">오늘 뭐?</button>
-        <button class="tab" data-tab="gov">공무원 픽</button>
+        <button class="tab on" data-tab="log">내 기록</button>
+        <button class="tab" data-tab="mine">등록식당</button>
         <button class="tab" data-tab="kakao">식당 찾기</button>
       </div>
 
-      <!-- 내 기록 검색 -->
-      <div id="pane-mine-ctl" class="pane-ctl">
-        <div class="row">
-          <input type="search" id="q-mine" placeholder="식당명 · 메뉴 · 주소 · 메모 검색">
-          <button id="filter-btn" class="ghost">필터</button>
-        </div>
-        <div id="filter-panel" class="hidden">
+      <!-- 검색창은 탭끼리 공유한다 — 탭을 옮겨도 적던 내용이 그대로 남는다 -->
+      <form id="q-form" class="row">
+        <input type="search" id="q" placeholder="식당명 · 메뉴 · 동행 · 메모로 기록 검색" autocomplete="off">
+        <button type="button" id="filter-btn" class="ghost on hidden">필터</button>
+        <button type="submit" id="kakao-go" class="hidden">검색</button>
+      </form>
+
+      <!-- 등록식당: 검색 필터 -->
+      <div id="pane-mine-ctl" class="pane-ctl hidden">
+        <div id="filter-panel">
+          <button id="f-reset" class="icon-btn" title="필터 초기화" aria-label="필터 초기화">↻</button>
+          <section class="f-sec">
+            <label class="f-check"><input type="checkbox" id="f-bounds"> 지도에 보이는 곳만</label>
+          </section>
           <section class="f-sec">
             <h4>카테고리 <small>(다중선택)</small></h4>
             <div id="f-cat" class="chips"></div>
           </section>
           <section class="f-sec">
-            <h4>거리 <small>기준점: <span id="origin-label">지도 중심</span></small></h4>
-            <div id="f-dist" class="chips"></div>
-            <div class="row tight">
-              <button id="origin-office" class="ghost sm">🏢 회사</button>
-              <button id="origin-geo" class="ghost sm">📍 내 위치</button>
-              <button id="origin-center" class="ghost sm">지도 중심</button>
+            <h4>거리 <small>기준점에서</small></h4>
+            <div class="dist-line">
+              <!-- 기준점은 셋 중 하나 — 탭처럼 묶어 택1 임을 보인다 -->
+              <div class="seg" role="radiogroup" aria-label="거리 기준점">
+                <button id="origin-office" role="radio">🏢 회사</button>
+                <button id="origin-geo" role="radio">📍 내 위치</button>
+                <button id="origin-center" role="radio" title="지금 보이는 지도 화면의 중심">🧭 화면</button>
+              </div>
+              <div id="f-dist" class="chips"></div>
             </div>
           </section>
-          <section class="f-sec">
-            <h4>정렬</h4>
-            <div id="f-sort" class="chips"></div>
-          </section>
-          <section class="f-sec">
-            <label class="f-check"><input type="checkbox" id="f-bounds"> 지도에 보이는 곳만</label>
-            <label class="f-check"><input type="checkbox" id="f-novisit"> 방문 기록 없는 곳만</label>
-          </section>
-          <button id="f-reset" class="ghost sm">필터 초기화</button>
         </div>
       </div>
 
-      <!-- 오늘 뭐 먹지 -->
-      <div id="pane-rec-ctl" class="pane-ctl hidden">
-        <div class="rec-row"><span class="rec-lb">거리</span><div id="rec-dist" class="chips"></div></div>
-        <div class="rec-row"><span class="rec-lb">최근 방문 제외</span><div id="rec-days" class="chips"></div></div>
-        <div class="rec-row"><span class="rec-lb">카테고리</span><div id="rec-cat" class="chips"></div></div>
-      </div>
-
-      <!-- 공무원 픽 (강남구 업무추진비) -->
-      <div id="pane-gov-ctl" class="pane-ctl hidden">
-        <div class="row">
-          <select id="gov-district" class="dist-sel"></select>
-          <input type="search" id="q-gov" placeholder="가게명 검색">
-        </div>
-        <div class="rec-row"><span class="rec-lb">거리</span><div id="gov-dist" class="chips"></div></div>
-        <div class="rec-row"><span class="rec-lb">인당금액대</span><div id="gov-band" class="chips"></div></div>
-        <div class="rec-row"><span class="rec-lb">정렬</span><div id="gov-sort" class="chips"></div></div>
-      </div>
-
-      <!-- 카카오맵 검색 -->
+      <!-- 식당 찾기 (카카오맵) -->
       <div id="pane-kakao-ctl" class="pane-ctl hidden">
-        <form id="kakao-form" class="row">
-          <input type="search" id="q-kakao" placeholder="카카오맵에서 음식점 검색 (예: 역삼 국밥)">
-          <button type="submit" id="kakao-go">검색</button>
-        </form>
         <label class="f-check"><input type="checkbox" id="k-near" checked> 지도 중심 주변 우선</label>
       </div>
     </header>
 
+    <!-- 등록식당 목록 머리줄 — 개수 + 정렬 -->
+    <div id="mine-bar" class="hidden">
+      <span id="mine-n"></span>
+      <select id="f-sort" class="sort-sel" aria-label="정렬"></select>
+    </div>
+
     <div id="list-wrap">
-      <ul id="list-mine" class="list"></ul>
+      <div id="list-log"></div>
+      <ul id="list-mine" class="list hidden"></ul>
       <ul id="list-kakao" class="list hidden"></ul>
-      <div id="gov-wrap" class="hidden">
-        <div id="gov-note"></div>
-        <ul id="gov-list" class="list"></ul>
-      </div>
-      <div id="rec-wrap" class="hidden">
-        <div id="rec-top">
-          <button id="rec-spin" class="spin-btn">🎲 오늘 뭐 먹지?</button>
-          <div id="rec-slot-box" class="hidden">
-            <div id="rec-slot"></div>
-            <div id="rec-slot-sub"></div>
-          </div>
-        </div>
-        <div id="rec-result"></div>
-        <div id="rec-pool-head" class="d-sec-h"><span id="rec-pool-count"></span><span class="hint-inline">눌러서 직접 고르기</span></div>
-        <ul id="rec-pool" class="list"></ul>
-      </div>
       <div id="empty" class="empty hidden"></div>
     </div>
   </aside>
@@ -119,6 +92,51 @@
     <button id="detail-close" class="x" aria-label="닫기">&times;</button>
     <div id="detail-body"></div>
   </section>
+</div>
+
+<!-- 기능 모달: 오늘 뭐 먹지 / 공무원 픽. 식당 등록·방문 기록 모달(#modal)은 이 위에 뜬다 -->
+<div id="fmodal" class="modal hidden">
+  <div class="modal-card wide">
+    <button class="x fmodal-x" aria-label="닫기">&times;</button>
+    <h2 id="fm-title"></h2>
+
+    <div id="fm-rec" class="hidden">
+      <div class="rec-row"><span class="rec-lb">거리</span><div id="rec-dist" class="chips"></div></div>
+      <div class="rec-row"><span class="rec-lb">최근 방문 제외</span><div id="rec-days" class="chips"></div></div>
+      <div class="rec-row"><span class="rec-lb">카테고리</span><div id="rec-cat" class="chips"></div></div>
+      <div id="rec-top">
+        <button id="rec-spin" class="spin-btn">🎲 오늘 뭐 먹지?</button>
+        <div id="rec-slot-box" class="hidden">
+          <div id="rec-slot"></div>
+          <div id="rec-slot-sub"></div>
+        </div>
+      </div>
+      <div id="rec-result"></div>
+      <div id="rec-pool-head" class="d-sec-h">
+        <span id="rec-pool-count"></span>
+        <span class="pool-head-r">
+          <span class="hint-inline">눌러서 담기</span>
+          <button id="rec-sel-all" class="ghost sm">모두 담기</button>
+        </span>
+      </div>
+      <ul id="rec-pool" class="list boxed"></ul>
+    </div>
+
+    <div id="fm-gov" class="hidden">
+      <div id="gov-main">
+        <div class="row">
+          <select id="gov-district" class="dist-sel"></select>
+          <input type="search" id="q-gov" placeholder="가게명 검색">
+        </div>
+        <div class="rec-row"><span class="rec-lb">거리</span><div id="gov-dist" class="chips"></div></div>
+        <div class="rec-row"><span class="rec-lb">인당금액대</span><div id="gov-band" class="chips"></div></div>
+        <div class="rec-row"><span class="rec-lb">정렬</span><div id="gov-sort" class="chips"></div></div>
+        <div id="gov-note"></div>
+        <ul id="gov-list" class="list boxed"></ul>
+      </div>
+      <div id="gov-detail" class="hidden"></div>
+    </div>
+  </div>
 </div>
 
 <!-- 모달: 식당 등록/수정 -->
@@ -133,6 +151,6 @@
 <div id="toast" class="hidden"></div>
 
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=f828a7fc8b831cd61ef2df06a93d4b11&libraries=clusterer,services&autoload=false"></script>
-<script src="js/app.js?v=11"></script>
+<script src="js/app.js?v=22"></script>
 </body>
 </html>

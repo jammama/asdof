@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>PMS 이슈 트리아지</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0f1115">
+<style>
+  :root {
+    --bg: #0f1115; --panel: #171a21; --panel2: #1e222b; --line: #2a2f3a;
+    --text: #e6e8ee; --muted: #8b93a4; --accent: #5b9dff;
+    --fix: #ff6b6b; --app: #b08cff; --insufficient: #ffb547; --invalid: #7d8699; --resolved: #3ecf8e;
+    --testing: #4fc3f7; --review: #f06292; --notify: #ffd54f;
+    --reopen: #ff4d8d;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.55 -apple-system, "Apple SD Gothic Neo", "Pretendard", system-ui, sans-serif; }
+  header { position: sticky; top: 0; z-index: 5; background: rgba(15,17,21,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+  .top { display: flex; align-items: center; gap: 12px; padding: 12px 0 8px; flex-wrap: wrap; }
+  h1 { font-size: 17px; margin: 0; }
+  .sync { color: var(--muted); font-size: 12px; margin-left: auto; }
+  .tabs, .chips { display: flex; gap: 6px; flex-wrap: wrap; padding-bottom: 8px; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  .tab, .chip { border: 1px solid var(--line); background: var(--panel); border-radius: 999px; padding: 4px 12px; font-size: 13px; }
+  .tab.on, .chip.on { border-color: var(--accent); background: #1c2a44; }
+  .chip .n, .tab .n { color: var(--muted); margin-left: 4px; }
+  main { padding: 14px 0 60px; }
+  .note { color: var(--muted); font-size: 12px; margin-bottom: 12px; white-space: pre-wrap; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--c, var(--line)); border-radius: 10px; margin-bottom: 10px; }
+  .card.checked { opacity: .55; }
+  .card.reopened { box-shadow: 0 0 0 1px var(--reopen); }
+  .head { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; cursor: pointer; }
+  .notify { flex: none; writing-mode: vertical-rl; font-size: 11px; font-weight: 700; letter-spacing: 1px; color: #1a1400; background: var(--notify); border-radius: 4px; padding: 6px 2px; align-self: stretch; text-align: center; }
+  .no { color: var(--muted); font-weight: 700; margin-right: 6px; }
+  .chk { flex: none; width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--muted); background: transparent; display: grid; place-items: center; margin-top: 1px; }
+  .chk.on { background: var(--resolved); border-color: var(--resolved); color: #0b1a12; font-weight: 700; }
+  .ttl { flex: 1; min-width: 0; }
+  .ttl .t { font-weight: 600; word-break: break-word; }
+  .meta { color: var(--muted); font-size: 12px; margin-top: 2px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .badge { font-size: 11px; padding: 1px 8px; border-radius: 999px; background: color-mix(in srgb, var(--c) 22%, transparent); color: var(--c); font-weight: 600; }
+  .badge.re { --c: var(--reopen); }
+  .pri-high { color: var(--fix); font-weight: 700; }
+  .sum { margin-top: 4px; color: #c7ccd8; }
+  .body { display: none; padding: 0 14px 14px 46px; }
+  .card.has-notify .body { padding-left: 70px; }
+  .card.open .body { display: block; }
+  .sec { margin-top: 10px; }
+  .sec h4 { margin: 0 0 4px; font-size: 12px; color: var(--muted); font-weight: 600; }
+  .ana { white-space: pre-wrap; }
+  .ev { margin: 0; padding-left: 18px; font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: #b9c0cf; }
+  .reason { color: var(--reopen); font-size: 13px; margin-top: 4px; }
+  .act { background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; margin-top: 8px; }
+  .act-h { display: flex; gap: 8px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .kind { font-size: 11px; padding: 1px 7px; border-radius: 4px; background: #24324d; color: #9fc2ff; }
+  .kind.person { background: #3b2d1a; color: #ffcf8a; }
+  .copy { margin-left: auto; border: 1px solid var(--accent); background: transparent; color: var(--accent); border-radius: 6px; padding: 3px 10px; font-size: 12px; flex: none; }
+  .copy.done { background: var(--resolved); border-color: var(--resolved); color: #0b1a12; }
+  pre { margin: 0; padding: 10px; white-space: pre-wrap; word-break: break-word; font: 12.5px/1.5 ui-monospace, Menlo, monospace; max-height: 320px; overflow: auto; }
+  .hist { color: var(--muted); font-size: 12px; }
+  a { color: var(--accent); }
+  .empty { color: var(--muted); text-align: center; padding: 40px 0; }
+  #login { max-width: 320px; margin: 18vh auto; padding: 0 16px; }
+  #login input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: inherit; }
+  #login button { width: 100%; margin-top: 8px; padding: 10px; border-radius: 8px; border: 0; background: var(--accent); color: #fff; }
+  #login .err { color: var(--fix); font-size: 13px; min-height: 20px; margin-top: 6px; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #263042; padding: 8px 14px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .toast.on { opacity: 1; }
+</style>
+</head>
+<body>
+<div id="login" hidden>
+  <h1 style="margin-bottom:12px">PMS 이슈 트리아지</h1>
+  <form id="loginForm">
+    <input id="pw" type="password" placeholder="비밀번호" autocomplete="current-password" autofocus>
+    <button>들어가기</button>
+    <div class="err" id="loginErr"></div>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header>
+    <div class="wrap">
+      <div class="top">
+        <h1>PMS 이슈 트리아지</h1>
+        <span class="sync" id="sync"></span>
+      </div>
+      <div class="tabs" id="tabs"></div>
+      <div class="chips" id="chips"></div>
+    </div>
+  </header>
+  <main class="wrap">
+    <div class="note" id="note"></div>
+    <div id="list"></div>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const VERDICT = {
+  review:       { label: '확인필요',      c: 'var(--review)' },
+  fix:          { label: '수정 필요',     c: 'var(--fix)' },
+  app:          { label: '앱 개발자 전달', c: 'var(--app)' },
+  insufficient: { label: '내용 미비',     c: 'var(--insufficient)' },
+  invalid:      { label: '잘못된 이슈',   c: 'var(--invalid)' },
+  testing:      { label: '테스트중',      c: 'var(--testing)' },
+  resolved:     { label: '해결됨',        c: 'var(--resolved)' },
+};
+const TABS = [
+  ['todo', '확인 필요'], ['reopened', '다시 확인'], ['checked', '확인 완료'], ['all', '전체'],
+];
+const PRI = { high: 0, mid: 1, low: 2 };
+
+let pw = '';
+try { pw = localStorage.getItem('pw') || ''; } catch {}
+let state = { issues: [] };
+let tab = 'todo', verdictFilter = '';
+const open = new Set();
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = (s) => s ? new Date(s).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+
+async function api(path, opt = {}) {
+  const res = await fetch(path, { ...opt, headers: { 'Content-Type': 'application/json', 'X-Admin-Password': pw, ...(opt.headers || {}) } });
+  if (res.status === 401) { showLogin(); throw new Error('401'); }
+  if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || res.status);
+  return res.json();
+}
+
+function showLogin() { $('app').hidden = true; $('login').hidden = false; }
+
+$('loginForm').onsubmit = async (e) => {
+  e.preventDefault();
+  const v = $('pw').value;
+  const res = await fetch('api/auth', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: v }) });
+  if (!res.ok) { $('loginErr').textContent = '비밀번호가 틀렸습니다'; return; }
+  pw = v;
+  try { localStorage.setItem('pw', v); } catch {}
+  $('login').hidden = true;
+  load();
+};
+
+async function load() {
+  try {
+    state = await api('api/issues');
+    $('app').hidden = false;
+    render();
+  } catch (e) { if (e.message !== '401') toast('불러오기 실패: ' + e.message); }
+}
+
+function inTab(it) {
+  if (tab === 'todo') return !it.checked;
+  if (tab === 'reopened') return !it.checked && it.reopened;
+  if (tab === 'checked') return it.checked;
+  return true;
+}
+
+function render() {
+  const all = state.issues || [];
+  $('sync').textContent = '마지막 동기화 ' + fmt(state.last_sync);
+  $('note').textContent = state.last_note || '';
+
+  $('tabs').innerHTML = TABS.map(([k, l]) =>
+    `<button class="tab ${tab === k ? 'on' : ''}" data-tab="${k}">${l}<span class="n">${all.filter((it) => { const t = tab; tab = k; const r = inTab(it); tab = t; return r; }).length}</span></button>`).join('');
+
+  const scoped = all.filter(inTab);
+  $('chips').innerHTML = `<button class="chip ${verdictFilter === '' ? 'on' : ''}" data-v="">전체<span class="n">${scoped.length}</span></button>` +
+    Object.entries(VERDICT).map(([k, v]) =>
+      `<button class="chip ${verdictFilter === k ? 'on' : ''}" data-v="${k}" style="--c:${v.c}"><span style="color:${v.c}">●</span> ${v.label}<span class="n">${scoped.filter((it) => it.verdict === k).length}</span></button>`).join('');
+
+  const rows = scoped.filter((it) => !verdictFilter || it.verdict === verdictFilter)
+    .sort((a, b) => (b.reopened - a.reopened) || (PRI[a.priority] - PRI[b.priority]) || String(b.created_at).localeCompare(String(a.created_at)));
+
+  $('list').innerHTML = rows.length ? rows.map(card).join('') : '<div class="empty">표시할 이슈가 없습니다</div>';
+}
+
+function card(it) {
+  const v = VERDICT[it.verdict] || { label: it.verdict, c: 'var(--line)' };
+  const cls = ['card', it.notify_needed && 'has-notify', it.checked && 'checked', it.reopened && !it.checked && 'reopened', open.has(it.id) && 'open'].filter(Boolean).join(' ');
+  return `<div class="${cls}" style="--c:${v.c}" data-id="${esc(it.id)}">
+    <div class="head" data-toggle>
+      ${it.notify_needed ? '<span class="notify" title="코드는 완료됐지만 노션에 수정 완료 안내 댓글이 없음">전달 필요</span>' : ''}
+      <button class="chk ${it.checked ? 'on' : ''}" data-check title="확인 체크">${it.checked ? '✓' : ''}</button>
+      <div class="ttl">
+        <div class="t">${it.no ? `<span class="no">#${esc(it.no)}</span>` : ''}${esc(it.title)}</div>
+        <div class="meta">
+          <span class="badge">${v.label}</span>
+          ${it.reopened && !it.checked ? '<span class="badge re">다시 확인</span>' : ''}
+          ${it.priority === 'high' ? '<span class="pri-high">긴급</span>' : ''}
+          <span>${esc(it.author)} · ${fmt(it.created_at)}</span>
+          ${it.notion_status ? `<span>노션: ${esc(it.notion_status)}</span>` : ''}
+          ${it.notion_edited ? `<span>변경 ${fmt(it.notion_edited)}</span>` : ''}
+        </div>
+        ${it.reopened && !it.checked ? `<div class="reason">↻ ${esc(it.reopen_reason)}</div>` : ''}
+        <div class="sum">${esc(it.summary)}</div>
+      </div>
+    </div>
+    <div class="body">
+      ${it.analysis ? `<div class="sec"><h4>판단 근거</h4><div class="ana">${esc(it.analysis)}</div></div>` : ''}
+      ${(it.evidence || []).length ? `<div class="sec"><h4>확인한 곳</h4><ul class="ev">${it.evidence.map((e) => `<li>${esc(e)}</li>`).join('')}</ul></div>` : ''}
+      ${(it.actions || []).length ? `<div class="sec"><h4>보낼 문구</h4>${it.actions.map((a, i) => `
+        <div class="act">
+          <div class="act-h">
+            <span class="kind ${a.kind}">${a.kind === 'prompt' ? '프롬프트' : '사람'}</span>
+            <span>→ ${esc(a.to)}${a.label ? ' · ' + esc(a.label) : ''}</span>
+            <button class="copy" data-copy="${i}">복사</button>
+          </div>
+          <pre>${esc(a.text)}</pre>
+        </div>`).join('')}</div>` : ''}
+      <div class="sec hist">
+        ${it.url ? `<a href="${esc(it.url)}" target="_blank" rel="noopener">노션에서 열기 ↗</a> · ` : ''}판정 ${fmt(it.triaged_at)}
+        ${(it.history || []).slice(-5).reverse().map((h) => `<div>${fmt(h.at)} ${esc(h.text)}</div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+document.addEventListener('click', async (e) => {
+  const t = e.target.closest('[data-tab],[data-v],[data-check],[data-copy],[data-toggle]');
+  if (!t) return;
+  if (t.dataset.tab) { tab = t.dataset.tab; verdictFilter = ''; return render(); }
+  if (t.dataset.v !== undefined && t.classList.contains('chip')) { verdictFilter = t.dataset.v; return render(); }
+  const id = t.closest('.card')?.dataset.id;
+  const it = state.issues.find((x) => x.id === id);
+  if (!it) return;
+  if (t.dataset.check !== undefined) {
+    e.stopPropagation();
+    try {
+      const upd = await api(`api/issues/${encodeURIComponent(id)}/check`, { method: 'PUT', body: JSON.stringify({ checked: !it.checked }) });
+      Object.assign(it, upd);
+      render();
+      toast(upd.checked ? '확인 처리했습니다' : '다시 확인 대상으로 돌렸습니다');
+    } catch (err) { if (err.message !== '401') toast('실패: ' + err.message); }
+    return;
+  }
+  if (t.dataset.copy !== undefined) {
+    const text = it.actions[+t.dataset.copy].text;
+    await copyText(text);
+    t.textContent = '복사됨'; t.classList.add('done');
+    setTimeout(() => { t.textContent = '복사'; t.classList.remove('done'); }, 1500);
+    return;
+  }
+  if (t.dataset.toggle !== undefined) {
+    open.has(id) ? open.delete(id) : open.add(id);
+    t.closest('.card').classList.toggle('open');
+  }
+});
+
+async function copyText(text) {
+  try { await navigator.clipboard.writeText(text); return; } catch {}
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove();
+}
+
+let toastTimer;
+function toast(msg) {
+  const el = $('toast'); el.textContent = msg; el.classList.add('on');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('on'), 1800);
+}
+
+if (pw) load(); else showLogin();
+// 동기화는 30분 주기지만 화면은 1분마다 조용히 갱신
+setInterval(() => { if (pw && !document.hidden) load(); }, 60000);
+</script>
+</body>
+</html>

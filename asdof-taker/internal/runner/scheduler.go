@@ -90,6 +90,8 @@ func (s *Scheduler) Run(ctx context.Context) {
 
 		wait := time.Hour
 		var fireAt time.Time
+		// 지정 스케줄이면 그 날짜의 항목 전부를 들고 간다 — 같은 실행일에 여러 건을 넣을 수 있다.
+		var entries []config.ScheduleEntry
 
 		switch {
 		case !cfg.Schedule.Enabled:
@@ -98,11 +100,12 @@ func (s *Scheduler) Run(ctx context.Context) {
 			// 발사 시각은 우리 시계 기준이다. 사이트 시계는 참고용으로만 재서 화면에 보여준다
 			// (그 시계가 예약 창을 여닫으므로, 크게 어긋나면 발사 시각을 손봐야 한다).
 			s.probeOffset(ctx, cfg)
-			t, err := cfg.Schedule.NextFire(time.Now(), loc)
+			t, es, err := cfg.Schedule.NextRun(time.Now(), loc)
 			if err != nil {
 				s.setNext(time.Time{}, err.Error())
 				break
 			}
+			entries = es
 			if err := cfg.Validate(); err != nil {
 				s.setNext(t, "설정 오류: "+err.Error())
 				break
@@ -139,7 +142,7 @@ func (s *Scheduler) Run(ctx context.Context) {
 		}
 		at := fireAt
 		s.log.Info("스케줄 실행 시작", "fire_at", at.Format(time.RFC3339Nano))
-		if _, err := s.runner.Start(ctx, Options{Mode: "scheduled", FireAt: &at}); err != nil {
+		if _, err := s.runner.Start(ctx, Options{Mode: "scheduled", FireAt: &at, Entries: entries}); err != nil {
 			s.log.Warn("스케줄 실행을 시작하지 못함", "err", err)
 			time.Sleep(time.Minute)
 			continue

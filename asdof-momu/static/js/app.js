@@ -31,12 +31,23 @@
     { key: 30, label: '한달' }
   ];
   var PW_KEY = 'momu.pw';
+  var SB_KEY = 'momu.sbw';          // 사이드바 넓이(px)
+  var SB_DEFAULT = 520;
+  var WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+  // 탭마다 같은 검색어를 다른 뜻으로 쓴다 — 자리표시 문구로 알려 준다
+  var TAB_PH = {
+    log: '식당명 · 메뉴 · 동행 · 메모로 기록 검색',
+    mine: '식당명 · 메뉴 · 주소 · 메모 검색',
+    kakao: '카카오맵에서 음식점 검색 (예: 역삼 국밥)'
+  };
 
   // ---------- 상태 ----------
   var S = {
     all: [],            // 등록된 식당 전체
-    view: [],           // 필터/정렬 적용 결과
-    tab: 'mine',
+    view: [],           // 필터/정렬 적용 결과 (등록식당 탭)
+    log: [],            // 검색어에 맞는 방문 기록 { r, v } — 최신순 (내 기록 탭)
+    tab: 'log',         // 'log' | 'mine' | 'kakao'
+    fm: null,           // 열려 있는 기능 모달 'rec' | 'gov' | null
     activeId: null,
     kakaoResults: [],
     pw: localStorage.getItem(PW_KEY) || '',
@@ -47,12 +58,15 @@
     overlay: null,
     origin: { lat: OFFICE.lat, lng: OFFICE.lng }, // 거리 기준점 (null = 지도 중심을 따라간다)
     originKind: 'office',                         // 'office' | 'geo' | 'center'
-    filters: { cats: {}, dist: 0, sort: 'recent', bounds: false, novisit: false },
-    q: '',
+    filters: { cats: {}, dist: 0, sort: 'recent', bounds: false },
+    q: '',              // 소문자·trim 한 검색어 (필터용)
+    qRaw: '',           // 입력창 원문 — 탭끼리 공유
+    kakaoQ: '',         // 마지막으로 카카오에 보낸 검색어
     // 오늘 뭐 먹지 — 점심에 걸어갈 만한 거리·1주 안에 안 간 곳이 기본값
-    rec: { dist: 500, cats: {}, days: 7, picked: null, spinning: false },
+    rec: { dist: 500, cats: {}, days: 7, picked: null, spinning: false,
+           sel: {} },   // 직접 담은 후보 (비어 있으면 조건에 맞는 전체로 돌린다)
     // 공무원 픽 — 자치구별 업무추진비 집계 (data/*-spending.json)
-    gov: { district: 'gangnam', cache: {}, data: null,
+    gov: { district: 'gangnam-all', cache: {}, data: null,
            dist: 0, band: '', sort: 'count', q: '', picked: null }
   };
 
@@ -231,7 +245,6 @@
     var f = S.filters;
     var catKeys = Object.keys(f.cats);
     if (catKeys.length && !f.cats[r.category || '기타']) return false;
-    if (f.novisit && r._d.visitCount > 0) return false;
     if (f.dist > 0) {
       if (r._dist == null || r._dist > f.dist) return false;
     }
@@ -268,9 +281,32 @@
       return a.name.localeCompare(b.name, 'ko');
     });
 
+    S.log = logEntries();
+
     renderList();
+    renderLog();
     renderCount();
-    if (S.tab === 'rec') renderRec(); else syncMarkers();
+    syncMarkers();
+    renderRec();
+  }
+
+  // 방문 기록을 식당과 짝지어 펼친다. 검색어는 식당명·카테고리·먹은 메뉴·동행·메모에 건다.
+  function logEntries() {
+    var out = [];
+    S.all.forEach(function (r) {
+      (r.visits || []).forEach(function (v) {
+        if (S.q) {
+          var hay = [r.name, r.category, (v.menus || []).join(' '), v.company, v.memo].join(' ').toLowerCase();
+          if (hay.indexOf(S.q) === -1) return;
+        }
+        out.push({ r: r, v: v });
+      });
+    });
+    out.sort(function (a, b) {
+      return (b.v.date || '').localeCompare(a.v.date || '') ||
+             (b.v.created_at || '').localeCompare(a.v.created_at || '');
+    });
+    return out;
   }
 
   // ---------- 렌더: 컨트롤 ----------
@@ -311,17 +347,33 @@
     renderChipRow('#f-dist', DIST_STEPS, S.filters.dist, function (k) {
       S.filters.dist = k; renderFilterCtl(); apply();
     });
-    renderChipRow('#f-sort', SORTS, S.filters.sort, function (k) {
-      S.filters.sort = k; renderFilterCtl(); apply();
+    var ss = $('#f-sort');
+    if (!ss.options.length) {
+      SORTS.forEach(function (it) {
+        var o = document.createElement('option');
+        o.value = it.key; o.textContent = it.label;
+        ss.appendChild(o);
+      });
+    }
+    ss.value = S.filters.sort;
+    ['office', 'geo', 'center'].forEach(function (k) {
+      var b = $('#origin-' + k), on = S.originKind === k;
+      b.className = on ? 'on' : '';
+      b.setAttribute('aria-checked', on ? 'true' : 'false');
     });
-    $('#origin-label').textContent = originLabel();
     $('#f-bounds').checked = S.filters.bounds;
-    $('#f-novisit').checked = S.filters.novisit;
   }
 
   function renderCount() {
+    if (S.tab === 'log') {
+      var tv = 0;
+      S.all.forEach(function (r) { tv += (r.visits || []).length; });
+      $('#count').textContent = S.log.length === tv ? '· 기록 ' + tv + '건' : '· 기록 ' + S.log.length + '/' + tv + '건';
+      return;
+    }
     var n = S.view.length, total = S.all.length;
     $('#count').textContent = n === total ? '· ' + total + '곳' : '· ' + n + '/' + total + '곳';
+    $('#mine-n').textContent = n === total ? total + '곳' : total + '곳 중 ' + n + '곳';
   }
 
   function renderAdminBtn() {
@@ -348,10 +400,19 @@
       var d = r._d;
       var li = el('li', 'item' + (r.id === S.activeId ? ' on' : ''));
       var main = el('div', 'item-main');
-      main.appendChild(el('div', 'item-name',
+      var nm = el('div', 'item-name',
         esc(r.name) +
         '<span class="cat-tag">' + esc(r.category || '기타') + '</span>' +
-        (d.visitCount === 0 ? '<span class="badge-new">미방문</span>' : '')));
+        (d.visitCount === 0 ? '<span class="badge-new">미방문</span>' : ''));
+      // 방문 기록 / 식당 수정은 목록에서 바로 — 상세를 열지 않는다
+      var addV = el('button', 'mini-btn pri', '＋ 기록');
+      addV.title = '방문 기록 남기기';
+      addV.onclick = function (e) { e.stopPropagation(); openVisitForm(r, null); };
+      var edit = el('button', 'mini-btn', '수정');
+      edit.title = '식당 정보 수정';
+      edit.onclick = function (e) { e.stopPropagation(); openRestaurantForm(r, null); };
+      nm.appendChild(addV); nm.appendChild(edit);
+      main.appendChild(nm);
       main.appendChild(el('div', 'item-sub', esc(r.road_address || r.address || '')));
       if (d.listMenus.length) {
         main.appendChild(el('div', 'item-menus', '🍽 ' + esc(d.listMenus.join(', '))));
@@ -359,10 +420,80 @@
       li.appendChild(main);
 
       var right = el('div', 'item-right');
-      if (r._dist != null) right.appendChild(el('div', null, fmtDist(r._dist)));
+      if (r._dist != null) right.appendChild(distLink(r));
       if (d.visitCount) right.appendChild(el('div', null, d.visitCount + '회'));
       if (d.lastDate) right.appendChild(el('div', null, d.lastDate.slice(2).replace(/-/g, '.')));
       if (d.showRating) right.appendChild(el('div', 'stars', stars(Math.round(d.showRating))));
+      li.appendChild(right);
+
+      li.onclick = function () { focus(r); };
+      ul.appendChild(li);
+    });
+  }
+
+  // 내 기록 — 날짜별 방문 로그. 달마다 머리줄(횟수·지출), 같은 날 여러 건이면 날짜는 한 번만.
+  function renderLog() {
+    var box = $('#list-log');
+    box.innerHTML = '';
+    if (S.tab !== 'log') return;
+
+    if (!S.log.length) {
+      showEmpty(S.q
+        ? '검색어에 맞는 기록이 없습니다.'
+        : '아직 방문 기록이 없습니다.<br><b>등록식당</b> 목록에서 <b>＋ 기록</b>을 눌러 남겨 보세요.');
+      return;
+    }
+    hideEmpty();
+
+    // 달별 합계를 먼저 낸다
+    var months = {};
+    S.log.forEach(function (e) {
+      var k = (e.v.date || '').slice(0, 7);
+      var m = months[k] || (months[k] = { n: 0, won: 0 });
+      m.n++;
+      m.won += e.v.price || 0;
+    });
+
+    var curMonth = null, curDate = null, ul = null;
+    S.log.forEach(function (e) {
+      var r = e.r, v = e.v;
+      var mk = (v.date || '').slice(0, 7);
+      if (mk !== curMonth) {
+        curMonth = mk;
+        var mm = months[mk];
+        box.appendChild(el('div', 'log-month',
+          '<span>' + esc(mk ? mk.slice(0, 4) + '년 ' + (+mk.slice(5, 7)) + '월' : '날짜 없음') + '</span>' +
+          '<small>' + mm.n + '회' + (mm.won ? ' · ' + fmtWon(mm.won) : '') + '</small>'));
+        ul = el('ul', 'list');
+        box.appendChild(ul);
+        curDate = null;
+      }
+
+      var li = el('li', 'item log' + (r.id === S.activeId ? ' on' : ''));
+      var dt = new Date((v.date || '') + 'T00:00:00');
+      var wd = isNaN(dt.getTime()) ? -1 : dt.getDay();
+      var day = el('div', 'log-day' + (wd === 0 ? ' sun' : wd === 6 ? ' sat' : '') + (v.date === curDate ? ' cont' : ''),
+        '<b>' + esc((v.date || '').slice(8, 10)) + '</b><span>' + (wd >= 0 ? WEEKDAYS[wd] : '') + '</span>');
+      curDate = v.date;
+      li.appendChild(day);
+
+      var main = el('div', 'item-main');
+      main.appendChild(el('div', 'item-name',
+        esc(r.name) + '<span class="cat-tag">' + esc(r.category || '기타') + '</span>'));
+      if ((v.menus || []).length) {
+        var vm = el('div', 'visit-menus');
+        v.menus.forEach(function (m) { vm.appendChild(el('span', 'menu-tag', esc(m))); });
+        main.appendChild(vm);
+      }
+      var note = [];
+      if (v.company) note.push('👥 ' + esc(v.company));
+      if (v.memo) note.push(esc(v.memo));
+      if (note.length) main.appendChild(el('div', 'log-note', note.join(' · ')));
+      li.appendChild(main);
+
+      var right = el('div', 'item-right');
+      if (v.rating) right.appendChild(el('div', 'stars', stars(v.rating)));
+      if (v.price) right.appendChild(el('div', null, fmtWon(v.price)));
       li.appendChild(right);
 
       li.onclick = function () { focus(r); };
@@ -414,6 +545,24 @@
     });
   }
 
+  // 📍거리 — 누르면 카카오맵 장소 페이지(없으면 좌표로 지도)를 연다
+  var PIN_SVG = '<svg width="9" height="12" viewBox="0 0 30 40" aria-hidden="true">' +
+    '<path d="M15 39C15 39 28 24 28 14A13 13 0 1 0 2 14C2 24 15 39 15 39Z" fill="currentColor"/>' +
+    '<circle cx="15" cy="14" r="5" fill="#1c1f26"/></svg>';
+  function kakaoUrl(r) {
+    if (r.place_url) return r.place_url;
+    return 'https://map.kakao.com/link/map/' + encodeURIComponent(r.name) + ',' + r.lat + ',' + r.lng;
+  }
+  function distLink(r) {
+    var a = el('a', 'dist-link', PIN_SVG + '<span>' + fmtDist(r._dist) + '</span>');
+    a.href = kakaoUrl(r);
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.title = '카카오맵에서 보기';
+    a.setAttribute('onclick', 'event.stopPropagation()');
+    return a;
+  }
+
   function showEmpty(html) { var e = $('#empty'); e.innerHTML = html; e.className = 'empty'; }
   function hideEmpty() { $('#empty').className = 'empty hidden'; }
 
@@ -463,16 +612,37 @@
     });
   }
 
+  // 룰렛을 돌릴 대상 — 담은 게 있으면 그것만, 없으면 조건에 맞는 전체
+  function spinSet() {
+    var pool = recPool();
+    var picked = pool.filter(function (r) { return S.rec.sel[r.id]; });
+    return picked.length ? picked : pool;
+  }
+
   // 후보 목록 + (뽑힌 게 있으면) 결과 카드
   function renderRec() {
-    if (S.tab !== 'rec') return;
+    if (S.fm !== 'rec') return;
     var pool = recPool();
 
-    $('#rec-pool-count').textContent = '후보 ' + pool.length + '곳';
+    // 조건에서 빠진 것은 담은 목록에서도 정리한다
+    var inPool = {};
+    pool.forEach(function (r) { inPool[r.id] = true; });
+    Object.keys(S.rec.sel).forEach(function (id) { if (!inPool[id]) delete S.rec.sel[id]; });
+
+    var nSel = Object.keys(S.rec.sel).length;
+    $('#rec-pool-count').innerHTML = nSel
+      ? '담은 <b class="sel-n">' + nSel + '곳</b> <span class="mute-s">/ 조건 ' + pool.length + '곳</span>'
+      : '후보 ' + pool.length + '곳';
+    $('#rec-sel-all').textContent = nSel ? '비우기' : '모두 담기';
+    $('#rec-sel-all').className = 'ghost sm' + (nSel ? ' on' : '');
+    $('#rec-spin').textContent = nSel ? '🎲 담은 ' + nSel + '곳으로 돌리기' : '🎲 오늘 뭐 먹지?';
+
     var ul = $('#rec-pool');
     ul.innerHTML = '';
     pool.forEach(function (r) {
-      var li = el('li', 'item' + (S.rec.picked === r.id ? ' on' : ''));
+      var on = !!S.rec.sel[r.id];
+      var li = el('li', 'item pick' + (on ? ' sel' : '') + (S.rec.picked === r.id ? ' on' : ''));
+      li.appendChild(el('div', 'pick-box', on ? '✓' : ''));
       var main = el('div', 'item-main');
       main.appendChild(el('div', 'item-name',
         esc(r.name) + '<span class="cat-tag">' + esc(r.category || '기타') + '</span>'));
@@ -486,9 +656,14 @@
       var ds = daysSince(r._d.lastDate);
       right.appendChild(el('div', null, ds == null ? '미방문' : ds === 0 ? '오늘' : ds + '일 전'));
       if (r._d.showRating) right.appendChild(el('div', 'stars', stars(Math.round(r._d.showRating))));
+      var go = el('button', 'pick-go', '▶');
+      go.title = '룰렛 없이 여기로 결정';
+      go.onclick = function (e) { e.stopPropagation(); settleRec(r); };
+      right.appendChild(go);
       li.appendChild(right);
 
-      li.onclick = function () { settleRec(r); };
+      // 줄을 누르면 담기/빼기 — 클릭만으로 후보군을 만든다
+      li.onclick = function () { toggleSel(r); };
       ul.appendChild(li);
     });
 
@@ -503,13 +678,28 @@
       $('#rec-result').innerHTML = '';
       $('#rec-slot-box').className = 'hidden';
     }
-    syncMarkers(pool);
+  }
+
+  // 후보 담기/빼기. 전체 리렌더 대신 해당 줄만 손대 반응을 즉각적으로 유지한다.
+  function toggleSel(r) {
+    if (S.rec.sel[r.id]) delete S.rec.sel[r.id]; else S.rec.sel[r.id] = true;
+    renderRec();
+  }
+
+  function selAllToggle() {
+    var pool = recPool();
+    if (Object.keys(S.rec.sel).length) {
+      S.rec.sel = {};
+    } else {
+      pool.forEach(function (r) { S.rec.sel[r.id] = true; });
+    }
+    renderRec();
   }
 
   // 룰렛 — 이름이 빠르게 바뀌다가 점점 느려지고, 마지막에 뜬 이름이 결과다
   function spinRec() {
     if (S.rec.spinning) return;
-    var pool = recPool();
+    var pool = spinSet();
     if (!pool.length) { toast('후보가 없습니다. 조건을 넓혀 보세요.', true); return; }
 
     var slotBox = $('#rec-slot-box'), slot = $('#rec-slot'), sub = $('#rec-slot-sub');
@@ -527,7 +717,7 @@
     S.rec.spinning = true;
     var btn = $('#rec-spin');
     btn.disabled = true;
-    sub.textContent = '후보 ' + pool.length + '곳';
+    sub.textContent = (Object.keys(S.rec.sel).length ? '담은 ' : '후보 ') + pool.length + '곳';
     var n = 0, total = 25 + Math.floor(Math.random() * 3);
 
     (function step() {
@@ -583,7 +773,7 @@
     var again = el('button', 'ghost sm', '🎲 다시');
     again.onclick = spinRec;
     var det = el('button', 'ghost sm', '상세');
-    det.onclick = function () { openDetail(r); };
+    det.onclick = function () { closeFeature(); focus(r); };
     var vis = el('button', 'primary sm', '＋ 방문 기록');
     vis.onclick = function () { openVisitForm(r, null); };
     var nav = el('button', 'ghost sm', '길찾기');
@@ -603,12 +793,14 @@
     renderRecPoolActive();
   }
 
-  // 후보 목록에서 뽑힌 항목만 표시 갱신 (전체 리렌더 없이)
+  // 후보 목록에서 뽑힌 항목만 표시 갱신 (전체 리렌더 없이). 담기 상태는 유지한다.
   function renderRecPoolActive() {
     var pool = recPool();
     var ul = $('#rec-pool');
     for (var i = 0; i < ul.children.length && i < pool.length; i++) {
-      ul.children[i].className = 'item' + (pool[i].id === S.rec.picked ? ' on' : '');
+      var r = pool[i];
+      ul.children[i].className = 'item pick' +
+        (S.rec.sel[r.id] ? ' sel' : '') + (r.id === S.rec.picked ? ' on' : '');
     }
   }
 
@@ -639,6 +831,7 @@
 
   // 자치구별 데이터 파일. 구마다 기준점(origin)과 기간이 다르며 JSON 안에 들어 있다.
   var GOV_DISTRICTS = [
+    { key: 'gangnam-all', label: '강남구 (전 부서)', file: 'ga-spending.json' },
     { key: 'gangnam', label: '강남구 (역삼1·2동)', file: 'gn-spending.json' },
     { key: 'jongno', label: '종로구 (전 부서)', file: 'jn-spending.json' }
   ];
@@ -658,12 +851,12 @@
       S.gov.picked = null;
       S.gov.q = '';
       $('#q-gov').value = '';
-      closeDetail();
-      loadGov(true);
+      showGovList();
+      loadGov();
     };
   }
 
-  function loadGov(panMap) {
+  function loadGov() {
     renderDistrictSel();
     var key = S.gov.district;
     var meta = GOV_DISTRICTS.filter(function (d) { return d.key === key; })[0];
@@ -673,10 +866,6 @@
       S.gov.data = d;
       renderGovCtl();
       renderGov();
-      if (panMap && d.origin) {
-        S.map.setCenter(new kakao.maps.LatLng(d.origin.lat, d.origin.lng));
-        S.map.setLevel(5);
-      }
     };
 
     if (S.gov.cache[key]) { after(S.gov.cache[key]); return; }
@@ -734,7 +923,7 @@
   }
 
   function renderGov() {
-    if (S.tab !== 'gov') return;
+    if (S.fm !== 'gov' || !S.gov.data) return;
     var d = S.gov.data, pool = govPool();
 
     $('#gov-note').innerHTML =
@@ -771,37 +960,32 @@
     if (!pool.length) {
       ul.appendChild(el('li', 'empty', '조건에 맞는 가게가 없습니다.'));
     }
-    drawGovMarkers(pool);
   }
 
-  function drawGovMarkers(pool) {
-    clearKakaoMarkers();
-    var img = new kakao.maps.MarkerImage(
-      'data:image/svg+xml;base64,' + btoa(
-        '<svg xmlns="http://www.w3.org/2000/svg" width="26" height="34" viewBox="0 0 30 40">' +
-        '<path d="M15 39C15 39 28 24 28 14A13 13 0 1 0 2 14C2 24 15 39 15 39Z" fill="#5b8c5a" stroke="#14161a" stroke-width="2"/>' +
-        '<circle cx="15" cy="14" r="5" fill="#14161a"/></svg>'),
-      new kakao.maps.Size(26, 34), { offset: new kakao.maps.Point(13, 33) });
-    pool.slice(0, 120).forEach(function (p) {
-      var m = new kakao.maps.Marker({
-        position: new kakao.maps.LatLng(p.lat, p.lng), image: img,
-        map: S.map, title: p.name + ' (' + p.count + '회)', zIndex: 4
-      });
-      kakao.maps.event.addListener(m, 'click', function () { pickGov(p); });
-      S.kMarkers.push(m);
-    });
-  }
-
+  // 공무원 픽 상세는 모달 안에서 목록과 자리를 바꿔 보여 준다 (돌아오면 스크롤 위치 복원)
   function pickGov(p) {
     S.gov.picked = p.kakao_id;
-    panTo(p.lat, p.lng, p.name, p.count + '회 · ' + p.per_person_band);
-    openGovDetail(p);
+    var card = $('#fmodal .modal-card');
+    S.gov.scroll = card.scrollTop;
     renderGov();
+    openGovDetail(p);
+    $('#gov-main').className = 'hidden';
+    $('#gov-detail').className = '';
+    card.scrollTop = 0;
+  }
+
+  function showGovList() {
+    $('#gov-detail').className = 'hidden';
+    $('#gov-main').className = '';
+    $('#fmodal .modal-card').scrollTop = S.gov.scroll || 0;
   }
 
   function openGovDetail(p) {
-    var box = $('#detail-body');
+    var box = $('#gov-detail');
     box.innerHTML = '';
+    var back = el('button', 'ghost sm back-btn', '← 목록');
+    back.onclick = showGovList;
+    box.appendChild(back);
     box.appendChild(el('div', 'd-name', esc(p.name) + ' <span class="cat-tag">' + esc(p.category) + '</span>'));
 
     var meta = [];
@@ -818,9 +1002,14 @@
 
     var acts = el('div', 'd-actions');
     var mine = S.all.filter(function (r) { return r.kakao_id === p.kakao_id; })[0];
+    var onMap = el('button', 'ghost', '지도에서 보기');
+    onMap.onclick = function () {
+      closeFeature();
+      panTo(p.lat, p.lng, p.name, p.count + '회 · ' + p.per_person_band);
+    };
     if (mine) {
-      var go = el('button', 'primary', '내 기록에서 보기');
-      go.onclick = function () { switchTab('mine'); focus(mine); };
+      var go = el('button', 'primary', '등록식당에서 보기');
+      go.onclick = function () { closeFeature(); switchTab('mine'); focus(mine); };
       acts.appendChild(go);
     } else {
       var add = el('button', 'primary', '＋ 내 목록에 추가');
@@ -835,6 +1024,7 @@
       };
       acts.appendChild(add);
     }
+    acts.appendChild(onMap);
     var kb = el('button', 'ghost', '카카오맵');
     kb.onclick = function () { window.open('http://place.map.kakao.com/' + p.kakao_id, '_blank', 'noopener'); };
     acts.appendChild(kb);
@@ -870,8 +1060,30 @@
       '누적 ' + p.total_amount.toLocaleString('ko-KR') + '원 · 건당 평균 ' +
       p.avg_amount.toLocaleString('ko-KR') + '원' +
       (p.aliases.length > 1 ? '<br><span class="mute-s">가맹점명: ' + esc(p.aliases.join(' / ')) + '</span>' : '')));
+  }
 
-    $('#detail').className = '';
+  // ---------- 기능 모달 (오늘 뭐 먹지 / 공무원 픽) ----------
+  function openFeature(kind) {
+    S.fm = kind;
+    $('#fm-title').textContent = kind === 'rec' ? '🎲 오늘 뭐 먹지?' : '💳 공무원 픽';
+    $('#fm-rec').className = kind === 'rec' ? '' : 'hidden';
+    $('#fm-gov').className = kind === 'gov' ? '' : 'hidden';
+    $('#fmodal').className = 'modal';
+    $('#fmodal .modal-card').scrollTop = 0;
+    if (kind === 'rec') {
+      renderRecCtl();
+      renderRec();
+    } else {
+      S.gov.scroll = 0;
+      showGovList();
+      loadGov();
+    }
+  }
+
+  function closeFeature() {
+    if (!S.fm) return;
+    S.fm = null;
+    $('#fmodal').className = 'modal hidden';
   }
 
   // ---------- 지도 ----------
@@ -909,7 +1121,10 @@
     S.all.forEach(function (r) {
       if (!r.lat || !r.lng) return;
       var m = new kakao.maps.Marker({ position: new kakao.maps.LatLng(r.lat, r.lng), title: r.name });
-      kakao.maps.event.addListener(m, 'click', function () { switchTab('mine'); focus(r); });
+      kakao.maps.event.addListener(m, 'click', function () {
+        if (S.tab === 'kakao') switchTab('mine');
+        focus(r);
+      });
       S.markers[r.id] = m;
       list.push(m);
     });
@@ -920,8 +1135,9 @@
   function syncMarkers(list) {
     if (!S.map) return;
     if (!list) {
-      if (S.tab !== 'mine') return;
-      list = S.view;
+      if (S.tab === 'kakao') return;
+      // 내 기록 탭에선 검색에 걸린 기록의 식당만 찍는다
+      list = S.tab === 'log' ? S.log.map(function (e) { return e.r; }) : S.view;
     }
     var visible = {};
     list.forEach(function (r) { visible[r.id] = true; });
@@ -964,6 +1180,7 @@
   function focus(r) {
     S.activeId = r.id;
     renderList();
+    renderLog();
     panTo(r.lat, r.lng, r.name, r.road_address || r.address);
     openDetail(r);
   }
@@ -971,6 +1188,7 @@
   // ---------- 카카오맵 검색 ----------
   function searchKakao(q) {
     if (!q.trim()) return;
+    S.kakaoQ = q;
     var ps = new kakao.maps.services.Places();
     var opt = { size: 15, category_group_code: 'FD6' }; // FD6 = 음식점
     if ($('#k-near').checked) {
@@ -1026,6 +1244,7 @@
     var body = $('#modal-body');
     body.innerHTML = '';
     modal.className = 'modal';
+    $('#modal .modal-card').className = 'modal-card';   // 폼마다 넓이를 따로 줄 수 있게 초기화
 
     var closed = false;
     function close() {
@@ -1046,6 +1265,7 @@
     if (e.key !== 'Escape') return;
     var m = $('#modal');
     if (!m.classList.contains('hidden') && m._close) { m._close(); return; }
+    if (S.fm) { closeFeature(); return; }
     if (!$('#detail').classList.contains('hidden')) closeDetail();
   });
 
@@ -1175,6 +1395,7 @@
             : api('POST', '/api/restaurants', payload);
           p.then(function (rec) {
             close();
+            closeFeature();
             toast(existing ? '수정했습니다.'
               : (payload.menus.length ? '등록했습니다. 메뉴 별점을 바로 눌러 보세요.' : '등록했습니다.'));
             return load().then(function () {
@@ -1213,18 +1434,45 @@
   function openVisitForm(r, existing) {
     requirePw().then(function () {
       var v = existing || {};
+      // 고를 메뉴 — 등록된 메뉴 먼저, 그 뒤에 예전에 먹었던 것 중 등록 안 된 것
+      var choices = [];
+      (r.menus || []).forEach(function (m) { if (choices.indexOf(m.name) === -1) choices.push(m.name); });
+      (r.visits || []).forEach(function (pv) {
+        (pv.menus || []).forEach(function (n) { if (choices.indexOf(n) === -1) choices.push(n); });
+      });
+      // 새 기록의 기본 메뉴 = 별점 제일 높은 메뉴(없으면 첫 메뉴). 사용자가 손대기 전까지만 '기본값'이다.
+      var defMenu = '';
+      if (!existing && (r.menus || []).length) {
+        defMenu = r.menus.slice().sort(function (a, b) { return (b.rating || 0) - (a.rating || 0); })[0].name;
+      }
+      var menuVal = existing ? (v.menus || []).join(', ') : defMenu;
+      var priceVal = existing ? (v.price || '') : 10000;
+
       openModal(existing ? '방문 기록 수정' : r.name + ' — 뭐 먹었지?', function (body, close) {
         var rating = v.rating || 0;
         body.appendChild(el('div', null,
           '<div class="field field-2">' +
-            '<div><label>날짜</label><input type="date" id="v-date" value="' + esc(v.date || today()) + '"></div>' +
-            '<div><label>1인 가격 (원)</label><input type="number" id="v-price" min="0" step="500" value="' + (v.price || '') + '"></div>' +
+            '<div><label>날짜</label><div class="stepper">' + STEP_BTN('prev', 'v-date', '하루 전') +
+              '<input type="date" id="v-date" value="' + esc(v.date || today()) + '">' +
+              STEP_BTN('next', 'v-date', '하루 뒤') + '</div></div>' +
+            '<div><label>1인 가격 (원)</label><div class="stepper">' + STEP_BTN('prev', 'v-price', '1,000원 빼기') +
+              '<input type="number" id="v-price" min="0" step="1000" inputmode="numeric" value="' + priceVal + '">' +
+              STEP_BTN('next', 'v-price', '1,000원 더하기') + '</div></div>' +
           '</div>' +
-          '<div class="field"><label>먹은 메뉴 *</label><input type="text" id="v-menus" value="' + esc((v.menus || []).join(', ')) + '" placeholder="김치찌개, 계란말이">' +
-            '<div class="hint">쉼표로 여러 개 입력</div></div>' +
+          '<div class="field"><label>먹은 메뉴 *</label>' +
+            (choices.length ? '<div id="v-menu-tags" class="chips menu-pick"></div>' : '') +
+            '<input type="text" id="v-menus" value="' + esc(menuVal) + '" placeholder="김치찌개, 계란말이"' +
+              (defMenu ? ' class="is-default"' : '') + '>' +
+            '<div class="hint" id="v-menus-hint">' + (defMenu
+              ? '기본으로 넣어 둔 메뉴입니다. 위에서 고르면 바뀌고, 이후로는 하나씩 더해집니다.'
+              : '쉼표로 여러 개 입력' + (choices.length ? ' · 위 메뉴를 누르면 넣고 빼기' : '')) + '</div></div>' +
           '<div class="field"><label>평점</label><div class="rating-pick" id="v-rating"></div></div>' +
           '<div class="field"><label>같이 간 사람 / 모임</label><input type="text" id="v-company" value="' + esc(v.company || '') + '" placeholder="팀 점심"></div>' +
           '<div class="field"><label>메모</label><textarea id="v-memo" placeholder="맛·웨이팅·주차 등">' + esc(v.memo || '') + '</textarea></div>'));
+
+        $('#modal .modal-card').className = 'modal-card mid';
+        wireSteppers(body);
+        wireMenuPick(body, r, choices, !!defMenu);
 
         var pick = body.querySelector('#v-rating');
         function drawStars() {
@@ -1278,6 +1526,172 @@
         body.appendChild(btns);
       });
     }).catch(function () { /* 인증 취소 */ });
+  }
+
+  // 먹은 메뉴 태그 — 입력칸의 메뉴명과 같으면 on. 누르면 넣고/빼고,
+  // 기본값 상태에서 처음 누르면 기본값을 지우고 그 메뉴로 바꾼다. 직접 타이핑해도 기본값 상태는 끝난다.
+  function wireMenuPick(body, r, choices, isDefault) {
+    var box = body.querySelector('#v-menu-tags');
+    var input = body.querySelector('#v-menus');
+    var hint = body.querySelector('#v-menus-hint');
+    function names() {
+      return input.value.split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+    }
+    function endDefault() {
+      if (!isDefault) return;
+      isDefault = false;
+      input.classList.remove('is-default');
+      hint.textContent = '쉼표로 여러 개 입력 · 위 메뉴를 누르면 넣고 빼기';
+    }
+    function paint() {
+      if (!box) return;
+      var cur = names();
+      for (var i = 0; i < box.children.length; i++) {
+        box.children[i].classList.toggle('on', cur.indexOf(box.children[i].dataset.name) !== -1);
+      }
+    }
+    if (box) {
+      choices.forEach(function (n) {
+        var c = el('button', 'chip', esc(n));
+        c.type = 'button';
+        c.dataset.name = n;
+        c.onclick = function () {
+          var cur = names();
+          if (isDefault) {
+            cur = cur.indexOf(n) !== -1 ? [] : [n];
+            endDefault();
+          } else if (cur.indexOf(n) !== -1) {
+            cur.splice(cur.indexOf(n), 1);
+          } else {
+            cur.push(n);
+          }
+          input.value = cur.join(', ');
+          paint();
+        };
+        box.appendChild(c);
+      });
+      // 태그를 끌어 옮기면 식당 메뉴 순서가 바뀐다 (누르기와 구분: 마우스는 조금 끌어야, 터치는 길게 눌러야 시작)
+      makeSortable(box, {
+        item: '.chip', axis: 'x',
+        onEnd: function () {
+          saveMenuOrder(r, Array.prototype.map.call(box.children, function (c) { return c.dataset.name; }));
+        }
+      });
+      if (choices.length > 1) hint.textContent += ' · 끌어서 순서 변경';
+    }
+    input.addEventListener('input', function () { endDefault(); paint(); });
+    paint();
+  }
+
+  // 식당 메뉴 순서 저장 — 화면은 이미 옮겨져 있으니 결과만 반영한다
+  function saveMenuOrder(r, names) {
+    requirePw().then(function () {
+      return api('PUT', '/api/restaurants/' + r.id + '/menus', { names: names });
+    }).then(function (d) {
+      r.menus = d.menus || r.menus;
+      r._d = derive(r);
+      renderList();
+      toast('메뉴 순서를 바꿨습니다.');
+    }).catch(function (e) {
+      if (e.message !== '취소') toast(e.message, true);
+      load();
+    });
+  }
+
+  // 끌어서 순서 바꾸기 (마우스·터치 공용, 라이브러리 없이).
+  //  - handle 이 있으면 그 손잡이로만 시작한다 (손잡이는 touch-action:none 이라 바로 끌림)
+  //  - 손잡이가 없으면 마우스는 6px 이상 끌 때, 터치는 0.3초 길게 누를 때 시작 — 그 전엔 클릭·스크롤 그대로
+  //  - 끄는 동안 항목을 실제로 옮겨 놓고, 놓을 때 순서가 바뀌었으면 onEnd
+  function makeSortable(box, opt) {
+    box.addEventListener('pointerdown', function (e) {
+      if (e.button !== 0) return;
+      var item = e.target.closest(opt.item);
+      if (!item || item.parentNode !== box) return;
+      if (opt.handle && !e.target.closest(opt.handle)) return;
+
+      var sx = e.clientX, sy = e.clientY, dragging = false, timer = null;
+      var startOrder = Array.prototype.indexOf.call(box.children, item);
+      var lazyTouch = e.pointerType !== 'mouse' && !opt.handle;
+
+      function start() {
+        dragging = true;
+        item.classList.add('dragging');
+        document.body.classList.add('sorting');
+      }
+      if (opt.handle) { e.preventDefault(); start(); }
+      else if (lazyTouch) timer = setTimeout(start, 300);
+
+      function onMove(ev) {
+        if (!dragging) {
+          var far = Math.abs(ev.clientX - sx) + Math.abs(ev.clientY - sy) > (lazyTouch ? 8 : 6);
+          if (!far) return;
+          if (lazyTouch) { cleanup(); return; }   // 길게 누르기 전에 움직이면 스크롤로 본다
+          start();
+        }
+        var hit = document.elementFromPoint(ev.clientX, ev.clientY);
+        var tgt = hit && hit.closest(opt.item);
+        if (!tgt || tgt === item || tgt.parentNode !== box) return;
+        var rc = tgt.getBoundingClientRect();
+        var after = opt.axis === 'y' ? ev.clientY > rc.top + rc.height / 2 : ev.clientX > rc.left + rc.width / 2;
+        box.insertBefore(item, after ? tgt.nextSibling : tgt);
+      }
+      function blockScroll(ev) { if (dragging) ev.preventDefault(); }
+      function onUp() {
+        var was = dragging;
+        cleanup();
+        if (!was) return;
+        // 끌기가 끝나며 생기는 클릭(태그 토글)을 한 번 삼킨다
+        box.addEventListener('click', swallow, true);
+        setTimeout(function () { box.removeEventListener('click', swallow, true); }, 0);
+        if (Array.prototype.indexOf.call(box.children, item) !== startOrder) opt.onEnd();
+      }
+      function swallow(ev) { ev.stopPropagation(); ev.preventDefault(); }
+      function cleanup() {
+        clearTimeout(timer);
+        dragging = false;
+        item.classList.remove('dragging');
+        document.body.classList.remove('sorting');
+        document.removeEventListener('pointermove', onMove);
+        document.removeEventListener('pointerup', onUp);
+        document.removeEventListener('pointercancel', cleanup);
+        document.removeEventListener('touchmove', blockScroll);
+      }
+      document.addEventListener('pointermove', onMove);
+      document.addEventListener('pointerup', onUp);
+      document.addEventListener('pointercancel', cleanup);
+      document.addEventListener('touchmove', blockScroll, { passive: false });
+    });
+  }
+
+  // ---------- ◀ ▶ 스테퍼 (날짜는 하루씩, 가격은 step 만큼) ----------
+  function STEP_BTN(dir, target, label) {
+    var d = dir === 'prev' ? 'M7 1L1 6l6 5z' : 'M1 1l6 5-6 5z';
+    return '<button type="button" class="step-btn" data-dir="' + dir + '" data-for="' + target +
+      '" aria-label="' + label + '" title="' + label + '">' +
+      '<svg width="8" height="12" viewBox="0 0 8 12" aria-hidden="true"><path d="' + d + '" fill="currentColor"/></svg></button>';
+  }
+  function wireSteppers(root) {
+    root.querySelectorAll('.step-btn').forEach(function (b) {
+      b.onclick = function () {
+        var inp = root.querySelector('#' + b.dataset.for);
+        var sign = b.dataset.dir === 'prev' ? -1 : 1;
+        if (inp.type === 'date') {
+          var dt = new Date((inp.value || today()) + 'T00:00:00');
+          if (isNaN(dt.getTime())) dt = new Date(today() + 'T00:00:00');
+          dt.setDate(dt.getDate() + sign);
+          inp.value = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' +
+            String(dt.getDate()).padStart(2, '0');
+        } else {
+          var step = parseInt(inp.step, 10) || 1;
+          var cur = parseInt(inp.value, 10) || 0;
+          // 어중간한 값(12,300)에서 누르면 step 눈금(12,000 / 12,500)으로 맞춘다
+          var next = sign > 0 ? Math.floor(cur / step) * step + step : Math.ceil(cur / step) * step - step;
+          next = Math.max(parseInt(inp.min, 10) || 0, next);
+          inp.value = next || '';
+        }
+        inp.dispatchEvent(new Event('input', { bubbles: true }));
+      };
+    });
   }
 
   // ---------- 상세 ----------
@@ -1337,28 +1751,10 @@
     if (r.road_address) meta.push(esc(r.road_address));
     else if (r.address) meta.push(esc(r.address));
     if (r.phone) meta.push('<a href="tel:' + esc(r.phone) + '">' + esc(r.phone) + '</a>');
-    if (r._dist != null) meta.push('기준점에서 ' + fmtDist(r._dist));
+    if (r._dist != null) meta.push('기준점에서 ' + distLink(r).outerHTML);
     if (r.memo) meta.push('<span style="color:#a8b0bd">' + esc(r.memo) + '</span>');
     box.appendChild(el('div', 'd-meta', meta.join('<br>')));
 
-    var acts = el('div', 'd-actions');
-    var addV = el('button', 'primary', '＋ 방문 기록');
-    addV.onclick = function () { openVisitForm(r, null); };
-    acts.appendChild(addV);
-    var edit = el('button', 'ghost', '식당 수정');
-    edit.onclick = function () { openRestaurantForm(r, null); };
-    acts.appendChild(edit);
-    if (r.place_url) {
-      var kb = el('button', 'ghost', '카카오맵');
-      kb.onclick = function () { window.open(r.place_url, '_blank', 'noopener'); };
-      acts.appendChild(kb);
-    }
-    var nav = el('button', 'ghost', '길찾기');
-    nav.onclick = function () {
-      window.open('https://map.kakao.com/link/to/' + encodeURIComponent(r.name) + ',' + r.lat + ',' + r.lng, '_blank', 'noopener');
-    };
-    acts.appendChild(nav);
-    box.appendChild(acts);
 
     // 통계는 방문 기록이 있을 때만 — 갓 등록한 식당은 메뉴 별점이 바로 보이게 한다
     if (d.visitCount) {
@@ -1382,23 +1778,31 @@
 
     if (!menus.length) {
       box.appendChild(el('div', 'empty sm',
-        '등록된 메뉴가 없습니다.<br><b>식당 수정</b>에서 쉼표로 구분해 넣으면 여기서 별점을 매길 수 있습니다.'));
+        '등록된 메뉴가 없습니다.<br>목록의 <b>수정</b>에서 쉼표로 구분해 넣으면 여기서 별점을 매길 수 있습니다.'));
     } else {
       var mlist = el('div', 'menu-list');
       menus.forEach(function (m) {
         var row = el('div', 'menu-row');
+        row.dataset.name = m.name;
+        if (menus.length > 1) row.appendChild(el('span', 'drag-h', '⠿')).title = '끌어서 순서 변경';
         row.appendChild(el('div', 'menu-row-name', esc(m.name)));
         row.appendChild(menuStars(r, m));
         mlist.appendChild(row);
       });
       box.appendChild(mlist);
+      makeSortable(mlist, {
+        item: '.menu-row', handle: '.drag-h', axis: 'y',
+        onEnd: function () {
+          saveMenuOrder(r, Array.prototype.map.call(mlist.children, function (x) { return x.dataset.name; }));
+        }
+      });
     }
 
     var h = el('div', 'd-sec-h', '<span>방문 기록 ' + d.visitCount + '건</span>');
     box.appendChild(h);
 
     if (!d.visitCount) {
-      box.appendChild(el('div', 'empty', '아직 기록이 없습니다.<br>다녀왔으면 <b>＋ 방문 기록</b>을 눌러 남겨 두세요.'));
+      box.appendChild(el('div', 'empty', '아직 기록이 없습니다.<br>다녀왔으면 목록의 <b>＋ 기록</b>을 눌러 남겨 두세요.'));
     }
     (r.visits || []).forEach(function (v) {
       var card = el('div', 'visit');
@@ -1446,6 +1850,7 @@
     $('#detail').className = 'hidden';
     S.activeId = null;
     renderList();
+    renderLog();
     closeOverlay();
   }
 
@@ -1455,39 +1860,80 @@
     document.querySelectorAll('.tab').forEach(function (b) {
       b.className = 'tab' + (b.dataset.tab === tab ? ' on' : '');
     });
+    // 검색창은 하나 — 탭에 따라 자리표시 문구와 옆 버튼만 바뀐다
+    $('#q').placeholder = TAB_PH[tab];
+    $('#filter-btn').classList.toggle('hidden', tab !== 'mine');
+    $('#kakao-go').className = tab === 'kakao' ? '' : 'hidden';
     $('#pane-mine-ctl').className = 'pane-ctl' + (tab === 'mine' ? '' : ' hidden');
-    $('#pane-rec-ctl').className = 'pane-ctl' + (tab === 'rec' ? '' : ' hidden');
-    $('#pane-gov-ctl').className = 'pane-ctl' + (tab === 'gov' ? '' : ' hidden');
+    $('#mine-bar').className = tab === 'mine' ? '' : 'hidden';
     $('#pane-kakao-ctl').className = 'pane-ctl' + (tab === 'kakao' ? '' : ' hidden');
+    $('#list-log').className = tab === 'log' ? '' : 'hidden';
     $('#list-mine').className = 'list' + (tab === 'mine' ? '' : ' hidden');
     $('#list-kakao').className = 'list' + (tab === 'kakao' ? '' : ' hidden');
-    $('#rec-wrap').className = tab === 'rec' ? '' : 'hidden';
-    $('#gov-wrap').className = tab === 'gov' ? '' : 'hidden';
+    $('#list-wrap').scrollTop = 0;
+    hideEmpty();
+    renderCount();
 
     if (tab === 'kakao') {
       // 등록 마커를 걷고 검색결과 마커만 남긴다
       S.clusterer.clear();
       Object.keys(S.markers).forEach(function (id) { S.markers[id]._shown = false; });
-      hideEmpty();
       renderKakaoList();
-      setTimeout(function () { $('#q-kakao').focus(); }, 60);
+      // 다른 탭에서 적던 검색어가 있으면 바로 카카오에서 찾아 준다
+      if (S.qRaw.trim() && S.qRaw !== S.kakaoQ) searchKakao(S.qRaw);
+      else if (S.kakaoResults.length) drawKakaoMarkers(S.kakaoResults);
+      setTimeout(function () { $('#q').focus(); }, 60);
       return;
     }
 
     clearKakaoMarkers();
-    hideEmpty();
-    if (tab === 'rec') {
-      renderRecCtl();
-      renderRec();
-    } else if (tab === 'gov') {
-      // 등록 마커는 걷고 공무원 픽 마커만 띄운다
-      S.clusterer.clear();
-      Object.keys(S.markers).forEach(function (id) { S.markers[id]._shown = false; });
-      loadGov();
-    } else {
-      renderList();
-      syncMarkers();
+    // 카카오 탭에서 고친 검색어도 여기서 그대로 걸린다
+    S.q = S.qRaw.trim().toLowerCase();
+    apply();
+  }
+
+  // ---------- 사이드바 넓이 조절 ----------
+  function sbClamp(w) {
+    return Math.round(Math.max(320, Math.min(w, window.innerWidth - 300)));
+  }
+  function setSidebarWidth(w) {
+    document.documentElement.style.setProperty('--sb-w', sbClamp(w) + 'px');
+  }
+  function wireResizer() {
+    var saved = parseInt(localStorage.getItem(SB_KEY), 10);
+    setSidebarWidth(saved || SB_DEFAULT);
+
+    var rz = $('#resizer'), raf = 0, lastW = 0;
+    function relayout() { if (S.map) S.map.relayout(); }
+    rz.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      rz.setPointerCapture(e.pointerId);
+      rz.classList.add('drag');
+      document.body.classList.add('resizing');
+    });
+    rz.addEventListener('pointermove', function (e) {
+      if (!rz.classList.contains('drag')) return;
+      lastW = sbClamp(window.innerWidth - e.clientX);
+      setSidebarWidth(lastW);
+      if (!raf) raf = requestAnimationFrame(function () { raf = 0; relayout(); });
+    });
+    function end() {
+      if (!rz.classList.contains('drag')) return;
+      rz.classList.remove('drag');
+      document.body.classList.remove('resizing');
+      if (lastW) localStorage.setItem(SB_KEY, String(lastW));
+      relayout();
     }
+    rz.addEventListener('pointerup', end);
+    rz.addEventListener('pointercancel', end);
+    rz.addEventListener('dblclick', function () {
+      localStorage.removeItem(SB_KEY);
+      setSidebarWidth(SB_DEFAULT);
+      relayout();
+    });
+    window.addEventListener('resize', function () {
+      setSidebarWidth(parseInt(localStorage.getItem(SB_KEY), 10) || SB_DEFAULT);
+    });
   }
 
   // ---------- 이벤트 배선 ----------
@@ -1496,15 +1942,26 @@
       b.onclick = function () { switchTab(b.dataset.tab); };
     });
 
-    var qm = $('#q-mine');
-    qm.oninput = function () {
-      clearTimeout(qm._t);
-      qm._t = setTimeout(function () { S.q = qm.value.trim().toLowerCase(); apply(); }, 150);
+    var q = $('#q');
+    q.oninput = function () {
+      S.qRaw = q.value;
+      if (S.tab === 'kakao') return;          // 카카오는 엔터/검색 버튼으로만 보낸다
+      clearTimeout(q._t);
+      q._t = setTimeout(function () { S.q = S.qRaw.trim().toLowerCase(); apply(); }, 150);
+    };
+    $('#q-form').onsubmit = function (e) {
+      e.preventDefault();
+      S.qRaw = q.value;
+      if (S.tab === 'kakao') searchKakao(S.qRaw);
     };
 
-    $('#kakao-form').onsubmit = function (e) { e.preventDefault(); searchKakao($('#q-kakao').value); };
+    $('#rec-open').onclick = function () { openFeature('rec'); };
+    $('#gov-btn').onclick = function () { openFeature('gov'); };
+    $('.fmodal-x').onclick = closeFeature;
+    $('#fmodal').onclick = function (e) { if (e.target === this) closeFeature(); };
 
     $('#rec-spin').onclick = spinRec;
+    $('#rec-sel-all').onclick = selAllToggle;
 
     var qg = $('#q-gov');
     qg.oninput = function () {
@@ -1520,10 +1977,10 @@
     };
 
     $('#f-bounds').onchange = function () { S.filters.bounds = this.checked; apply(); };
-    $('#f-novisit').onchange = function () { S.filters.novisit = this.checked; apply(); };
+    $('#f-sort').onchange = function () { S.filters.sort = this.value; apply(); };
     $('#f-reset').onclick = function () {
-      S.filters = { cats: {}, dist: 0, sort: 'recent', bounds: false, novisit: false };
-      S.q = ''; $('#q-mine').value = '';
+      // 정렬과 검색어는 필터가 아니므로 그대로 둔다
+      S.filters = { cats: {}, dist: 0, sort: S.filters.sort, bounds: false };
       S.origin = { lat: OFFICE.lat, lng: OFFICE.lng }; S.originKind = 'office';
       renderCatChips(); renderFilterCtl(); renderBadge(); apply();
     };
@@ -1569,6 +2026,7 @@
   }
 
   // ---------- 시작 ----------
+  wireResizer();
   kakao.maps.load(function () {
     initMap();
     wire();

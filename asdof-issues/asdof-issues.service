@@ -1,0 +1,27 @@
+[Unit]
+Description=asdof-issues (PMS 노션 이슈 트리아지)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/asdof-issues
+# localhost 에만 바인딩 — nginx 가 trackbot.asdof.xyz 로 리버스 프록시
+Environment=LISTEN_ADDR=127.0.0.1:8800
+Environment=STATIC_DIR=/var/lib/asdof-issues/static
+Environment=DATA_FILE=/var/lib/asdof-issues/data.json
+# ADMIN_PASSWORD, SYNC_TOKEN
+EnvironmentFile=/etc/asdof-issues.env
+StateDirectory=asdof-issues
+User=www-data
+Group=www-data
+Restart=always
+RestartSec=2
+
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+MemoryMax=64M
+
+[Install]
+WantedBy=multi-user.target

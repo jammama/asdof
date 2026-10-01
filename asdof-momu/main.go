@@ -375,6 +375,45 @@ func (r *Restaurant) applyMenus(in []MenuItem) {
 	r.Menus = out
 }
 
+// absorbMenus 는 방문 기록에 처음 나온 메뉴를 식당 메뉴 목록 끝에 붙인다 (별점 0).
+func (r *Restaurant) absorbMenus(names []string) {
+	have := map[string]bool{}
+	for _, m := range r.Menus {
+		have[m.Name] = true
+	}
+	for _, n := range names {
+		n = clampStr(n, 60)
+		if n == "" || have[n] || len(r.Menus) >= 60 {
+			continue
+		}
+		have[n] = true
+		r.Menus = append(r.Menus, &MenuItem{ID: newID("m"), Name: n})
+	}
+}
+
+// reorderMenus 는 이름 순서대로 메뉴를 다시 늘어놓는다. 모르는 이름은 무시하고,
+// 목록에 안 온 메뉴는 원래 순서대로 뒤에 남긴다 — 메뉴가 사라지는 일은 없다.
+func (r *Restaurant) reorderMenus(names []string) {
+	byName := map[string]*MenuItem{}
+	for _, m := range r.Menus {
+		byName[m.Name] = m
+	}
+	used := map[string]bool{}
+	out := make([]*MenuItem, 0, len(r.Menus))
+	for _, n := range names {
+		if m := byName[n]; m != nil && !used[n] {
+			used[n] = true
+			out = append(out, m)
+		}
+	}
+	for _, m := range r.Menus {
+		if !used[m.Name] {
+			out = append(out, m)
+		}
+	}
+	r.Menus = out
+}
+
 // ---------- 핸들러 ----------
 
 func (s *server) handleAuth(w http.ResponseWriter, r *http.Request) {
@@ -456,13 +495,13 @@ func (s *server) handleRestaurantItem(w http.ResponseWriter, r *http.Request) {
 		s.handleVisits(w, r, id, vid)
 		return
 	}
-	// /api/restaurants/{id}/menus/{mid} — 메뉴 별점만 바꾸는 전용 경로
+	// /api/restaurants/{id}/menus — 메뉴 순서 / .../menus/{mid} — 메뉴 별점만 바꾸는 전용 경로
 	if len(parts) >= 2 && parts[1] == "menus" {
-		mid := ""
-		if len(parts) >= 3 {
-			mid = parts[2]
+		if len(parts) == 2 {
+			s.handleMenuOrder(w, r, id)
+			return
 		}
-		s.handleMenuRating(w, r, id, mid)
+		s.handleMenuRating(w, r, id, parts[2])
 		return
 	}
 	if len(parts) != 1 {
@@ -651,6 +690,36 @@ func (s *server) handleKakaoPlace(w http.ResponseWriter, r *http.Request) {
 
 // handleMenuRating 은 메뉴 하나의 별점만 갱신한다.
 // 상세 화면에서 별을 누르면 저장 버튼 없이 바로 이 경로로 들어온다.
+func (s *server) handleMenuOrder(w http.ResponseWriter, r *http.Request, id string) {
+	if !s.requireAuth(w, r) {
+		return
+	}
+	if r.Method != http.MethodPut && r.Method != http.MethodPatch {
+		writeErr(w, http.StatusMethodNotAllowed, "PUT 만 허용됩니다.")
+		return
+	}
+	var in struct {
+		Names []string `json:"names"`
+	}
+	if !decode(w, r, &in) {
+		return
+	}
+	var out []*MenuItem
+	if err := s.st.mutate(func(d *db) error {
+		rec := s.st.findLocked(id)
+		if rec == nil {
+			return errNotFound
+		}
+		rec.reorderMenus(in.Names)
+		out = rec.Menus
+		return nil
+	}); err != nil {
+		respondMutateErr(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{"menus": out})
+}
+
 func (s *server) handleMenuRating(w http.ResponseWriter, r *http.Request, id, mid string) {
 	if !s.requireAuth(w, r) {
 		return
@@ -708,6 +777,7 @@ func (s *server) handleVisits(w http.ResponseWriter, r *http.Request, id, vid st
 				return errNotFound
 			}
 			rec.Visits = append(rec.Visits, v)
+			rec.absorbMenus(v.Menus)
 			// 최신 방문이 위로 오도록 날짜 내림차순 유지
 			sortVisits(rec.Visits)
 			return nil
@@ -731,6 +801,7 @@ func (s *server) handleVisits(w http.ResponseWriter, r *http.Request, id, vid st
 			for _, v := range rec.Visits {
 				if v.ID == vid {
 					v.applyVisit(in)
+					rec.absorbMenus(v.Menus)
 					out = v
 					sortVisits(rec.Visits)
 					return nil

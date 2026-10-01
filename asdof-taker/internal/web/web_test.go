@@ -108,7 +108,11 @@ func TestLoginAndSecretsNeverEcho(t *testing.T) {
 	}
 
 	// 저장은 됐는가 (복호화해서 확인)
-	if pw, err := store.Password(); err != nil || pw != "site-secret-pw" {
+	accs := store.Get().Site.Accounts
+	if len(accs) != 1 || accs[0].Username != "tester" {
+		t.Fatalf("계정이 만들어지지 않았다: %+v", accs)
+	}
+	if pw, err := store.AccountPassword(accs[0].ID); err != nil || pw != "site-secret-pw" {
 		t.Fatalf("저장된 비밀번호 = %q %v", pw, err)
 	}
 	// 상태 응답에 비밀값이 절대 섞이면 안 된다
@@ -223,11 +227,11 @@ func TestPartialSaveKeepsOmittedFields(t *testing.T) {
 
 	// 먼저 온전한 예약 설정을 저장한다.
 	full := map[string]any{
-		"date_offset_days": 6, "count": 2, "gap_seconds": 35,
-		"subject": "주간 정기 회의", "manager": "홍길동", "contact": "010-0000-0000",
+		"date_offset_days": 7, "count": 2, "gap_seconds": 35,
+		"subject": "주간 정기 회의", "manager": "홍길동", "purpose_cd": "A",
 		"targets": []any{
-			map[string]any{"room_id": 41, "building": "3", "floor": "25", "start": "09:00", "duration_slots": 8},
-			map[string]any{"room_id": 41, "building": "3", "floor": "25", "start": "14:00", "duration_slots": 8},
+			map[string]any{"space_cd": "BLDG004_05_001", "bldg_cd": "BLDG004", "start": "09:00", "duration_slots": 4},
+			map[string]any{"space_cd": "BLDG004_05_001", "bldg_cd": "BLDG004", "start": "14:00", "duration_slots": 4},
 		},
 		"fallback": map[string]any{"enabled": false},
 	}

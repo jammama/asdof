@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>컴포넌트 패널 개선안 · Design 1 — Miner Report</title>
+<style>
+  :root{
+    --brand:#2BB0D5;
+    --brand-deep:#147D98;
+    --ink:#222222;
+    --ink-2:#5A6069;
+    --ink-3:#8A9099;
+    --line:#E9ECF1;
+    --line-soft:#F0F2F5;
+    --bg:#F7F8FA;
+    --canvas:#F4F4F4;
+    --c-mart:#2BB0D5;
+    --c-eda:#7C6CF0;
+    --c-prep:#E8862F;
+    --c-model:#22A06B;
+    --c-etc:#98A2B3;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+    font-size:14px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1360px;margin:0 auto;padding:40px 24px 80px}
+
+  /* ---------- doc header ---------- */
+  .doc-head{margin-bottom:28px}
+  .eyebrow{
+    display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;
+    color:var(--brand-deep);background:#EAF7FB;border-radius:999px;padding:4px 10px;margin-bottom:12px;
+  }
+  h1{font-size:26px;line-height:1.3;font-weight:800;margin:0 0 10px;letter-spacing:-.01em}
+  .lede{margin:0;max-width:78ch;color:var(--ink-2);font-size:14.5px}
+  .lede b{color:var(--ink);font-weight:700}
+
+  /* ---------- section ---------- */
+  section{margin-top:40px}
+  h2{
+    font-size:13px;font-weight:800;letter-spacing:.06em;color:var(--ink-3);
+    margin:0 0 14px;text-transform:uppercase;
+  }
+  h2 .kr{letter-spacing:0;font-size:14px;color:var(--ink);text-transform:none;margin-left:8px}
+
+  /* ---------- diagnosis stats ---------- */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .stat{
+    background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;
+  }
+  .stat .n{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .stat .n small{font-size:14px;font-weight:600;color:var(--ink-3);margin-left:3px}
+  .stat .t{margin-top:6px;font-size:12.5px;font-weight:700;color:var(--ink)}
+  .stat .d{margin-top:4px;font-size:12px;color:var(--ink-3);line-height:1.45}
+  .stat .d b{color:#15774C;font-weight:800}
+  .stat.bad .n{color:#D0453B}
+
+  /* ---------- compare ---------- */
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .pane{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+  .pane-head{padding:14px 16px;border-bottom:1px solid var(--line-soft);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .tag{font-size:11px;font-weight:800;letter-spacing:.06em;border-radius:5px;padding:3px 7px}
+  .tag.before{background:#F1F3F6;color:#6B7280}
+  .tag.after{background:var(--brand);color:#fff}
+  .pane-head .title{font-size:13.5px;font-weight:700}
+  .pane-head .sub{font-size:12px;color:var(--ink-3);width:100%;margin-top:-2px}
+  .stage{background:var(--canvas);padding:14px;height:760px;position:relative;
+    background-image:radial-gradient(#E0E0E0 1px,transparent 1px);background-size:14px 14px}
+  .pane-foot{padding:10px 16px;border-top:1px solid var(--line-soft);font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .pane-foot b{color:var(--ink);font-weight:700}
+  .pane-foot .pill{background:#F3F5F8;border-radius:5px;padding:2px 7px;font-size:11.5px;color:var(--ink-2)}
+  .pane-foot .pill.good{background:#E8F7F0;color:#15774C}
+
+  /* ================= shared panel shell ================= */
+  .panel{
+    position:absolute;top:14px;left:14px;width:300px;bottom:14px;
+    background:#fff;border:1px solid #E5E7EB;border-radius:12px;
+    box-shadow:0 4px 14px rgba(15,23,42,.08);
+    display:flex;flex-direction:column;overflow:hidden;
+  }
+  .panel-head{
+    display:flex;align-items:center;gap:6px;padding:9px 10px;flex-shrink:0;
+  }
+  .panel-head .h-t{font-size:13px;font-weight:700;color:var(--ink);flex:1;min-width:0}
+  .icon-btn{
+    width:24px;height:24px;border:0;background:transparent;border-radius:6px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;color:#98A2B3;flex-shrink:0;
+  }
+  .icon-btn:hover{background:#F2F4F7;color:var(--ink-2)}
+
+  /* ================= BEFORE (현재 UI 재현) ================= */
+  .b-search{margin:0 12px 8px;display:flex;align-items:center;gap:8px;height:40px;border:1px solid #D1D5DB;border-radius:8px;padding:0 12px;color:#9AA1A9;font-size:13px}
+  .b-tabs{display:flex;border-bottom:1px solid #E5E7EB;margin:0 12px}
+  .b-tab{flex:1;text-align:center;padding:10px 0;font-size:13px;font-weight:700;border-bottom:2px solid transparent;color:#98A2B3}
+  .b-tab.on{color:var(--brand-deep);border-bottom-color:var(--brand)}
+  .b-body{flex:1;overflow-y:auto;padding:8px 10px}
+  .b-sec{margin-bottom:16px}
+  .b-sec-h{
+    display:flex;align-items:center;gap:8px;min-height:36px;background:#F3FAFC;border-radius:6px;padding:6px 8px;
+  }
+  .b-sec-h .bar{width:3px;height:14px;border-radius:999px;background:var(--brand);flex-shrink:0}
+  .b-sec-h .nm{flex:1;font-size:13px;font-weight:700;color:#1B8FAD}
+  .b-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-top:8px}
+  .b-card{
+    min-height:96px;border:1px solid #EEF0F3;border-radius:12px;background:#fff;
+    box-shadow:0 1px 2px rgba(15,23,42,.03);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:8px 6px;text-align:center;cursor:pointer;
+  }
+  .b-card:hover{border-color:var(--brand);background:#F0FBFF;box-shadow:none}
+  .b-card .lb{
+    margin-top:4px;font-size:12px;font-weight:500;color:#374151;line-height:1.25;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    word-break:keep-all;overflow-wrap:anywhere;
+  }
+  .b-card svg{display:block}
+
+  /* ================= AFTER (개선안) ================= */
+  .a-search{
+    margin:0 10px 8px;display:flex;align-items:center;gap:7px;height:32px;
+    border:1px solid #DDE1E6;border-radius:7px;padding:0 9px;background:#fff;
+  }
+  .a-search:focus-within{border-color:var(--brand);box-shadow:0 0 0 3px rgba(43,176,213,.14)}
+  .a-search input{
+    border:0;outline:0;background:transparent;flex:1;min-width:0;
+    font:inherit;font-size:12.5px;color:var(--ink);
+  }
+  .a-search input::placeholder{color:#A6ACB4;font-weight:400}
+  .a-chips{display:flex;gap:5px;padding:0 10px 8px;flex-shrink:0}
+  .chip{
+    border:1px solid #E3E6EA;background:#fff;border-radius:999px;
+    height:24px;padding:0 9px;font:inherit;font-size:11.5px;font-weight:600;color:var(--ink-2);
+    cursor:pointer;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;
+  }
+  .chip:hover{background:#F7F9FB}
+  .chip .cnt{color:#A6ACB4;font-weight:600}
+  .chip.on{background:#EAF7FB;border-color:#A8DEEE;color:var(--brand-deep)}
+  .chip.on .cnt{color:#63B9D2}
+
+  .a-body{flex:1;overflow-y:auto;padding:2px 6px 10px;scrollbar-width:thin}
+  .a-body::-webkit-scrollbar{width:8px}
+  .a-body::-webkit-scrollbar-thumb{background:#DFE3E8;border-radius:99px;border:2px solid #fff}
+
+  .a-sec-h{
+    display:flex;align-items:center;gap:6px;width:100%;
+    border:0;background:transparent;cursor:pointer;
+    padding:7px 6px 3px;font:inherit;
+    font-size:11px;font-weight:700;letter-spacing:.03em;color:#8A9099;
+  }
+  .a-sec-h:hover{color:var(--ink-2)}
+  .a-sec-h .nm{flex:1;min-width:0;text-align:left}
+  .a-sec-h .cnt{font-size:11px;font-weight:600;color:#B6BCC4}
+  .a-sec-h .cv{transition:transform .15s;color:#C3C8CE}
+  .a-sec.collapsed .cv{transform:rotate(-90deg)}
+  .a-sec.collapsed .a-items{display:none}
+  .a-sec + .a-sec .a-sec-h{border-top:1px solid #F1F3F5;margin-top:3px;padding-top:9px}
+
+  .row{
+    display:flex;align-items:center;gap:7px;width:100%;
+    border:0;background:transparent;cursor:pointer;font:inherit;text-align:left;
+    height:27px;padding:0 6px;border-radius:6px;color:#2C3138;
+  }
+  .row:hover{background:#F2FAFD}
+  .row:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
+  .row .dot{width:5px;height:5px;border-radius:99px;flex-shrink:0}
+  .row .glyph{width:18px;height:18px;flex-shrink:0;display:none;align-items:center;justify-content:center;color:#7A828C}
+  .row .glyph svg{display:block;width:18px;height:18px}
+  .row .lb{flex:1;min-width:0;font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .lb mark{background:#FFF0B3;color:inherit;padding:0;border-radius:2px}
+  .row .cat{font-size:10.5px;color:#B6BCC4;flex-shrink:0;display:none}
+  .row .used{
+    font-size:10px;font-weight:700;color:#15774C;background:#E8F7F0;
+    border-radius:4px;padding:1px 4px;flex-shrink:0;
+  }
+  .row .star{
+    width:18px;height:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+    color:#D3D7DC;opacity:0;border-radius:4px;
+  }
+  .row:hover .star{opacity:1}
+  .row .star:hover{color:#F0B429}
+  .row.fav .star{opacity:1;color:#F0B429}
+  .row.fav .star svg{fill:currentColor}
+
+  /* density: 보통 — 작은 글리프 노출 */
+  .a-body.d-mid .row{height:30px}
+  .a-body.d-mid .row .dot{display:none}
+  .a-body.d-mid .row .glyph{display:flex}
+
+  /* density: 카드 — 2열, 28px 아이콘 */
+  .a-body.d-card .a-items{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:2px 2px 4px}
+  .a-body.d-card .row{
+    height:auto;flex-direction:column;gap:5px;padding:9px 6px;border:1px solid #EEF0F3;border-radius:9px;
+  }
+  .a-body.d-card .row:hover{border-color:#A8DEEE;background:#F7FCFE}
+  .a-body.d-card .row .dot{display:none}
+  .a-body.d-card .row .glyph{display:flex;width:26px;height:26px;color:#6B7280}
+  .a-body.d-card .row .glyph svg{width:26px;height:26px}
+  .a-body.d-card .row .lb{flex:none;width:100%;text-align:center;font-size:11.5px;white-space:normal;line-height:1.25;word-break:keep-all}
+  .a-body.d-card .row .star{position:absolute}
+  .a-body.d-card .row{position:relative}
+  .a-body.d-card .row .star{top:4px;right:4px}
+  .a-body.d-card .row .used{position:absolute;top:4px;left:4px}
+
+  /* search mode: flat */
+  .a-body.searching .a-sec-h{display:none}
+  .a-body.searching .a-sec + .a-sec .a-sec-h{border-top:0}
+  .a-body.searching .row .cat{display:block}
+
+  .a-empty{padding:26px 12px;text-align:center;font-size:12px;color:#A6ACB4}
+
+  .a-foot{
+    flex-shrink:0;border-top:1px solid #F1F3F5;padding:7px 8px;
+    display:flex;align-items:center;gap:6px;
+  }
+  .a-foot .lbl{font-size:10.5px;color:#A6ACB4;font-weight:600;margin-right:auto;padding-left:3px}
+  .seg{display:flex;background:#F3F5F8;border-radius:6px;padding:2px;gap:2px}
+  .seg button{
+    border:0;background:transparent;border-radius:4px;cursor:pointer;font:inherit;
+    font-size:11px;font-weight:600;color:#8A9099;padding:3px 8px;
+  }
+  .seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(15,23,42,.08)}
+
+  /* collapsed panel */
+  .panel.folded{bottom:auto}
+  .panel.folded .a-search,.panel.folded .a-chips,.panel.folded .a-body,.panel.folded .a-foot{display:none}
+
+  /* ---------- rationale ---------- */
+  .changes{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .chg{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;border-left:3px solid var(--brand)}
+  .chg h3{margin:0 0 4px;font-size:14px;font-weight:700;display:flex;align-items:baseline;gap:8px}
+  .chg h3 .num{font-size:11px;font-weight:800;color:var(--brand);letter-spacing:.04em}
+  .chg .ba{margin:9px 0 0;font-size:12.5px;color:var(--ink-2);display:flex;gap:8px;align-items:flex-start}
+  .chg .ba b{color:var(--ink);font-weight:700}
+  .chg .ba .k{flex-shrink:0;width:40px;font-size:10.5px;font-weight:800;letter-spacing:.04em;color:#B6BCC4;padding-top:2px}
+  .chg .ba.now .k{color:#C98A84}
+  .chg .why{margin:10px 0 0;padding-top:9px;border-top:1px dashed var(--line);font-size:12.5px;color:var(--ink-2)}
+  .chg .why b{color:var(--ink);font-weight:700}
+
+  .notes{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .notes ul{margin:0;padding-left:18px}
+  .notes li{font-size:13px;color:var(--ink-2);margin-bottom:8px;line-height:1.55}
+  .notes li:last-child{margin-bottom:0}
+  .notes b{color:var(--ink);font-weight:700}
+  code{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+    background:#F3F5F8;border-radius:4px;padding:1px 5px;color:#44505F;
+  }
+  .foot-note{margin-top:32px;font-size:12px;color:#A6ACB4;text-align:center}
+
+  @media (max-width:1100px){
+    .compare{grid-template-columns:1fr}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .changes{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="doc-head">
+    <span class="eyebrow">DESIGN 1 · 워크플로우 컴포넌트 패널</span>
+    <h1>왼쪽 「컴포넌트 추가」 패널 경량화 개선안</h1>
+    <p class="lede">
+      현재 패널은 <b>34개 컴포넌트를 3열 · 96px 아이콘 카드</b>로 보여줍니다.
+      그런데 이 34개가 실제로 쓰는 아이콘 디자인은 <b>9종뿐</b>입니다 —
+      「탐색적 자료분석」 7개는 전부 같은 차트 아이콘, 「미분류」 12개는 전부 같은 아이콘입니다.
+      즉 <b>카드 높이의 절반을 차지하는 44px 아이콘이 구분 정보를 거의 주지 않은 채 시선만 가져갑니다.</b>
+      여기에 34개 중 15개는 제목이 2줄로 접히고 2개는 말줄임까지 생겨, 결국 "필요한 하나"를 고르려면 매번 전부 읽어야 합니다.
+      이 개선안은 <b>시각적 무게를 아이콘에서 글자로 되돌리고</b>, "중요한 것만 보기"를 실제 기능으로 만듭니다.
+    </p>
+  </div>
+
+  <section>
+    <h2>진단<span class="kr">숫자로 본 현재 패널</span></h2>
+    <div class="stats">
+      <div class="stat bad">
+        <div class="n">9<small>종 / 34개</small></div>
+        <div class="t">아이콘의 변별력</div>
+        <div class="d">34개 항목이 9종의 아이콘을 공유. 한 카테고리 안에서는 전부 동일해 사실상 구분에 기여하지 않습니다.</div>
+      </div>
+      <div class="stat bad">
+        <div class="n"><span id="statBefore">–</span><small>개</small></div>
+        <div class="t">첫 화면 노출 항목</div>
+        <div class="d">아래 비교와 같은 높이 기준. 34개를 훑으려면 스크롤 3~4회, 카테고리 5개 중 2개만 보입니다. 개선안은 같은 높이에서 <b id="statAfter">–</b>개.</div>
+      </div>
+      <div class="stat bad">
+        <div class="n">46<small>%</small></div>
+        <div class="t">아이콘이 먹는 카드 높이</div>
+        <div class="d">96px 카드 중 44px이 아이콘 + 원형 배경. 정작 읽어야 할 제목은 12px · 2줄로 눌려 있습니다.</div>
+      </div>
+      <div class="stat bad">
+        <div class="n">0<small>개</small></div>
+        <div class="t">우선순위 장치</div>
+        <div class="d">즐겨찾기 · 최근 사용 · 사용 중 표시가 없어 34개가 모두 같은 강도로 경쟁합니다.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>비교<span class="kr">같은 높이(700px)에서 현재 UI와 개선안</span></h2>
+    <div class="compare">
+
+      <div class="pane">
+        <div class="pane-head">
+          <span class="tag before">BEFORE</span>
+          <span class="title">현재 UI 재현</span>
+          <span class="sub">저장된 화면의 마크업·아이콘을 그대로 옮긴 것입니다.</span>
+        </div>
+        <div class="stage">
+          <div class="panel" id="beforePanel">
+            <div class="panel-head">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#222" stroke-width="1.3" stroke-linecap="round"><path d="M2 8h2.5l1.5-4 2 8 2-6 1.3 2H14"/></svg>
+              <span class="h-t">컴포넌트 추가</span>
+              <span class="icon-btn"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M3 8h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+            </div>
+            <div class="b-search">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14" stroke-linecap="round"/></svg>
+              컴포넌트·회사·분류 검색
+            </div>
+            <div class="b-tabs"><div class="b-tab on">일반</div><div class="b-tab">커스텀</div></div>
+            <div class="b-body" id="beforeBody"></div>
+          </div>
+        </div>
+        <div class="pane-foot">
+          첫 화면에 보이는 항목 <b><span id="beforeCount">–</span> / 34</b>
+          <span class="pill">카드 96px</span>
+          <span class="pill">아이콘 44px</span>
+          <span class="pill">제목 15개 2줄·2개 말줄임</span>
+        </div>
+      </div>
+
+      <div class="pane">
+        <div class="pane-head">
+          <span class="tag after">AFTER</span>
+          <span class="title">개선안 · 동작합니다</span>
+          <span class="sub">검색·필터·즐겨찾기(☆)·섹션 접기·밀도 전환을 직접 눌러보세요.</span>
+        </div>
+        <div class="stage">
+          <div class="panel" id="afterPanel">
+            <div class="panel-head">
+              <span class="h-t">컴포넌트 추가</span>
+              <button class="icon-btn" id="foldBtn" title="패널 접기">
+                <svg width="14" height="14" viewBox="0 0 16 16"><path d="M3 8h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+            <div class="a-search">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="#A6ACB4" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14" stroke-linecap="round"/></svg>
+              <input id="q" type="search" placeholder="컴포넌트 검색" autocomplete="off">
+            </div>
+            <div class="a-chips" id="chips">
+              <button class="chip on" data-f="all">전체 <span class="cnt">34</span></button>
+              <button class="chip" data-f="fav">★ 즐겨찾기 <span class="cnt" id="cFav">3</span></button>
+              <button class="chip" data-f="recent">최근 <span class="cnt">6</span></button>
+              <button class="chip" data-f="used">사용 중 <span class="cnt">1</span></button>
+            </div>
+            <div class="a-body d-compact" id="afterBody"></div>
+            <div class="a-foot">
+              <span class="lbl">밀도</span>
+              <div class="seg" id="density">
+                <button data-d="compact" class="on">컴팩트</button>
+                <button data-d="mid">보통</button>
+                <button data-d="card">카드</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pane-foot">
+          첫 화면에 보이는 항목 <b><span id="afterCount">–</span> / 34</b>
+          <span class="pill good">행 27px</span>
+          <span class="pill good">제목 1줄 전체 노출</span>
+          <span class="pill good">즐겨찾기·최근·사용 중</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>개선 내용<span class="kr">무엇을 · 왜 바꿨는지</span></h2>
+    <div class="changes">
+
+      <div class="chg">
+        <h3><span class="num">01</span> 아이콘을 5px 카테고리 점으로 대체</h3>
+        <p class="ba now"><span class="k">NOW</span><span>44px 컬러 아이콘 + 원형 배경. 한 카테고리 내 전 항목이 동일한 그림이라 구분에 쓰이지 않습니다.</span></p>
+        <p class="ba"><span class="k">NEW</span><span>기본 밀도에서는 5px 카테고리 색 점만. 아이콘이 실제로 하던 일(＝어느 그룹인지)을 1/50 면적으로 대신합니다.</span></p>
+        <p class="why"><b>효과 —</b> 시선이 그림이 아니라 <b>이름</b>에 먼저 닿습니다. 아이콘이 필요한 사람은 하단 밀도 전환에서 「보통 · 카드」로 되돌릴 수 있게 남겨뒀습니다.</p>
+      </div>
+
+      <div class="chg">
+        <h3><span class="num">02</span> 제목 2줄 클램프 → 1줄 전체 노출</h3>
+        <p class="ba now"><span class="k">NOW</span><span>34개 중 <b>15개가 2줄로 접히고</b>, 2개는 「워크플로우 데이터 복수…」처럼 말줄임까지 생깁니다.</span></p>
+        <p class="ba"><span class="k">NEW</span><span>300px 폭을 가로로 쓰면 한글 18자가 한 줄에 들어갑니다. <b>34개 전부 잘리지 않습니다</b>(실측).</span></p>
+        <p class="why"><b>효과 —</b> 줄바꿈된 제목은 한 항목당 시선을 두 번 잡아둡니다. 한 줄이면 <b>위에서 아래로 훑는 속도</b>가 그대로 나옵니다.</p>
+      </div>
+
+      <div class="chg">
+        <h3><span class="num">03</span> 카테고리 헤더의 강도를 낮춤</h3>
+        <p class="ba now"><span class="k">NOW</span><span>하늘색 배경 + 컬러 바 + 볼드 청록 텍스트. 헤더가 항목보다 강해 목록을 5토막으로 끊습니다.</span></p>
+        <p class="ba"><span class="k">NEW</span><span>배경 제거, 11px 회색 + 개수 표기 + 얇은 구분선. 헤더는 <b>구분자</b>이지 버튼이 아닙니다.</span></p>
+        <p class="why"><b>효과 —</b> 헤더가 물러서면 항목이 주인공이 됩니다. 섹션당 8px씩 절약되는 건 덤입니다.</p>
+      </div>
+
+      <div class="chg">
+        <h3><span class="num">04</span> “중요한 것만 보기”를 실제 기능으로</h3>
+        <p class="ba now"><span class="k">NOW</span><span>우선순위 장치가 없어 34개가 모두 같은 무게입니다. 자주 쓰는 3~4개도 매번 찾아야 합니다.</span></p>
+        <p class="ba"><span class="k">NEW</span><span>행 호버 시 ☆로 즐겨찾기 → 최상단 고정. 상단 칩으로 <b>전체 / 즐겨찾기 / 최근 / 사용 중</b> 전환.</span></p>
+        <p class="why"><b>효과 —</b> 불편의 핵심은 밀도가 아니라 <b>선별 수단의 부재</b>였습니다. 즐겨찾기 4개만 켜두면 패널이 4줄로 줄어듭니다.</p>
+      </div>
+
+      <div class="chg">
+        <h3><span class="num">05</span> 현재 워크플로우에서 쓰는 컴포넌트 표시</h3>
+        <p class="ba now"><span class="k">NOW</span><span>캔버스에 이미 놓인 컴포넌트와 패널 목록이 아무 관계도 맺지 않습니다.</span></p>
+        <p class="ba"><span class="k">NEW</span><span>사용 중인 항목에 <b>사용 개수 배지</b>를 붙이고, 「사용 중」 칩으로 그것만 볼 수 있게 합니다.</span></p>
+        <p class="why"><b>효과 —</b> 남의 워크플로우를 열어봤을 때 "이 화면이 뭘로 만들어졌나"를 패널에서 바로 읽을 수 있습니다.</p>
+      </div>
+
+      <div class="chg">
+        <h3><span class="num">06</span> 검색 결과는 카테고리를 풀고 평평하게</h3>
+        <p class="ba now"><span class="k">NOW</span><span>검색해도 카테고리 헤더와 3열 그리드 구조가 그대로 남아 결과가 흩어집니다.</span></p>
+        <p class="ba"><span class="k">NEW</span><span>입력 즉시 헤더를 감추고 한 줄 목록으로 평탄화, 일치 글자는 하이라이트, 카테고리는 행 우측에 회색으로.</span></p>
+        <p class="why"><b>효과 —</b> 검색은 "분류를 건너뛰겠다"는 신호입니다. 그때까지 분류를 유지하면 <b>결과 사이 거리만 멀어집니다.</b></p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2>적용 메모<span class="kr">구현 시 참고</span></h2>
+    <div class="notes">
+      <ul>
+        <li><b>바꿀 지점</b> — 카드 그리드는 <code>grid-cols-3</code> + <code>min-h-[96px]</code> 버튼, 카테고리 헤더는 <code>bg-[#F3FAFC]</code> + <code>text-[#1B8FAD]</code> 입니다. 이 두 블록만 교체하면 나머지(패널 셸·검색·탭)는 그대로 둘 수 있습니다.</li>
+        <li><b>아이콘은 지우지 않았습니다</b> — 같은 SVG를 원형 배경만 벗기고 18px / 26px로 재사용합니다(「보통」·「카드」 밀도). 에셋 교체 없이 밀도만 바꾸면 됩니다.</li>
+        <li><b>밀도 기본값은 컴팩트</b>를 제안합니다. 선택값은 사용자별로 저장해 두면 기존 카드 UI에 익숙한 사람도 잃는 게 없습니다.</li>
+        <li><b>즐겨찾기·최근</b>은 계정 단위 저장이 필요합니다. 서버 작업이 부담되면 1차에는 <code>localStorage</code>로 시작해도 체감 효과는 그대로입니다.</li>
+        <li><b>「미분류」 12개</b>는 이름부터 정리 대상입니다. <code>UTIL_*</code> 계열이 모두 여기 묶여 있으니 「유틸리티 / 전역변수 / 발행」 정도로 쪼개면 이 섹션만으로도 탐색 비용이 크게 줄어듭니다.</li>
+        <li><b>다음 단계</b> — 이 문서는 밀도와 선별에 집중한 1안입니다. 2안으로는 패널을 캔버스에서 떼어내 <b>우클릭 · 스페이스바 커맨드 팔레트</b>로 부르는 방향을 볼 수 있습니다(캔버스 300px을 통째로 돌려받습니다).</li>
+      </ul>
+    </div>
+  </section>
+
+  <p class="foot-note">Miner Report · 워크플로우 <code>2609_AR_89</code> 화면 기준 · 2026-09-15</p>
+</div>
+
+<script>
+const ICONS = ["<svg width=44 height=44 viewBox=\"0 0 48 48\" fill=currentColor xmlns=http://www.w3.org/2000/svg><rect width=48 height=48 rx=24 fill=#F9F9F9></rect><g fill=none stroke=#222222 stroke-width=1 stroke-linecap=round stroke-linejoin=round><path d=\"M13 16V32C13 34.2 17.9 36 24 36C30.1 36 35 34.2 35 32V16\" fill=white></path><ellipse cx=24 cy=16 rx=11 ry=4 fill=white></ellipse><path d=\"M13 16V32C13 34.2 17.9 36 24 36C30.1 36 35 34.2 35 32V16M13 24C13 26.2 17.9 28 24 28C30.1 28 35 26.2 35 24\"></path><path d=\"M17 22L19 22.5M17 30L19 30.5\"></path></g></svg>", "<svg width=44 height=44 viewBox=\"0 0 48 48\" fill=currentColor xmlns=http://www.w3.org/2000/svg><rect width=48 height=48 rx=24 fill=#F9F9F9></rect><g fill=none stroke=#222222 stroke-width=1 stroke-linecap=round stroke-linejoin=round><rect x=12 y=13 width=24 height=22 rx=2 fill=white></rect><path d=\"M12 17H36\"></path><path d=\"M16 31H32M17 31V25H20V31M23 31V21H26V31M29 31V23H32V31\"></path><path d=\"M15 15H16M18 15H19\"></path></g></svg>", "<svg width=44 height=44 viewBox=\"0 0 48 48\" fill=currentColor xmlns=http://www.w3.org/2000/svg><rect width=48 height=48 rx=24 fill=#F9F9F9></rect><rect x=8.5 y=15.5 width=31 height=17 rx=4.5 fill=white stroke=#222222></rect><path d=\"M36 19V28.837H34.6687L29.8313 21.6495H29.7522V28.837H28.3022V19H29.6467L34.4842 26.2011H34.5765V19H36Z\" fill=#222222></path><path d=\"M20.8631 26.7583C20.8565 25.0735 22.2471 24.6387 23.5388 24.5436C24.0134 24.5164 25.0876 24.4553 25.4171 24.4417L25.4105 23.8507C25.4171 23.0151 24.9163 22.5327 23.9606 22.5327C23.1302 22.5327 22.6293 22.9268 22.4843 23.4702H21.0871C21.2124 22.2474 22.3196 21.3643 24.0134 21.3643C25.1535 21.3643 26.8143 21.7922 26.8209 23.9322V28.8371H25.4501V27.8317H25.3974C25.1206 28.3819 24.4615 29.0001 23.2752 29.0001C21.9176 29.0001 20.8565 28.1985 20.8631 26.7583ZM22.2339 26.7719C22.2339 27.4784 22.8007 27.8385 23.5916 27.8453C24.7383 27.8385 25.4237 27.0504 25.4237 26.1741L25.4171 25.5015C25.0942 25.5219 24.0727 25.5966 23.7365 25.617C22.8139 25.6849 22.2339 26.045 22.2339 26.7719Z\" fill=#222222></path><path d=\"M19.6978 19V28.837H18.3665L13.529 21.6495H13.4499V28.837H12V19H13.3445L18.1819 26.2011H18.2742V19H19.6978Z\" fill=#222222></path></svg>", "<svg width=44 height=44 viewBox=\"0 0 48 48\" fill=currentColor xmlns=http://www.w3.org/2000/svg><rect width=48 height=48 rx=24 fill=#F9F9F9></rect><path d=\"M29.0556 10H11.9444C10.5944 10 9.5 11.0944 9.5 12.4444V29.5556C9.5 30.9056 10.5944 32 11.9444 32H29.0556C30.4056 32 31.5 30.9056 31.5 29.5556V12.4444C31.5 11.0944 30.4056 10 29.0556 10Z\" fill=white stroke=#222222 stroke-linecap=round stroke-linejoin=round></path><path d=\"M12.5 10.5H28.5C29.7592 10.5 30.7981 11.4314 30.9717 12.6426H10.0283C10.2019 11.4314 11.2408 10.5 12.5 10.5Z\" fill=#222222 stroke=#222222></path><path d=\"M31.5 13.1426H9.5\" stroke=#222222></path><path d=\"M31.5 19.4287H9.5\" stroke=#222222></path><path d=\"M31.5 25.7134H9.5\" stroke=#222222></path><path d=\"M16.8332 31.9997L16.8332 13.1426\" stroke=#222222></path><path d=\"M36.0556 16H18.9444C17.5944 16 16.5 17.0944 16.5 18.4444V35.5556C16.5 36.9056 17.5944 38 18.9444 38H36.0556C37.4056 38 38.5 36.9056 38.5 35.5556V18.4444C38.5 17.0944 37.4056 16 36.0556 16Z\" fill=white stroke=#222222 stroke-linecap=round stroke-linejoin=round></path><path d=\"M19.5 16.5H35.5C36.7592 16.5 37.7981 17.4314 37.9717 18.6426H17.0283C17.2019 17.4314 18.2408 16.5 19.5 16.5Z\" fill=#222222 stroke=#222222></path><path d=\"M38.5 19.1426H16.5\" stroke=#222222></path><path d=\"M38.5 25.4287H16.5\" stroke=#222222></path><path d=\"M38.5 31.7134H16.5\" stroke=#222222></path><path d=\"M23.8332 37.9997L23.8332 19.1426\" stroke=#222222></path></svg>", "<svg width=44 height=44 viewBox=\"0 0 48 48\" fill=currentColor xmlns=http://www.w3.org/2000/svg><rect width=48 height=48 rx=24 fill=#F9F9F9></rect><path d=\"M13 17.9995C13 16.8949 13.8954 15.9995 15 15.9995H32.9998C34.1043 15.9995 34.9998 16.8949 34.9998 17.9995V32.9993C34.9998 34.1039 34.1043 34.9993 32.9998 34.9993H15C13.8954 34.9993 13 34.1039 13 32.9993V17.9995Z\" fill=white></path><path d=\"M34.5 15.4443C34.5 14.3706 33.6294 13.5002 32.5557 13.5H15.4443C14.3705 13.5 13.5 14.3705 13.5 15.4443V32.5557C13.5002 33.6294 14.3706 34.5 15.4443 34.5H32.5557C33.6293 34.4998 34.4998 33.6293 34.5 32.5557V15.4443ZM35.5 32.5557C35.4998 34.1816 34.1816 35.4998 32.5557 35.5H15.4443C13.8183 35.5 12.5002 34.1816 12.5 32.5557V15.4443C12.5 13.8182 13.8182 12.5 15.4443 12.5H32.5557C34.1816 12.5002 35.5 13.8183 35.5 15.4443V32.5557Z\" fill=#222222></path><path d=\"M13 16C13 14.3431 14.3431 13 16 13H31.9998C33.6566 13 34.9998 14.3431 34.9998 16V16.1428H13V16Z\" fill=#222222></path><path d=\"M32.1543 13.0039C33.7393 13.0843 34.9998 14.395 34.9998 16V16.1428H13V16C13 14.3431 14.3431 13 16 13H31.9998L32.1543 13.0039ZM16 14C15.2027 14 14.5166 14.4676 14.1953 15.1426H33.8047C33.4835 14.4676 32.7972 14.0001 32 14H16Z\" fill=#222222></path><path d=\"M35 15.6425V16.6425H13V15.6425H35Z\" fill=#222222></path><path d=\"M35 21.9284V22.9284H13V21.9284H35Z\" fill=#222222></path><path d=\"M35 28.2135V29.2135H13V28.2135H35Z\" fill=#222222></path><path d=\"M20.8335 34.9989H19.8335L19.8335 16.1425H20.8335L20.8335 34.9989Z\" fill=#222222></path><path d=\"M17.9495 18.0195C18.1243 17.8058 18.4389 17.7744 18.6526 17.9492C18.8663 18.1241 18.8978 18.4386 18.7229 18.6523L17.0442 20.7051C16.8796 20.9061 16.5884 20.947 16.3743 20.7998L15.1799 19.9795C14.9524 19.8231 14.8947 19.5117 15.051 19.2842C15.2075 19.0566 15.5188 18.9988 15.7463 19.1552L16.5608 19.7148L17.9495 18.0195Z\" fill=#222222></path><path d=\"M17.9495 30.7435C18.1243 30.5298 18.4389 30.4984 18.6526 30.6732C18.8663 30.8481 18.8978 31.1626 18.7229 31.3763L17.0442 33.4291C16.8796 33.6301 16.5884 33.671 16.3743 33.5238L15.1799 32.7035C14.9524 32.5471 14.8947 32.2357 15.051 32.0082C15.2075 31.7806 15.5188 31.7229 15.7463 31.8793L16.5608 32.4388L17.9495 30.7435Z\" fill=#222222></path></svg>", "<svg width=44 height=44 viewBox=\"0 0 48 48\" fill=currentColor xmlns=http://www.w3.org/2000/svg><rect width=48 height=48 rx=24 fill=#F9F9F9></rect><rect x=11 y=13.9995 width=21.9998 height=18.9998 rx=2 fill=white></rect><path d=\"M30.5553 11.0002H13.4444C12.0944 11.0002 11 12.0946 11 13.4447V30.5556C11 31.9056 12.0944 33 13.4444 33H30.5553C31.9054 33 32.9998 31.9056 32.9998 30.5556V13.4447C32.9998 12.0946 31.9054 11.0002 30.5553 11.0002Z\" stroke=#222222 stroke-linecap=round stroke-linejoin=round fill=none></path><path d=\"M14 11.5002H30C31.2591 11.5004 32.2981 12.4317 32.4717 13.6428H11.5283C11.7019 12.4316 12.7408 11.5002 14 11.5002Z\" fill=#222222 stroke=#222222></path><path d=\"M32.9998 14.1426H11\" stroke=#222222></path><path d=\"M32.9998 20.4285H11\" stroke=#222222></path><path d=\"M32.9998 26.7131H11\" stroke=#222222></path><path d=\"M18.3334 32.9995L18.3335 14.1426\" stroke=#222222></path><rect x=30 y=16.9998 width=7 height=22 rx=2 fill=white stroke=#222222></rect><path d=\"M30 18.9998C30 17.8952 30.8954 16.9998 32 16.9998H35C36.1046 16.9998 37 17.8952 37 18.9998V20.9998H30V18.9998Z\" fill=#222222></path><path d=\"M37 26.4985H30\" stroke=#222222></path><path d=\"M37 32.8303H30\" stroke=#222222></path></svg>", "<svg width=44 height=44 viewBox=\"0 0 48 48\" fill=currentColor xmlns=http://www.w3.org/2000/svg><rect width=48 height=48 rx=24 fill=#F9F9F9></rect><rect x=26.9998 y=26.9995 width=7 height=7 fill=white stroke=#222222 stroke-width=1.5 stroke-linejoin=round></rect><ellipse cx=17.4995 cy=17.3894 rx=3.5 ry=3 fill=white></ellipse><path d=\"M33.9995 22.8886V19.5553C33.9995 18.9659 33.7654 18.4007 33.3486 17.984C32.9319 17.5672 32.3667 17.3331 31.7773 17.3331H25.1106M25.1106 17.3331L28.444 20.6664M25.1106 17.3331L28.444 13.9998M13.9995 25.1109V28.4442C13.9995 29.0336 14.2336 29.5988 14.6504 30.0155C15.0671 30.4323 15.6324 30.6664 16.2217 30.6664H22.8884M22.8884 30.6664L19.5551 27.3331M22.8884 30.6664L19.5551 33.9998M13.9995 17.3331C13.9995 18.2171 14.3507 19.065 14.9758 19.6901C15.6009 20.3152 16.4488 20.6664 17.3328 20.6664C18.2169 20.6664 19.0647 20.3152 19.6899 19.6901C20.315 19.065 20.6662 18.2171 20.6662 17.3331C20.6662 16.449 20.315 15.6012 19.6899 14.9761C19.0647 14.3509 18.2169 13.9998 17.3328 13.9998C16.4488 13.9998 15.6009 14.3509 14.9758 14.9761C14.3507 15.6012 13.9995 16.449 13.9995 17.3331Z\" stroke=#222222 stroke-width=1.5 stroke-linecap=round stroke-linejoin=round fill=none></path></svg>", "<svg width=44 height=44 viewBox=\"0 0 48 48\" fill=currentColor xmlns=http://www.w3.org/2000/svg><rect width=48 height=48 rx=24 fill=#F9F9F9></rect><g fill=none stroke=#222222 stroke-width=1 stroke-linecap=round stroke-linejoin=round><rect x=15 y=15 width=18 height=18 rx=2 fill=white></rect><path d=\"M19 11V15M24 11V15M29 11V15M19 33V37M24 33V37M29 33V37M11 19H15M11 24H15M11 29H15M33 19H37M33 24H37M33 29H37\"></path><path d=\"M18.5 27V21L21.5 25L24.5 21V27M27 21V27H30\"></path></g></svg>", "<svg width=44 height=44 viewBox=\"0 0 48 48\" fill=currentColor xmlns=http://www.w3.org/2000/svg><rect width=48 height=48 rx=24 fill=#F9F9F9></rect><path d=\"M29.1547 15.1547L24.6446 10.6443C24.2888 10.2885 23.7119 10.2885 23.356 10.6443L18.8459 15.1547C18.4901 15.5105 18.4901 16.0875 18.8459 16.4433L23.356 20.9536C23.7119 21.3095 24.2888 21.3095 24.6446 20.9536L29.1547 16.4433C29.5106 16.0875 29.5106 15.5105 29.1547 15.1547Z\" fill=white></path><path d=\"M28.7304 16.0187C28.8518 15.8973 28.8523 15.7004 28.7311 15.5788L24.2206 11.0681C24.0991 10.9467 23.9016 10.9467 23.7801 11.0681L19.2696 15.5788C19.1484 15.7004 19.1489 15.8973 19.2703 16.0187L23.7808 20.5294C23.9022 20.6505 24.0985 20.6505 24.2199 20.5294L28.7304 16.0187ZM25.0686 21.3781C24.4785 21.9678 23.5222 21.9678 22.9321 21.3781L18.4216 16.8674C17.8317 16.2773 17.8318 15.321 18.4216 14.7308L22.9321 10.2201C23.5222 9.63003 24.4784 9.63003 25.0686 10.2201L29.579 14.7308C30.1688 15.321 30.169 16.2773 29.579 16.8674L25.0686 21.3781Z\" fill=#222222></path><path d=\"M29.1543 31.5565L24.6441 27.0462C24.2883 26.6903 23.7114 26.6903 23.3555 27.0462L18.8454 31.5565C18.4896 31.9124 18.4896 32.4893 18.8454 32.8452L23.3555 37.3555C23.7114 37.7114 24.2883 37.7114 24.6441 37.3555L29.1543 32.8452C29.5101 32.4893 29.5101 31.9124 29.1543 31.5565Z\" fill=white></path><path d=\"M28.7299 32.4208C28.8513 32.2994 28.8518 32.1025 28.7306 31.9809L24.2201 27.4702C24.0986 27.3488 23.9011 27.3488 23.7796 27.4702L19.2691 31.9809C19.1479 32.1025 19.1484 32.2994 19.2698 32.4208L23.7803 36.9315C23.9017 37.0526 24.098 37.0526 24.2194 36.9315L28.7299 32.4208ZM25.0681 37.7802C24.478 38.3699 23.5217 38.3699 22.9316 37.7802L18.4212 33.2695C17.8312 32.6794 17.8313 31.7231 18.4212 31.1329L22.9316 26.6222C23.5218 26.0321 24.4779 26.0321 25.0681 26.6222L29.5785 31.1329C30.1684 31.7231 30.1685 32.6794 29.5785 33.2695L25.0681 37.7802Z\" fill=#222222></path><path d=\"M37.3559 23.3556L32.8458 18.8453C32.49 18.4894 31.913 18.4894 31.5572 18.8453L27.0471 23.3556C26.6913 23.7114 26.6913 24.2884 27.0471 24.6443L31.5572 29.1546C31.913 29.5104 32.49 29.5104 32.8458 29.1546L37.3559 24.6443C37.7118 24.2884 37.7118 23.7114 37.3559 23.3556Z\" fill=white></path><path d=\"M36.9315 24.2196C37.0529 24.0982 37.0534 23.9013 36.9322 23.7797L32.4218 19.2691C32.3003 19.1476 32.1027 19.1476 31.9812 19.2691L27.4708 23.7797C27.3496 23.9013 27.3501 24.0982 27.4715 24.2196L31.9819 28.7303C32.1034 28.8514 32.2996 28.8514 32.4211 28.7303L36.9315 24.2196ZM33.2697 29.579C32.6797 30.1688 31.7233 30.1688 31.1333 29.579L26.6228 25.0683C26.0328 24.4782 26.033 23.5219 26.6228 22.9317L31.1333 18.4211C31.7234 17.831 32.6796 17.831 33.2697 18.4211L37.7802 22.9317C38.37 23.5219 38.3702 24.4782 37.7802 25.0683L33.2697 29.579Z\" fill=#222222></path><path d=\"M20.9536 23.3556L16.4435 18.8453C16.0876 18.4894 15.5107 18.4894 15.1549 18.8453L10.6448 23.3556C10.2889 23.7114 10.2889 24.2884 10.6448 24.6443L15.1549 29.1546C15.5107 29.5104 16.0876 29.5104 16.4435 29.1546L20.9536 24.6443C21.3094 24.2884 21.3094 23.7114 20.9536 23.3556Z\" fill=white></path><path d=\"M20.5292 24.2196C20.6506 24.0982 20.6511 23.9013 20.5299 23.7797L16.0194 19.2691C15.8979 19.1476 15.7004 19.1476 15.5789 19.2691L11.0684 23.7797C10.9472 23.9013 10.9477 24.0982 11.0691 24.2196L15.5796 28.7303C15.701 28.8514 15.8973 28.8514 16.0187 28.7303L20.5292 24.2196ZM16.8674 29.579C16.2773 30.1688 15.321 30.1688 14.7309 29.579L10.2205 25.0683C9.63048 24.4782 9.63065 23.5219 10.2205 22.9317L14.7309 18.4211C15.3211 17.831 16.2773 17.831 16.8674 18.4211L21.3779 22.9317C21.9677 23.5219 21.9678 24.4782 21.3779 25.0683L16.8674 29.579Z\" fill=#222222></path></svg>"];
+
+const CATS = [
+  {name:'데이터 마트', color:'var(--c-mart)', items:[
+    {l:'마트 데이터 복수 조회', id:'MDM', i:0, used:1},
+    {l:'워크플로우 데이터 복수 조회', id:'WFS', i:0},
+  ]},
+  {name:'탐색적 자료분석', color:'var(--c-eda)', items:[
+    {l:'결측치 현황 분석', id:'GNR_ED_43_missing', i:1, fav:1, recent:1},
+    {l:'단일 변수 분포(날짜형)', id:'ED_22_date', i:1},
+    {l:'단일 변수 분포(문자형)', id:'ED_22_str', i:1},
+    {l:'단일 변수 분포(수치형)', id:'ED_22_num', i:1, recent:1},
+    {l:'데이터 구조 확인', id:'GNR_ED_11', i:1, fav:1, recent:1},
+    {l:'시계열 분포', id:'GNR_ED_23_ts', i:1},
+    {l:'이상치 탐지', id:'GNR_ED_42_anomaly', i:1},
+  ]},
+  {name:'데이터 전처리', color:'var(--c-prep)', items:[
+    {l:'결측치 처리', id:'GNR_PR_10_missing', i:2, fav:1, recent:1},
+    {l:'데이터 집계', id:'GNR_PR_44_aggregate', i:3},
+    {l:'데이터 필터', id:'GNR_PR_11_filter', i:4, recent:1},
+    {l:'랜덤 생성(임시)', id:'GNR_PR_99_missing_auto', i:2},
+    {l:'랜덤값 생성', id:'GNR_PR_41_random', i:5},
+    {l:'범주형 더미변수 생성', id:'GNR_PR_20', i:6},
+    {l:'스케일링', id:'GNR_PR_18_scaling', i:6},
+    {l:'시간 변수 변환', id:'GNR_PR_21_datetime', i:6},
+    {l:'이상치 처리', id:'GNR_PR_42_anomaly', i:2},
+    {l:'컬럼명 변경', id:'GNR_PR_22_rename', i:6},
+    {l:'파생변수 생성(자동)', id:'GNR_PR_45_feature', i:5},
+  ]},
+  {name:'모델링', color:'var(--c-model)', items:[
+    {l:'모델 학습·비교', id:'GNR_MD_27', i:7, recent:1},
+    {l:'모델링 변수 선택', id:'GNR_MD_26', i:7},
+  ]},
+  {name:'미분류', color:'var(--c-etc)', items:[
+    {l:'커스텀_피클', id:'CU_B100', i:8},
+    {l:'다른 워크플로우 결과 로드', id:'UTIL_WF_DATAS', i:8},
+    {l:'레이아웃 인자 조회', id:'UTIL_LAYOUT', i:8},
+    {l:'로그 발행', id:'UTIL_LOG', i:8},
+    {l:'마트데이터 다중 로드', id:'UTIL_MARTS', i:8},
+    {l:'마트데이터 로드', id:'UTIL_MART', i:8},
+    {l:'이벤트 발행', id:'UTIL_EVENT', i:8},
+    {l:'전역변수 로드', id:'UTIL_GV_LOAD', i:8},
+    {l:'전역변수 목록', id:'UTIL_GV_LIST', i:8},
+    {l:'전역변수 삭제', id:'UTIL_GV_DELETE', i:8},
+    {l:'전역변수 저장', id:'UTIL_GV_SAVE', i:8},
+    {l:'진행률 발행', id:'UTIL_PROGRESS', i:8},
+  ]},
+];
+
+const ALL = CATS.flatMap(c => c.items.map(it => ({...it, cat:c.name, color:c.color})));
+
+/* ---------- BEFORE: 현재 UI 재현 ---------- */
+(function renderBefore(){
+  const body = document.getElementById('beforeBody');
+  body.innerHTML = CATS.map(c => `
+    <div class="b-sec">
+      <div class="b-sec-h">
+        <span class="bar"></span><span class="nm">${c.name}</span>
+        <svg width="14" height="14" viewBox="0 0 16 16"><path d="M12 6H4l4 4 4-4z" fill="#33344D"></path></svg>
+      </div>
+      <div class="b-grid">
+        ${c.items.map(it => `
+          <div class="b-card" title="${it.l}">
+            ${ICONS[it.i]}
+            <span class="lb">${it.l}</span>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+})();
+
+/* ---------- AFTER ---------- */
+// 44px 원형 배경 아이콘을 배경 없는 얇은 글리프로 재활용
+function glyph(i){
+  let s = ICONS[i];
+  s = s.replace(/<rect width="48" height="48" rx="24"[^>]*><\/rect>/, '');
+  s = s.replace(/width="44" height="44"/, 'width="18" height="18"');
+  s = s.replace(/stroke="#222222"/g, 'stroke="currentColor"');
+  s = s.replace(/stroke="#222"/g, 'stroke="currentColor"');
+  s = s.replace(/stroke-width="1"/g, 'stroke-width="1.7"');
+  s = s.replace(/fill="white"/g, 'fill="none"');
+  s = s.replace(/fill="#F9F9F9"/g, 'fill="none"');
+  return s;
+}
+
+const favs = new Set(ALL.filter(x => x.fav).map(x => x.id));
+let filter = 'all';
+let query = '';
+const collapsed = new Set();
+const afterBody = document.getElementById('afterBody');
+
+function esc(s){ return s.replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+function hl(label, q){
+  if(!q) return esc(label);
+  const i = label.toLowerCase().indexOf(q.toLowerCase());
+  if(i < 0) return esc(label);
+  return esc(label.slice(0,i)) + '<mark>' + esc(label.slice(i, i+q.length)) + '</mark>' + esc(label.slice(i+q.length));
+}
+
+const STAR = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M8 2l1.8 3.9 4.2.5-3.1 2.9.8 4.2L8 11.5 4.3 13.5l.8-4.2L2 6.4l4.2-.5z"/></svg>';
+
+function rowHTML(it){
+  const fav = favs.has(it.id);
+  return `<button class="row${fav ? ' fav' : ''}" data-id="${it.id}" title="${esc(it.l)} · ${it.id}">
+    <span class="dot" style="background:${it.color}"></span>
+    <span class="glyph">${glyph(it.i)}</span>
+    <span class="lb">${hl(it.l, query)}</span>
+    ${it.used ? `<span class="used">${it.used}</span>` : ''}
+    <span class="cat">${it.cat}</span>
+    <span class="star" data-star="${it.id}">${STAR}</span>
+  </button>`;
+}
+
+function match(it){
+  if(query){
+    const q = query.toLowerCase();
+    if(!(it.l.toLowerCase().includes(q) || it.id.toLowerCase().includes(q) || it.cat.toLowerCase().includes(q))) return false;
+  }
+  if(filter === 'fav') return favs.has(it.id);
+  if(filter === 'recent') return !!it.recent;
+  if(filter === 'used') return !!it.used;
+  return true;
+}
+
+function render(){
+  const searching = query.length > 0;
+  afterBody.classList.toggle('searching', searching);
+
+  const sections = [];
+
+  // 즐겨찾기 고정 섹션 (검색/필터 중에는 생략)
+  if(!searching && filter === 'all'){
+    const f = ALL.filter(it => favs.has(it.id));
+    if(f.length) sections.push({name:'★ 즐겨찾기', key:'__fav', items:f});
+  }
+
+  if(searching || filter !== 'all'){
+    const hits = ALL.filter(match);
+    sections.push({name:'결과', key:'__flat', items:hits, flat:true});
+  } else {
+    CATS.forEach(c => {
+      const items = c.items.map(it => ({...it, cat:c.name, color:c.color})).filter(match);
+      if(items.length) sections.push({name:c.name, key:c.name, items});
+    });
+  }
+
+  const total = sections.reduce((n, s) => n + s.items.length, 0);
+  if(!total){
+    afterBody.innerHTML = '<div class="a-empty">일치하는 컴포넌트가 없습니다.</div>';
+    updateCounts(); return;
+  }
+
+  afterBody.innerHTML = sections.map(s => {
+    const off = collapsed.has(s.key);
+    const head = s.flat ? '' : `
+      <button class="a-sec-h" data-sec="${s.key}">
+        <svg class="cv" width="10" height="10" viewBox="0 0 16 16"><path d="M12 6H4l4 4 4-4z" fill="currentColor"/></svg>
+        <span class="nm">${s.name}</span><span class="cnt">${s.items.length}</span>
+      </button>`;
+    return `<div class="a-sec${off ? ' collapsed' : ''}">${head}
+      <div class="a-items">${s.items.map(rowHTML).join('')}</div>
+    </div>`;
+  }).join('');
+
+  updateCounts();
+}
+
+afterBody.addEventListener('click', e => {
+  const star = e.target.closest('[data-star]');
+  if(star){
+    const id = star.dataset.star;
+    favs.has(id) ? favs.delete(id) : favs.add(id);
+    document.getElementById('cFav').textContent = favs.size;
+    render();
+    e.stopPropagation();
+    return;
+  }
+  const sec = e.target.closest('[data-sec]');
+  if(sec){
+    const k = sec.dataset.sec;
+    collapsed.has(k) ? collapsed.delete(k) : collapsed.add(k);
+    render();
+  }
+});
+
+document.getElementById('q').addEventListener('input', e => {
+  query = e.target.value.trim();
+  render();
+});
+
+document.getElementById('chips').addEventListener('click', e => {
+  const b = e.target.closest('.chip');
+  if(!b) return;
+  filter = b.dataset.f;
+  [...e.currentTarget.querySelectorAll('.chip')].forEach(c => c.classList.toggle('on', c === b));
+  render();
+});
+
+document.getElementById('density').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if(!b) return;
+  [...e.currentTarget.querySelectorAll('button')].forEach(x => x.classList.toggle('on', x === b));
+  afterBody.className = 'a-body d-' + b.dataset.d;
+  updateCounts();
+});
+
+document.getElementById('foldBtn').addEventListener('click', () => {
+  document.getElementById('afterPanel').classList.toggle('folded');
+});
+
+/* ---------- 첫 화면 노출 항목 수 실측 ---------- */
+function countVisible(scroller, sel){
+  const prev = scroller.scrollTop;
+  scroller.scrollTop = 0;                       // 항상 "첫 화면" 기준으로 측정
+  const box = scroller.getBoundingClientRect();
+  const n = [...scroller.querySelectorAll(sel)].filter(el => {
+    const r = el.getBoundingClientRect();
+    return r.top >= box.top - 1 && r.bottom <= box.bottom + 1;
+  }).length;
+  scroller.scrollTop = prev;
+  return n;
+}
+function updateCounts(){
+  requestAnimationFrame(() => {
+    const nb = countVisible(document.getElementById('beforeBody'), '.b-card');
+    const na = countVisible(afterBody, '.row');
+    document.getElementById('beforeCount').textContent = nb;
+    document.getElementById('afterCount').textContent = na;
+    document.getElementById('statBefore').textContent = nb;
+    if(afterBody.classList.contains('d-compact') && filter === 'all' && !query){
+      document.getElementById('statAfter').textContent = na;
+    }
+  });
+}
+
+render();
+window.addEventListener('resize', updateCounts);
+</script>
+</body>
+</html>

@@ -11,6 +11,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .hidden { display: none !important; }
 
 /* ---------- 레이아웃 ---------- */
+/* --sb-w: 사이드바 넓이. 경계선을 드래그해 바꾸며 JS 가 localStorage 에 기억한다 */
+:root { --sb-w: 520px; }
 #app { display: flex; height: 100vh; height: 100dvh; }
 #map-pane { flex: 1; min-width: 0; position: relative; }
 #map { width: 100%; height: 100%; }
@@ -21,8 +23,19 @@ button, input, select, textarea { font: inherit; color: inherit; }
   padding: 6px 10px; font-size: 12px; color: #9aa3b2;
 }
 
+#resizer {
+  width: 7px; margin: 0 -3px; flex-shrink: 0; position: relative; z-index: 6;
+  cursor: col-resize; touch-action: none;
+}
+#resizer::after {
+  content: ''; position: absolute; top: 0; bottom: 0; left: 3px; width: 1px; background: transparent;
+  transition: background .12s;
+}
+#resizer:hover::after, #resizer.drag::after { background: #4c8dff; width: 2px; left: 2px; }
+body.resizing, body.resizing * { cursor: col-resize !important; user-select: none !important; }
+
 #sidebar {
-  width: 380px; flex-shrink: 0; display: flex; flex-direction: column;
+  width: var(--sb-w); flex-shrink: 0; display: flex; flex-direction: column;
   background: #1c1f26; border-left: 1px solid #2c313a; min-height: 0;
 }
 
@@ -58,6 +71,10 @@ textarea { resize: vertical; min-height: 60px; }
 
 .row { display: flex; gap: 6px; align-items: center; }
 .row.tight { gap: 6px; margin-top: 6px; }
+#q-form button { flex-shrink: 0; white-space: nowrap; }
+#kakao-go { background: #4c8dff; border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 600; color: #0d1117; }
+#kakao-go:hover { background: #6aa0ff; }
+#pane-mine-ctl, #pane-kakao-ctl { margin-top: 4px; }
 
 /* ---------- 탭 ---------- */
 #tabs { display: flex; gap: 4px; margin: 10px 0 8px; background: #14161a; border-radius: 9px; padding: 3px; }
@@ -65,10 +82,38 @@ textarea { resize: vertical; min-height: 60px; }
 .tab.on { background: #2b313b; color: #e8eaed; font-weight: 600; }
 
 /* ---------- 필터 ---------- */
-#filter-panel { margin-top: 10px; border-top: 1px solid #2c313a; padding-top: 10px; }
+#filter-panel { position: relative; margin-top: 10px; border-top: 1px solid #2c313a; padding-top: 10px; }
+.icon-btn {
+  position: absolute; top: 6px; right: 0; width: 28px; height: 28px; border-radius: 7px;
+  font-size: 17px; line-height: 1; color: #8a93a3; display: flex; align-items: center; justify-content: center;
+}
+.icon-btn:hover { background: #2a2f38; color: #e8eaed; }
+.icon-btn:active { transform: rotate(-90deg); transition: transform .15s; }
+#filter-panel .f-sec:first-of-type { padding-right: 34px; }
+
+#mine-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 6px 14px; border-bottom: 1px solid #23262d; background: #191c22;
+  font-size: 12px; color: #7d8595;
+}
+.sort-sel {
+  width: auto; padding: 3px 24px 3px 8px; font-size: 12px; border-radius: 6px;
+  background: #23272f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238a93a3' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat right 8px center;
+  -webkit-appearance: none; appearance: none; color: #c6ccd6; cursor: pointer;
+}
 .f-sec { margin-bottom: 12px; }
 .f-sec h4 { font-size: 12px; color: #8a93a3; font-weight: 600; margin-bottom: 6px; }
 .f-sec h4 small { font-weight: 400; color: #5f6775; }
+.dist-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.seg {
+  display: inline-flex; flex-shrink: 0; padding: 2px; gap: 2px;
+  background: #14161a; border: 1px solid #333a45; border-radius: 8px;
+}
+.seg button { padding: 4px 10px; font-size: 12px; border-radius: 6px; color: #7d8595; white-space: nowrap; }
+.seg button:hover { color: #c6ccd6; }
+.seg button.on { background: #2b313b; color: #e8eaed; font-weight: 600; }
+.rec-btn { border-color: #5a56c9; color: #c9c4ff; }
+.rec-btn:hover { background: #2a2846; color: #e4e1ff; }
 .chips { display: flex; flex-wrap: wrap; gap: 5px; }
 .chip {
   background: #23272f; border: 1px solid #333a45; border-radius: 999px;
@@ -93,6 +138,19 @@ textarea { resize: vertical; min-height: 60px; }
 .item-menus { font-size: 12px; color: #a08a5e; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .item-right { text-align: right; flex-shrink: 0; font-size: 11px; color: #6b7382; line-height: 1.5; }
 
+.mini-btn {
+  font-size: 11px; font-weight: 500; line-height: 1.4; padding: 1px 7px; border-radius: 5px;
+  background: #23272f; border: 1px solid #333a45; color: #a8b0bd; flex-shrink: 0;
+}
+.mini-btn:hover { color: #e8eaed; border-color: #4c5566; }
+.mini-btn.pri { border-color: #2f4f86; color: #9dc2ff; }
+.mini-btn.pri:hover { background: #1e3a63; color: #cfe0ff; }
+.item-name .mini-btn:first-of-type { margin-left: 2px; }
+.dist-link {
+  display: inline-flex; align-items: center; gap: 3px; color: #8fb4ff; text-decoration: none;
+  border-radius: 4px; padding: 0 2px;
+}
+.dist-link:hover { color: #cfe0ff; background: #1e3a63; }
 .cat-tag {
   font-size: 11px; padding: 1px 7px; border-radius: 999px;
   background: #2a2f38; color: #9aa3b2; font-weight: 500; flex-shrink: 0;
@@ -107,7 +165,7 @@ textarea { resize: vertical; min-height: 60px; }
 .rec-lb { font-size: 11px; color: #8a93a3; flex-shrink: 0; width: 76px; padding-top: 5px; text-align: right; }
 .rec-row .chips { flex: 1; }
 
-#rec-top { padding: 12px 14px 4px; }
+#rec-top { padding: 14px 0 4px; }
 .spin-btn {
   width: 100%; padding: 13px; border-radius: 11px; font-size: 15px; font-weight: 700;
   background: linear-gradient(135deg, #4c8dff, #6f5bff); color: #fff;
@@ -126,7 +184,7 @@ textarea { resize: vertical; min-height: 60px; }
 #rec-slot-sub { font-size: 11px; color: #7d8595; margin-top: 5px; }
 #rec-slot-box.settled #rec-slot-sub { color: #6aa0ff; font-weight: 600; }
 
-#rec-result { padding: 0 14px; }
+#rec-result { padding: 0; }
 .rec-card { background: #1d2430; border: 1px solid #333a45; border-radius: 11px; padding: 13px; margin-top: 10px; }
 .rec-card-name { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
 .rec-card-meta { font-size: 12px; color: #9aa3b2; margin-top: 6px; }
@@ -136,11 +194,31 @@ textarea { resize: vertical; min-height: 60px; }
 .rec-card-btns { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
 .primary.sm { padding: 5px 11px; font-size: 12px; }
 
-#rec-pool-head { padding: 0 14px; margin: 16px 0 6px; }
+#rec-pool-head { padding: 0; margin: 16px 0 6px; }
 #rec-pool .item-menus { color: #8b7a55; }
+#rec-pool-count .sel-n { color: #9dc2ff; }
+.pool-head-r { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+
+/* 후보 담기 — 줄 전체가 토글 버튼이다 */
+.item.pick { align-items: center; }
+.pick-box {
+  width: 20px; height: 20px; flex-shrink: 0; border-radius: 6px;
+  border: 1.5px solid #3d444f; background: #14161a;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: #0d1117; font-weight: 700; line-height: 1;
+}
+.item.pick.sel { background: #1a2740; box-shadow: inset 3px 0 0 #4c8dff; }
+.item.pick.sel:hover { background: #1e2d4a; }
+.item.pick.sel .pick-box { background: #4c8dff; border-color: #4c8dff; }
+.item.pick.sel .item-name { color: #dce9ff; }
+.pick-go {
+  margin-top: 4px; font-size: 11px; color: #6b7382;
+  border: 1px solid #333a45; border-radius: 6px; padding: 2px 7px; background: #23272f;
+}
+.pick-go:hover { color: #9dc2ff; border-color: #4c8dff; }
 
 /* ---------- 공무원 픽 ---------- */
-.gov-head { padding: 12px 14px; font-size: 12px; color: #9aa3b2; line-height: 1.7; border-bottom: 1px solid #23262d; }
+.gov-head { padding: 12px 2px; font-size: 12px; color: #9aa3b2; line-height: 1.7; border-bottom: 1px solid #23262d; }
 .gov-head b { color: #8fbf8e; font-size: 14px; }
 .gov-head a { color: #6aa0ff; }
 .mute-s { color: #6b7382; font-size: 11px; }
@@ -158,7 +236,7 @@ textarea { resize: vertical; min-height: 60px; }
 
 /* ---------- 상세 ---------- */
 #detail {
-  position: fixed; right: 380px; top: 0; bottom: 0; width: 400px; z-index: 20;
+  position: fixed; right: var(--sb-w); top: 0; bottom: 0; width: 400px; z-index: 20;
   background: #1c1f26; border-left: 1px solid #2c313a; overflow-y: auto;
   box-shadow: -12px 0 32px rgba(0,0,0,.45); padding: 16px 18px 40px;
 }
@@ -214,6 +292,34 @@ textarea { resize: vertical; min-height: 60px; }
   position: relative; background: #1c1f26; border: 1px solid #2c313a; border-radius: 14px;
   width: 100%; max-width: 460px; padding: 20px; max-height: 92vh; overflow-y: auto;
 }
+.modal-card.wide { max-width: 640px; min-height: min(560px, 92vh); }
+.modal-card.mid { max-width: 720px; }
+input[type=date] { color-scheme: dark; }
+input[type=date]::-webkit-calendar-picker-indicator { opacity: 1; cursor: pointer; }
+.menu-pick { margin-bottom: 7px; max-height: 132px; overflow-y: auto; }
+.menu-pick .chip { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.chip.dragging, .menu-row.dragging { opacity: .55; outline: 1px dashed #4c8dff; outline-offset: 1px; }
+.menu-row.dragging { background: #1a2740; }
+body.sorting, body.sorting * { cursor: grabbing !important; user-select: none !important; }
+.drag-h {
+  flex-shrink: 0; width: 14px; margin-left: -4px; color: #4a505a; font-size: 13px; line-height: 1;
+  cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; text-align: center;
+}
+.drag-h:hover { color: #9dc2ff; }
+#v-menus.is-default { color: #8a93a3; font-style: italic; }
+.stepper { display: flex; align-items: stretch; }
+.stepper input { border-radius: 0; text-align: center; flex: 1; }
+.stepper input[type=number] { -moz-appearance: textfield; }
+.stepper input[type=number]::-webkit-inner-spin-button,
+.stepper input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.step-btn {
+  width: 34px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  background: #23272f; border: 1px solid #333a45; color: #8a93a3;
+}
+.step-btn:first-child { border-radius: 8px 0 0 8px; border-right: none; }
+.step-btn:last-child { border-radius: 0 8px 8px 0; border-left: none; }
+.step-btn:hover { background: #2a2f38; color: #9dc2ff; }
+.step-btn:active { background: #1e3a63; color: #cfe0ff; }
 .modal-card h2 { font-size: 17px; margin-bottom: 14px; padding-right: 30px; }
 .field { margin-bottom: 11px; }
 .field label { display: block; font-size: 12px; color: #8a93a3; margin-bottom: 4px; }
@@ -228,6 +334,30 @@ textarea { resize: vertical; min-height: 60px; }
 .rating-pick { display: flex; gap: 4px; }
 .rating-pick button { font-size: 22px; color: #3a3f49; line-height: 1; }
 .rating-pick button.on { color: #ffb454; }
+
+/* 기능 모달은 등록·기록 모달(#modal) 아래에 깔린다 */
+#fmodal { z-index: 55; }
+.list.boxed { border: 1px solid #23262d; border-radius: 10px; overflow: hidden; }
+.list.boxed .item:last-child { border-bottom: none; }
+.back-btn { margin-bottom: 12px; }
+
+/* ---------- 내 기록 (날짜별 방문 로그) ---------- */
+.log-month {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+  padding: 9px 14px 7px; background: #191c22; border-bottom: 1px solid #2c313a;
+  font-size: 13px; font-weight: 700; color: #c6ccd6;
+}
+.log-month small { font-size: 11px; font-weight: 400; color: #7d8595; }
+.log-day { width: 42px; flex-shrink: 0; text-align: center; line-height: 1.25; }
+.log-day b { display: block; font-size: 17px; letter-spacing: -.5px; }
+.log-day span { font-size: 11px; color: #7d8595; }
+.log-day.sun span, .log-day.sun b { color: #ff8f9c; }
+.log-day.sat span, .log-day.sat b { color: #8fb4ff; }
+.log-day.cont b { visibility: hidden; }
+.log-day.cont span { visibility: hidden; }
+.log-note { font-size: 12px; color: #7d8595; margin-top: 4px; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.item.log .visit-menus { margin-top: 5px; }
 
 /* ---------- 토스트 ---------- */
 #toast {
@@ -251,6 +381,7 @@ textarea { resize: vertical; min-height: 60px; }
 @media (max-width: 760px) {
   #app { flex-direction: column; }
   #map-pane { height: 38dvh; flex: none; }
+  #resizer { display: none; }
   #sidebar { width: 100%; flex: 1; border-left: none; border-top: 1px solid #2c313a; }
   #detail { right: 0; left: 0; top: auto; bottom: 0; width: auto; height: 82dvh;
             border-left: none; border-top: 1px solid #2c313a; border-radius: 16px 16px 0 0; }

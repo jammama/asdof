@@ -63,11 +63,57 @@ input[type=checkbox]{width:auto;margin:0}
 .check{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink);margin:0}
 .check input{flex:none}
 .hint{font-size:12px;color:var(--ink-3);margin-top:5px}
+table.cal{border-collapse:separate;border-spacing:4px;width:100%;table-layout:fixed}
+table.cal th{font-size:12px;color:var(--ink-3);font-weight:600;padding-bottom:2px}
+table.cal td{padding:0}
+.cal-day{width:100%;display:flex;flex-direction:column;align-items:center;gap:1px;
+  padding:7px 2px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);
+  color:var(--ink);cursor:pointer;line-height:1.15;font:inherit;font-size:13px;font-weight:600}
+.cal-day .tgt{font-size:10px;font-weight:600;opacity:.7}
+.cal-day .cnt{font-size:9px;font-weight:700;opacity:.9}
+.cal-day.on{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.cal-day.closed{opacity:.4;cursor:not-allowed}
+.cal-day.past{opacity:.35}
+.cal-day.today{border-color:var(--accent)}
+.cal-day.blank{visibility:hidden}
+button.small.mode[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.acct{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);
+  border-radius:10px;background:var(--panel-2);margin-bottom:8px}
+.acct .n{width:24px;height:24px;border-radius:999px;background:var(--accent);color:var(--accent-ink);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.acct .t{font-weight:600}
+.acct .m{font-size:12px;color:var(--ink-3);margin-top:2px}
+.acct.off{opacity:.55}
 table.kv{border-collapse:collapse;font-size:12px;width:100%}
 table.kv th,table.kv td{padding:6px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
 table.kv th{color:var(--ink-3);font-weight:600}
 table.kv td.name{white-space:nowrap;font-weight:600}
 table.kv td.miss{color:var(--danger)}
+.entry{border:1px solid var(--line);border-radius:10px;background:var(--panel-2);
+  padding:8px 10px;margin:0 0 6px}
+.entry.open{padding-bottom:12px;border-color:var(--ink-3)}
+.entry.off{opacity:.55}
+.entry-head{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:nowrap}
+/* 접힌 줄은 한 줄을 넘지 않아야 목록으로 쓸 수 있다 */
+.entry-sum{flex:1;min-width:0;display:flex;align-items:center;gap:8px;text-align:left;
+  background:none;border:none;padding:4px 2px;color:var(--ink);cursor:pointer;font:inherit}
+.entry-sum:hover{border-color:transparent}
+.entry-sum .caret{width:12px;flex-shrink:0;color:var(--ink-3);font-size:11px}
+.entry-sum .tgt-badge{flex-shrink:0;font-size:12px;font-weight:700;padding:2px 7px;border-radius:6px;
+  background:var(--panel);border:1px solid var(--line);color:var(--ink-2)}
+.entry-sum .tgt-badge.bad{color:var(--danger);border-color:var(--danger)}
+.entry-sum .sum-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-size:13px;color:var(--ink-2)}
+.entry-body{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.entry-body>.row{margin-bottom:10px}
+.entry-sec{margin-top:12px;padding-top:10px;border-top:1px dashed var(--line)}
+.entry-sec .row{align-items:center;margin-bottom:8px}
+.day-head{display:flex;gap:10px;align-items:center;margin:16px 0 8px}
+.day-head b{font-size:14px}
+.grid.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:900px){.grid.g4{grid-template-columns:repeat(2,1fr)}}
+table.kv td.act{white-space:nowrap;width:1%}
+table.kv td.act button{white-space:nowrap}
 fieldset{border:1px solid var(--line);border-radius:8px;padding:12px;margin:0}
 legend{font-size:12px;color:var(--ink-2);padding:0 6px;font-weight:550}
 
@@ -270,29 +316,30 @@ td.slot.grp.gf.gl{box-shadow:inset 0 2px 0 var(--ink-2),inset 0 -2px 0 var(--ink
       <h2>예약 내용</h2>
       <div class="body">
         <div class="grid g2">
-          <div><label for="bkSubject">회의명 <span class="hint" style="display:inline">wr_subject</span></label>
+          <div><label for="bkSubject">회의명 <span class="hint" style="display:inline">title</span></label>
             <input id="bkSubject" placeholder="주간 정기 회의">
-            <div class="hint">사이트가 앞에 <code>[회사명]</code>을 <b>자동으로</b> 붙입니다 —
-              여기엔 회의명만 쓰세요. 직접 <code>[앰버로드]</code>를 넣으면 <code>[앰버로드][앰버로드]…</code>가 됩니다.
+            <div class="hint">신청의 <code>title</code> 로 그대로 들어갑니다.
               <span id="bkSubjectPreview"></span></div></div>
-          <div><label for="bkManager">담당자명 <span class="hint" style="display:inline">wr_17</span></label>
+          <div><label for="bkManager">담당자명 <span class="hint" style="display:inline">Notion 기록용</span></label>
             <input id="bkManager" placeholder="홍길동"></div>
-          <div><label for="bkContact">연락처 <span class="hint" style="display:inline">wr_15</span></label>
-            <input id="bkContact" placeholder="010-0000-0000"></div>
+          <div><label for="bkPurpose">이용목적</label>
+            <select id="bkPurpose"></select>
+            <div class="hint">사이트의 필수 입력 항목입니다.</div></div>
           <div><label for="bkCount">예약 건수</label>
             <select id="bkCount"></select>
-            <div class="hint">사이트는 팀당 하루 2건까지 받습니다. 아래 대상을 위에서부터 시도해 이 건수를 채웁니다.</div></div>
+            <div class="hint">사이트는 계정당 <b>하루 2회 · 총 5시간</b>까지 받습니다 (1회는 최대 3시간).
+              아래 대상을 위에서부터 시도해 이 건수를 채웁니다.</div></div>
           <div id="bkGapBox"><label for="bkGap">연속 신청 간격</label>
             <select id="bkGap"></select>
-            <div class="hint">사이트가 같은 계정의 연속 등록을 막습니다(gnuboard 도배 방지, 기본 30초).
-              한 건을 잡은 뒤 이만큼 기다렸다가 다음 건을 신청합니다.</div></div>
+            <div class="hint">한 건을 잡은 뒤 이만큼 기다렸다가 다음 건을 신청합니다.
+              개편 전의 도배 방지(30초)는 사라져서 짧게 둬도 됩니다.</div></div>
           <div><label for="bkOffset">대상 날짜</label>
             <select id="bkOffset"></select>
             <div class="hint" id="bkOffsetHint">실행일 기준.</div></div>
         </div>
         <div style="height:12px"></div>
-        <label for="bkContent">본문 내용 <span class="hint" style="display:inline">wr_content</span></label>
-        <input id="bkContent" placeholder="회의할 내용">
+        <label for="bkPurposeEtc">기타 사유</label>
+        <input id="bkPurposeEtc" placeholder="이용목적이 '기타'일 때만 보냅니다">
       </div>
     </div>
 
@@ -301,6 +348,7 @@ td.slot.grp.gf.gl{box-shadow:inset 0 2px 0 var(--ink-2),inset 0 -2px 0 var(--ink
       <div class="body">
         <div class="hint" style="margin:0 0 10px">
           위에서부터 순서대로 시도해 <b id="tgWant">1건</b>을 확보하면 멈춥니다.
+          지정 스케줄을 쓰면 여기 값은 <b>기본값</b>이 되고, 건마다 회의실을 따로 정할 수 있습니다.
           실패한 항목은 건너뛰고 다음으로 넘어가므로, 예비 자리를 뒤에 더 넣어두면 폴백 역할을 합니다.
           조회 없이 곧바로 신청하므로 가장 빠릅니다. 「현황 조회」 탭에서 빈 시간을 클릭해 추가할 수도 있습니다.
         </div>
@@ -308,9 +356,8 @@ td.slot.grp.gf.gl{box-shadow:inset 0 2px 0 var(--ink-2),inset 0 -2px 0 var(--ink
         <fieldset style="margin-top:12px">
           <legend>대상 추가</legend>
           <div class="grid g3">
-            <div><label for="ntBuilding">빌딩</label><select id="ntBuilding"></select></div>
-            <div><label for="ntFloor">층</label><select id="ntFloor"></select></div>
-            <div><label for="ntRoom">회의실</label><select id="ntRoom"></select></div>
+            <div><label for="ntBuilding">건물</label><select id="ntBuilding"></select></div>
+            <div style="grid-column:span 2"><label for="ntRoom">회의실</label><select id="ntRoom"></select></div>
             <div><label for="ntStart">시작</label><select id="ntStart"></select></div>
             <div><label for="ntSlots">길이</label><select id="ntSlots"></select></div>
             <div style="display:flex;align-items:flex-end"><button id="ntAdd" style="width:100%">추가</button></div>
@@ -326,7 +373,7 @@ td.slot.grp.gf.gl{box-shadow:inset 0 2px 0 var(--ink-2),inset 0 -2px 0 var(--ink
           <input type="checkbox" id="fbEnabled"> 지정 대상이 모두 실패하면 빈 자리를 자동으로 찾는다
         </label>
         <div class="grid g3" id="fbFields">
-          <div><label for="fbBuilding">빌딩</label><select id="fbBuilding"></select></div>
+          <div><label for="fbBuilding">건물</label><select id="fbBuilding"></select></div>
           <div><label for="fbFloor">선호 층</label><select id="fbFloor"></select></div>
           <div><label for="fbStart">희망 시작</label><select id="fbStart"></select></div>
           <div><label for="fbWindow">시작 허용 범위</label><select id="fbWindow"></select></div>
@@ -351,16 +398,48 @@ td.slot.grp.gf.gl{box-shadow:inset 0 2px 0 var(--ink-2),inset 0 -2px 0 var(--ink
             <input id="scFireAt" placeholder="00:00:01.000">
             <div class="hint">밀리초까지 씁니다. 예약 창은 <b>자정</b>에 롤링되므로 기본값은 <code>00:00:01.000</code> —
               날짜 경계 직후 1초를 두어 사이트가 창을 다시 계산할 여유를 줍니다. 실행 기록의 「발사 오차」를 보고 조정하세요.</div></div>
-          <div><label>실행 요일</label>
-            <div class="row" id="scDays" style="gap:6px"></div>
-            <div class="hint">아무것도 고르지 않으면 매일 실행합니다.
-              작은 글씨는 그 요일에 실행했을 때 <b>실제로 잡히는 요일</b>입니다 (예약 내용의 「대상 날짜」 기준).</div></div>
+          <div><label>실행 방식</label>
+            <div class="row" id="scMode" style="gap:6px">
+              <button type="button" class="small mode" data-mode="weekly">요일 반복</button>
+              <button type="button" class="small mode" data-mode="dates">지정 스케줄</button>
+            </div>
+            <div class="hint" id="scModeHint"></div></div>
+        </div>
+
+        <div id="modeWeekly" style="margin-top:14px">
+          <label>실행 요일</label>
+          <div class="row" id="scDays" style="gap:6px"></div>
+          <div class="hint" id="scDaysHint"></div>
+          <div class="hint">작은 글씨는 그 요일에 실행했을 때 <b>실제로 잡히는 요일</b>입니다
+            (예약 내용의 「대상 날짜」 기준). 매일 돌리려면 7개를 모두 고르세요.</div>
+        </div>
+
+        <div id="modeDates" style="margin-top:14px" hidden>
+          <div class="row" style="margin-bottom:8px">
+            <button type="button" class="small" id="calPrev">‹</button>
+            <b id="calTitle" style="min-width:120px;text-align:center"></b>
+            <button type="button" class="small" id="calNext">›</button>
+            <span class="sp" style="flex:1"></span>
+            <span class="hint" id="calCount"></span>
+            <button type="button" class="small" id="calToggleAll">모두 펼치기</button>
+            <button type="button" class="small" id="calClearPast">지난 날짜 정리</button>
+          </div>
+          <div id="calendar"></div>
+          <div class="hint" style="margin-top:8px">
+            날짜를 눌러 <b>실행일</b>을 고릅니다. 칸 아래 작은 글씨가 그날 실제로 잡히는
+            <b>대상 날짜</b>입니다. 회색 칸은 사이트 휴무일이라 잡히지 않습니다.
+            아래 카드 하나가 <b>회의실 한 개를 잡는 한 건</b>이고, 카드 안의 회의실 목록은 그 하나를 잡기 위한
+            <b>후보</b>입니다 — 위에서부터 시도해 하나가 잡히면 끝납니다.
+          </div>
+          <div id="calPicked" style="margin-top:10px"></div>
         </div>
         <div style="height:14px"></div>
         <div class="grid g3">
           <div><label for="scWarmup">워밍업 선행</label><select id="scWarmup"></select>
-            <div class="hint">로그인·uid 확보를 끝내 둘 시간</div></div>
-          <div><label for="scUid">uid 풀 크기</label><input id="scUid" type="number" min="1" max="20"></div>
+            <div class="hint">로그인·현황 조회를 끝내 둘 시간</div></div>
+          <div><label for="scCatalog">회의실 목록</label>
+            <button id="scCatalog" type="button" style="width:100%">사이트에서 새로 받기</button>
+            <div class="hint">건물·공간 목록을 사이트에서 다시 읽습니다.</div></div>
           <div><label for="scDry">모드</label><select id="scDry">
             <option value="false">실제 예약</option><option value="true">드라이런(신청 안 함)</option></select></div>
         </div>
@@ -385,17 +464,20 @@ td.slot.grp.gf.gl{box-shadow:inset 0 2px 0 var(--ink-2),inset 0 -2px 0 var(--ink
     <div class="card">
       <h2>jointips 로그인 <span class="sp"></span><span class="badge" id="siteBadge"></span></h2>
       <div class="body">
-        <div class="grid g2">
-          <div><label for="acUser">아이디</label><input id="acUser" autocomplete="off"></div>
-          <div><label for="acPw">비밀번호</label><input id="acPw" type="password" autocomplete="new-password" placeholder="변경할 때만 입력">
-            <div class="hint">저장된 비밀번호는 서버에서 암호화되며 이 화면으로 다시 내려오지 않습니다.</div></div>
+        <div class="hint" style="margin-bottom:12px">
+          사이트 한도(<b>1일 2회 · 5시간</b>)는 <b>계정별</b>입니다 — 계정을 여러 개 두면 그만큼 더 잡을 수 있습니다.
+          위에서부터 한도까지 쓰고 다음 계정으로 넘어갑니다. 비밀번호는 암호화 저장되며 이 화면으로 다시 내려오지 않습니다.
         </div>
-        <div class="row" style="margin-top:14px">
-          <button class="primary" id="acSave">자격증명 저장</button>
-          <button id="acTest">로그인 테스트</button>
-          <span class="sp" style="flex:1"></span>
-          <button class="danger small" id="acClear">저장된 비밀번호 지우기</button>
-        </div>
+        <div id="accounts"></div>
+        <fieldset style="margin-top:12px">
+          <legend>계정 추가</legend>
+          <div class="grid g3">
+            <div><label for="naLabel">이름 (선택)</label><input id="naLabel" placeholder="예: 이승혜"></div>
+            <div><label for="naUser">아이디(이메일)</label><input id="naUser" autocomplete="off" placeholder="name@example.com"></div>
+            <div><label for="naPw">비밀번호</label><input id="naPw" type="password" autocomplete="new-password"></div>
+          </div>
+          <div class="row end" style="margin-top:10px"><button class="primary" id="naAdd">추가</button></div>
+        </fieldset>
       </div>
     </div>
 
@@ -477,14 +559,16 @@ td.slot.grp.gf.gl{box-shadow:inset 0 2px 0 var(--ink-2),inset 0 -2px 0 var(--ink
   </section>
 
   <!-- 하단 각주 -->
+  <div class="note" id="migrationNote" hidden style="border-color:var(--warn)"></div>
+
   <div class="note" id="skewNote" hidden>
     <b>참고 · jointips 서버 시계</b>
-    예약 창(오늘 ~ +6일)은 jointips 서버가 <b>자기 시계로</b> 계산합니다. 그런데 그 시계가 실제보다
+    예약 창(오늘 ~ +7일)은 jointips 서버가 <b>자기 시계로</b> 계산합니다. 그런데 그 시계가 실제보다
     <b id="skAmount">—</b> (지금 그쪽은 <b id="skSiteNow">—</b>). 그래서 새 날짜가 실제로 열리는 건
-    우리 자정이 아니라 <b id="skOpen">—</b>이고, 발사 시각 기본값 <code id="skFire">—</code>은 여기에 맞춘 값입니다.
+    우리 자정이 아니라 <b id="skOpen">—</b>이고, 발사 시각 <code id="skFire">—</code>은 여기에 맞춰야 합니다.
     <br>
-    jointips 가 시계를 고치면 이 숫자가 0에 가까워집니다 — 그때는 발사 시각을 <code>00:00:01</code> 근처로
-    되돌리세요. <span class="dim">마지막 측정 <span id="skWhen">—</span></span>
+    개편 전 서버는 40분 가까이 느렸지만 새 서버는 거의 정확합니다 — 이 숫자가 다시 커지면 발사 시각을
+    그만큼 당겨야 합니다. <span class="dim">마지막 측정 <span id="skWhen">—</span></span>
   </div>
 
   <!-- 실행 기록 -->
@@ -504,7 +588,10 @@ td.slot.grp.gf.gl{box-shadow:inset 0 2px 0 var(--ink-2),inset 0 -2px 0 var(--ink
 const $ = (id) => document.getElementById(id);
 const el = (tag, cls, txt) => { const n = document.createElement(tag); if (cls) n.className = cls; if (txt != null) n.textContent = txt; return n; };
 
-let STATE = null, CODES = { buildings: [], floors: [], rooms: [] }, TARGETS = [], poll = null, pollMs = 0;
+// CATALOG 는 사이트에서 받아 온 건물·공간 목록이다. 예전에는 서버 코드에 표로 박혀
+// 있었지만(codes.go), 2026-09 개편으로 공개 API 에서 받아 쓴다.
+let STATE = null, CATALOG = { buildings: [], spaces: [], purposes: [], bookable_days: null },
+    TARGETS = [], poll = null, pollMs = 0;
 
 /* ── 공통 ─────────────────────────────────────────── */
 function toast(msg, isErr) {
@@ -522,7 +609,11 @@ async function api(path, body) {
   if (!res.ok) throw new Error(data.error || ("요청 실패 (" + res.status + ")"));
   return data;
 }
-const SLOTS = (() => { const a = []; for (let m = 9 * 60; m <= 20 * 60 + 30; m += 30) a.push(hhmm(m)); return a; })();
+// 공간 운영시간은 09:00~18:00, 30분 단위 18칸이다 (개편 전에는 21:00 까지 24칸이었다).
+const GRID_START = 9 * 60, GRID_END = 18 * 60;
+const SLOTS = (() => { const a = []; for (let m = GRID_START; m < GRID_END; m += 30) a.push(hhmm(m)); return a; })();
+// 사이트 한도: 1회 최대 3시간(6칸), 1일 최대 2회·5시간(10칸).
+const MAX_SLOTS = 6, MAX_DAILY_SLOTS = 10;
 function hhmm(m) { return String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0"); }
 function toMin(s) { const [h, m] = s.split(":").map(Number); return h * 60 + m; }
 function endOf(start, slots) { return hhmm(toMin(start) + slots * 30); }
@@ -575,41 +666,54 @@ document.querySelectorAll("nav.tabs button").forEach((b) => b.addEventListener("
 /* ── 선택지 채우기 ────────────────────────────────── */
 function buildingOptions(withAll) {
   const a = withAll ? [{ value: "", label: "전체" }] : [];
-  return a.concat(CODES.buildings.map((b) => ({ value: b.code, label: b.name })));
+  return a.concat(CATALOG.buildings.map((b) => ({ value: b.bldgCd, label: b.bldgNm })));
 }
-function floorOptions(building, withAll) {
+function floorOptions(bldgCd, withAll) {
   const a = withAll ? [{ value: "", label: "층 무관" }] : [];
-  return a.concat(CODES.floors.filter((f) => !building || f.building === building)
-    .map((f) => ({ value: f.code, label: f.name })));
+  const seen = [];
+  CATALOG.spaces.forEach((sp) => {
+    if (bldgCd && sp.bldgCd !== bldgCd) return;
+    if (!seen.includes(sp.floorNo)) seen.push(sp.floorNo);
+  });
+  seen.sort((x, y) => Number(x) - Number(y));
+  return a.concat(seen.map((f) => ({ value: f, label: f + "층" })));
 }
-function roomOptions(building, floor) {
-  return CODES.rooms.filter((r) => (!building || r.building === building) && (!floor || r.floor === floor))
-    .map((r) => ({ value: String(r.room_id), label: r.name + " (" + r.capacity + ")" }));
+// 공간명이 대개 "4층 회의실A" 처럼 층을 이미 품고 있어서, 층을 또 붙이면
+// "4층 4층 회의실A" 가 된다. 층이 없는 이름("8인 회의실")에만 살려 준다.
+function withFloor(floorNo, spaceNm) {
+  if (!floorNo || (spaceNm || "").startsWith(floorNo + "층")) return spaceNm;
+  return floorNo + "층 " + spaceNm;
 }
-const slotOptions = SLOTS.map((s) => ({ value: s, label: s }));
-const lenOptions = Array.from({ length: 8 }, (_, i) => ({ value: String(i + 1), label: (i + 1) * 30 + "분" + (i >= 1 ? " (" + ((i + 1) / 2) + "시간)" : "") }));
+function spaceOptions(bldgCd) {
+  return CATALOG.spaces.filter((sp) => !bldgCd || sp.bldgCd === bldgCd).map((sp) => ({
+    value: sp.spaceCd,
+    // 신청을 받지 않는 공간(reserveStatus≠Y)도 목록에는 남기되 눈에 띄게 표시한다.
+    label: withFloor(sp.floorNo, sp.spaceNm) + " (" + (sp.capacity || "?") + "명)" +
+      (sp.tvYn === "Y" ? " · 디스플레이" : "") + (sp.reserveStatus === "Y" ? "" : " · 예약불가"),
+  }));
+}
+function spaceInfo(spaceCd) { return CATALOG.spaces.find((sp) => sp.spaceCd === spaceCd); }
+function spaceLabel(spaceCd) {
+  const sp = spaceInfo(spaceCd);
+  return sp ? sp.bldgNm + " " + withFloor(sp.floorNo, sp.spaceNm) : spaceCd;
+}
+const slotOptions = SLOTS.map((x) => ({ value: x, label: x }));
+const lenOptions = Array.from({ length: MAX_SLOTS }, (_, i) => ({
+  value: String(i + 1), label: (i + 1) * 30 + "분" + (i >= 1 ? " (" + ((i + 1) / 2) + "시간)" : ""),
+}));
 
-function wireCascade(bSel, fSel, rSel) {
+// 건물 → 공간 2단 종속. 개편으로 층 선택 단계가 없어졌다(공간 코드 하나면 확정된다).
+function wireCascade(bSel, rSel) {
   const sync = () => {
-    const b = bSel.value;
-    const prevF = fSel.value;
-    fill(fSel, floorOptions(b, false));
-    if ([...fSel.options].some((o) => o.value === prevF)) fSel.value = prevF;
-    const prevR = rSel.value;
-    fill(rSel, roomOptions(b, fSel.value));
-    if ([...rSel.options].some((o) => o.value === prevR)) rSel.value = prevR;
+    const prev = rSel.value;
+    fill(rSel, spaceOptions(bSel.value));
+    if ([...rSel.options].some((o) => o.value === prev)) rSel.value = prev;
   };
   bSel.addEventListener("change", sync);
-  fSel.addEventListener("change", () => {
-    const prevR = rSel.value;
-    fill(rSel, roomOptions(bSel.value, fSel.value));
-    if ([...rSel.options].some((o) => o.value === prevR)) rSel.value = prevR;
-  });
   return sync;
 }
 
 /* ── 지정 대상 ────────────────────────────────────── */
-function roomInfo(id) { return CODES.rooms.find((r) => r.room_id === Number(id)); }
 function renderTargets() {
   const box = $("targets"); box.innerHTML = "";
   const want = Number($("bkCount").value || 1);
@@ -622,16 +726,26 @@ function renderTargets() {
     w.style.color = "var(--warn)"; w.style.borderColor = "var(--warn)";
     box.appendChild(w);
   }
+  // 위에서부터 want 건을 잡으므로, 그 합이 하루 한도를 넘으면 마지막 건은 반드시 거절된다.
+  const planned = TARGETS.slice(0, want).reduce((n, t) => n + t.duration_slots, 0);
+  if (planned > MAX_DAILY_SLOTS) {
+    const w = el("div", "empty", "⚠ 앞 " + want + "건의 합이 " + (planned / 2) + "시간 — 사이트의 1일 한도 " +
+      (MAX_DAILY_SLOTS / 2) + "시간을 넘습니다. 길이를 줄이세요.");
+    w.style.color = "var(--danger)"; w.style.borderColor = "var(--danger)";
+    box.appendChild(w);
+  }
   TARGETS.forEach((t, i) => {
-    const info = roomInfo(t.room_id);
+    const sp = spaceInfo(t.space_cd);
     const row = el("div", "target");
     const n = el("div", "n", String(i + 1));
     if (i >= want) { n.style.background = "var(--busy)"; n.style.color = "var(--ink-3)"; n.title = "예비 — 앞 항목이 실패할 때만 쓰입니다"; }
     row.appendChild(n);
     const mid = el("div");
-    mid.appendChild(el("div", "t", info ? info.place + " " + info.name : "회의실 " + t.room_id));
-    mid.appendChild(el("div", "m", t.start + "~" + endOf(t.start, t.duration_slots) +
-      " · " + (t.duration_slots * 30 / 60) + "시간 · wr_8=" + t.room_id));
+    mid.appendChild(el("div", "t", t.label || spaceLabel(t.space_cd)));
+    let meta = t.start + "~" + endOf(t.start, t.duration_slots) +
+      " · " + (t.duration_slots * 30 / 60) + "시간 · " + t.space_cd;
+    if (sp && sp.reserveStatus !== "Y") meta += " · ⚠ 사이트에서 예약불가 상태";
+    mid.appendChild(el("div", "m", meta));
     row.appendChild(mid);
     const act = el("div", "row");
     if (i > 0) { const up = el("button", "small", "↑"); up.title = "위로";
@@ -644,16 +758,22 @@ function renderTargets() {
   });
 }
 function addTarget(t) {
-  if (TARGETS.some((x) => x.room_id === t.room_id && x.start === t.start)) { toast("이미 같은 대상이 있습니다", true); return; }
-  if (toMin(t.start) + t.duration_slots * 30 > 21 * 60) { toast("종료 시각이 21:00 을 넘습니다", true); return; }
+  if (TARGETS.some((x) => x.space_cd === t.space_cd && x.start === t.start)) { toast("이미 같은 대상이 있습니다", true); return; }
+  if (t.duration_slots > MAX_SLOTS) { toast("1회 최대 " + (MAX_SLOTS / 2) + "시간까지 예약할 수 있습니다", true); return; }
+  if (toMin(t.start) + t.duration_slots * 30 > GRID_END) { toast("종료 시각이 " + hhmm(GRID_END) + " 을 넘습니다", true); return; }
   TARGETS.push(t); renderTargets(); toast("대상을 추가했습니다 — 저장을 눌러 반영하세요");
 }
 $("ntAdd").addEventListener("click", () => {
-  const id = Number($("ntRoom").value);
-  if (!id) { toast("회의실을 고르세요", true); return; }
-  const info = roomInfo(id);
-  addTarget({ room_id: id, building: info ? info.building : $("ntBuilding").value,
-    floor: info ? info.floor : $("ntFloor").value, start: $("ntStart").value, duration_slots: Number($("ntSlots").value) });
+  const spaceCd = $("ntRoom").value;
+  if (!spaceCd) { toast("회의실을 고르세요", true); return; }
+  const sp = spaceInfo(spaceCd);
+  addTarget({
+    space_cd: spaceCd,
+    bldg_cd: sp ? sp.bldgCd : $("ntBuilding").value,
+    label: spaceLabel(spaceCd),
+    start: $("ntStart").value,
+    duration_slots: Number($("ntSlots").value),
+  });
 });
 
 /* ── 폼 ↔ 상태 ────────────────────────────────────── */
@@ -672,10 +792,24 @@ function renderDayToggles(selected) {
       b.style.borderColor = on ? "transparent" : "var(--line)";
     };
     paint(selected.includes(i));
-    b.onclick = () => { paint(b.getAttribute("aria-pressed") !== "true"); offsetHint(); };
+    b.onclick = () => { paint(b.getAttribute("aria-pressed") !== "true"); offsetHint(); dayCountHint(); };
     box.appendChild(b);
   });
   refreshDayArrows();
+  dayCountHint();
+}
+// 요일을 하나도 안 고르면 요일 반복은 돌지 않는다 — 예전엔 이게 '매일'이라 함정이었다.
+function dayCountHint() {
+  const h = $("scDaysHint");
+  if (!h) return;
+  const n = selectedDays().length;
+  if (n === 0) {
+    h.innerHTML = "⚠ 고른 요일이 없습니다 — <b>요일 반복은 돌지 않습니다</b>.";
+    h.style.color = "var(--warn)";
+  } else {
+    h.textContent = n === 7 ? "매일 실행합니다." : n + "개 요일에 실행합니다.";
+    h.style.color = "";
+  }
 }
 // 이 요일에 발사하면 실제로 잡히는 날은 「대상 날짜」만큼 뒤다(스케줄러는 발사일
 // 기준으로 요일을 거르고, 러너는 발사 시각 + offset 을 대상 날짜로 쓴다).
@@ -688,6 +822,489 @@ function refreshDayArrows() {
     to.textContent = n === 0 ? "당일" : "→" + WEEKDAYS[(Number(b.dataset.day) + n) % 7];
   });
 }
+/* ── 지정 스케줄 캘린더 ───────────────────────────── */
+// 캘린더에서 고르는 건 **실행일**이다. 실제로 잡히는 날짜는 실행일 + 「대상 날짜」(일괄)이라,
+// 둘을 머릿속에서 더하지 않도록 칸 안에 함께 적는다.
+// 각 항목은 {id, date, target_date, subject, manager, purpose_cd, account_id, enabled}.
+// 비운 필드는 「예약 설정」의 값을 그대로 쓴다 — 대부분은 날짜만 찍으면 된다.
+let ENTRIES = [], CAL_MONTH = null;
+// 펼쳐 둔 카드. 카드는 편집할 때마다 다시 그려지므로 상태를 DOM 밖에 들고 있어야 한다.
+// 저장된 항목은 id 로, 아직 저장 안 한 항목은 임시 키로 식별한다.
+let EXPANDED = new Set(), uidSeq = 0;
+function entryUID(e) {
+  if (!e._uid) e._uid = e.id || "new-" + ++uidSeq;
+  return e._uid;
+}
+const entryOn = (d) => ENTRIES.find((e) => e.date === d);
+// 이 항목이 실제로 잡을 날짜. 명시값이 없으면 오프셋으로 계산한다(서버와 같은 규칙).
+function entryTarget(e) {
+  if (e.target_date) return e.target_date;
+  const d = parseYmd(e.date);
+  return d ? ymd(addDays(d, currentOffset())) : "";
+}
+
+const ymd = (d) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") +
+  "-" + String(d.getDate()).padStart(2, "0");
+const parseYmd = (s) => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
+const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+
+function currentOffset() { return Number($("bkOffset").value) || 0; }
+
+function setMode(mode) {
+  const dates = mode === "dates";
+  document.querySelectorAll("#scMode button.mode").forEach((b) => {
+    const on = b.dataset.mode === mode;
+    b.setAttribute("aria-pressed", String(on));
+  });
+  $("modeWeekly").hidden = dates;
+  $("modeDates").hidden = !dates;
+  $("scModeHint").textContent = dates
+    ? "캘린더에서 고른 날짜에만 실행합니다."
+    : "고른 요일마다 반복 실행합니다.";
+  if (dates) renderCalendar();
+}
+function currentMode() {
+  const on = document.querySelector('#scMode button.mode[aria-pressed="true"]');
+  return on ? on.dataset.mode : "weekly";
+}
+document.querySelectorAll("#scMode button.mode").forEach((b) => {
+  b.addEventListener("click", () => setMode(b.dataset.mode));
+});
+$("calPrev").addEventListener("click", () => { CAL_MONTH.setMonth(CAL_MONTH.getMonth() - 1); renderCalendar(); });
+$("calNext").addEventListener("click", () => { CAL_MONTH.setMonth(CAL_MONTH.getMonth() + 1); renderCalendar(); });
+$("calToggleAll").addEventListener("click", () => {
+  const todayStr = ymd(new Date());
+  const shown = ENTRIES.filter((e) => e.date >= todayStr);
+  const allOpen = shown.length > 0 && shown.every((e) => EXPANDED.has(entryUID(e)));
+  if (allOpen) shown.forEach((e) => EXPANDED.delete(entryUID(e)));
+  else shown.forEach((e) => EXPANDED.add(entryUID(e)));
+  renderCalendar();
+});
+$("calClearPast").addEventListener("click", () => {
+  const today = ymd(new Date());
+  const before = ENTRIES.length;
+  ENTRIES = ENTRIES.filter((e) => e.date >= today);
+  renderCalendar();
+  toast(before - ENTRIES.length + "건을 정리했습니다 — 저장을 눌러 반영하세요");
+});
+
+function renderCalendar() {
+  if (!CAL_MONTH) CAL_MONTH = new Date();
+  const box = $("calendar"); box.innerHTML = "";
+  const y = CAL_MONTH.getFullYear(), m = CAL_MONTH.getMonth();
+  $("calTitle").textContent = y + "년 " + (m + 1) + "월";
+
+  const first = new Date(y, m, 1), last = new Date(y, m + 1, 0);
+  const todayStr = ymd(new Date());
+  const off = currentOffset();
+
+  const table = el("table", "cal"), thead = el("thead"), htr = el("tr");
+  WEEKDAYS.forEach((w) => htr.appendChild(el("th", null, w)));
+  thead.appendChild(htr); table.appendChild(thead);
+
+  const tbody = el("tbody");
+  let tr = el("tr");
+  for (let i = 0; i < first.getDay(); i++) tr.appendChild(el("td"));
+  for (let day = 1; day <= last.getDate(); day++) {
+    const d = new Date(y, m, day), key = ymd(d);
+    const target = addDays(d, off);
+    const td = el("td");
+    const b = el("button", "cal-day");
+    b.type = "button";
+    b.appendChild(el("span", null, String(day)));
+    // 칸 아래 작은 글씨 = 이 날 실행하면 실제로 잡히는 날짜
+    b.appendChild(el("span", "tgt", (target.getMonth() + 1) + "/" + target.getDate() +
+      "(" + WEEKDAYS[target.getDay()] + ")"));
+    const sameDay = ENTRIES.filter((x) => x.date === key);
+    const ent = sameDay[0];
+    if (ent) b.classList.add("on");
+    // 같은 날짜에 여러 건을 넣을 수 있으므로 건수를 칸에 남긴다.
+    if (sameDay.length > 1) {
+      const badge = el("span", "cnt", sameDay.length + "건");
+      b.appendChild(badge);
+    }
+    // 항목이 대상 날짜를 따로 못박아 뒀으면 그 값을 보여줘야 한다(오프셋과 다를 수 있다).
+    if (ent && ent.target_date) {
+      const t2 = parseYmd(ent.target_date);
+      if (t2) b.lastChild.textContent = (t2.getMonth() + 1) + "/" + t2.getDate() + "(" + WEEKDAYS[t2.getDay()] + ")";
+    }
+    if (key === todayStr) b.classList.add("today");
+    if (key < todayStr) b.classList.add("past");
+    // 대상 날짜가 사이트 휴무일이면 그 실행일은 아무것도 못 잡는다.
+    if (closedDay(target)) {
+      b.classList.add("closed");
+      b.title = "대상 날짜가 사이트 휴무일입니다";
+      b.disabled = true;
+    } else {
+      b.onclick = () => {
+        // 이미 있으면 그 날짜를 통째로 빼고, 없으면 한 건 넣는다.
+        // 같은 날짜에 건을 더하려면 아래 목록의 «+ 이 날짜에 예약 추가» 를 쓴다.
+        if (ENTRIES.some((e) => e.date === key)) {
+          const n = ENTRIES.filter((e) => e.date === key).length;
+          if (n > 1 && !confirm(key + " 의 예약 " + n + "건을 모두 지웁니다. 계속할까요?")) return;
+          ENTRIES = ENTRIES.filter((e) => e.date !== key);
+          renderCalendar();
+          return;
+        }
+        addEntry(key);
+      };
+    }
+    td.appendChild(b);
+    tr.appendChild(td);
+    if (d.getDay() === 6) { tbody.appendChild(tr); tr = el("tr"); }
+  }
+  if (tr.children.length) {
+    while (tr.children.length < 7) tr.appendChild(el("td"));
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody); box.appendChild(table);
+
+  const upcoming = ENTRIES.filter((e) => e.date >= todayStr);
+  $("calCount").textContent = ENTRIES.length
+    ? "예약 " + ENTRIES.length + "건 (앞으로 " + upcoming.length + "건)" : "고른 날짜 없음";
+  const allOpen = upcoming.length > 0 && upcoming.every((e) => EXPANDED.has(entryUID(e)));
+  $("calToggleAll").textContent = allOpen ? "모두 접기" : "모두 펼치기";
+  $("calToggleAll").disabled = upcoming.length === 0;
+  renderPicked(off, todayStr);
+}
+
+// 고른 날짜를 예약별 카드로 펼친다.
+//
+// 카드 하나 = **회의실 한 개를 잡는 한 건**이다. 안의 회의실 목록은 그 하나를 잡기 위한
+// **후보**고, 위에서부터 시도해 하나가 잡히면 끝난다(여러 개를 잡는 게 아니다).
+// 같은 실행일에 여러 건이 필요하면 카드를 여러 개 만든다.
+function renderPicked(off, todayStr) {
+  const box = $("calPicked"); box.innerHTML = "";
+  const upcoming = ENTRIES.filter((e) => e.date >= todayStr);
+  if (!upcoming.length) {
+    box.appendChild(el("div", "empty", "앞으로 실행할 예약이 없습니다. 위 캘린더에서 날짜를 고르세요."));
+    return;
+  }
+  // 같은 날짜끼리 묶어서 보여준다 — 한 번 발사로 함께 나가는 건들이라 묶여 보여야 한다.
+  let lastDate = null;
+  upcoming.forEach((e) => {
+    if (e.date !== lastDate) {
+      lastDate = e.date;
+      const d = parseYmd(e.date);
+      const n = upcoming.filter((x) => x.date === e.date).length;
+      const h = el("div", "day-head");
+      h.appendChild(el("b", null, e.date + " (" + WEEKDAYS[d.getDay()] + ") 실행"));
+      h.appendChild(el("span", "hint", " · 예약 " + n + "건"));
+      const add = el("button", "small", "+ 이 날짜에 예약 추가");
+      add.onclick = () => { addEntry(e.date); };
+      h.appendChild(add);
+      box.appendChild(h);
+    }
+    box.appendChild(entryCard(e, off));
+  });
+}
+
+function addEntry(date) {
+  const e = { id: "", date: date, target_date: "", subject: "", manager: "",
+    purpose_cd: "", account_id: "", targets: [], fallback: null, enabled: true };
+  ENTRIES.push(e);
+  ENTRIES.sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0);
+  EXPANDED.add(entryUID(e)); // 방금 만든 건 바로 채워 넣어야 하니 펼쳐 둔다
+  renderCalendar();
+}
+
+// 접혔을 때 보여 줄 한 줄 요약. 펼치지 않고도 무엇을 잡는 건지 알 수 있어야 한다.
+function entrySummary(e) {
+  const parts = [];
+  parts.push(e.subject || $("bkSubject").value || "(회의명 미지정)");
+  const ts = e.targets || [];
+  if (ts.length) {
+    const first = ts[0];
+    let room = (first.label || spaceLabel(first.space_cd)) + " " +
+      first.start + "~" + endOf(first.start, first.duration_slots);
+    if (ts.length > 1) room += " 외 " + (ts.length - 1) + "곳";
+    parts.push(room);
+  } else {
+    parts.push("「예약 설정」 대상 " + TARGETS.length + "개");
+  }
+  if (e.account_id) {
+    const a = ACCOUNTS.find((x) => x.id === e.account_id);
+    parts.push(a ? (a.label || a.username) : "⚠ 지워진 계정");
+  }
+  if (e.fallback && e.fallback.enabled) parts.push("폴백");
+  else if (e.fallback && !e.fallback.enabled) parts.push("폴백 없음");
+  return parts.join(" · ");
+}
+
+function entryCard(e, off) {
+  const d = parseYmd(e.date);
+  const uid = entryUID(e);
+  const open = EXPANDED.has(uid);
+  const card = el("div", "entry" + (e.enabled ? "" : " off") + (open ? " open" : ""));
+
+  // ── 머리: 접었을 때도 무엇을 잡는 건지 한 줄로 보인다 ──
+  const head = el("div", "entry-head");
+  const sum = el("button", "entry-sum");
+  sum.type = "button";
+  sum.setAttribute("aria-expanded", String(open));
+  sum.appendChild(el("span", "caret", open ? "▾" : "▸"));
+  const tgt = parseYmd(entryTarget(e));
+  const badge = el("span", "tgt-badge",
+    tgt ? (tgt.getMonth() + 1) + "/" + tgt.getDate() + "(" + WEEKDAYS[tgt.getDay()] + ")" : "—");
+  if (tgt && closedDay(tgt)) { badge.classList.add("bad"); badge.title = "대상 날짜가 사이트 휴무일입니다"; }
+  sum.appendChild(badge);
+  sum.appendChild(el("span", "sum-t", entrySummary(e)));
+  sum.onclick = () => {
+    if (EXPANDED.has(uid)) EXPANDED.delete(uid); else EXPANDED.add(uid);
+    renderCalendar();
+  };
+  head.appendChild(sum);
+
+  const act = el("div", "row");
+  act.style.flexWrap = "nowrap";
+  const tog = el("button", "small", e.enabled ? "끄기" : "켜기");
+  tog.onclick = () => { e.enabled = !e.enabled; renderCalendar(); };
+  act.appendChild(tog);
+  const dry = el("button", "small", "드라이런");
+  dry.title = "이 건의 설정 그대로 한 번 돌려 봅니다 (신청은 안 보냅니다)";
+  dry.onclick = async () => {
+    if (!e.id) { toast("먼저 저장하세요", true); return; }
+    try {
+      await api("/api/run", { dry_run: true, entry_id: e.id });
+      toast("드라이런을 시작했습니다");
+      document.querySelector('nav.tabs button[data-tab="logs"]').click();
+      await refresh();
+    } catch (err) { toast(err.message, true); }
+  };
+  act.appendChild(dry);
+  const dup = el("button", "small", "복제");
+  dup.onclick = () => {
+    const c = Object.assign({}, e, { id: "", _uid: "", targets: (e.targets || []).map((t) => ({ ...t })),
+      fallback: e.fallback ? { ...e.fallback } : null });
+    ENTRIES.splice(ENTRIES.indexOf(e) + 1, 0, c);
+    EXPANDED.add(entryUID(c));
+    renderCalendar();
+  };
+  act.appendChild(dup);
+  const del = el("button", "small", "삭제");
+  del.onclick = () => {
+    EXPANDED.delete(uid);
+    ENTRIES = ENTRIES.filter((x) => x !== e);
+    renderCalendar();
+  };
+  act.appendChild(del);
+  head.appendChild(act);
+  card.appendChild(head);
+
+  if (!open) return card; // 접혀 있으면 여기까지
+
+  // ── 몸통: 펼쳤을 때만 그린다 ──
+  const body = el("div", "entry-body");
+
+  const tgtWrap = el("div", "row");
+  tgtWrap.appendChild(el("span", "hint", "대상 날짜"));
+  const inT = el("input");
+  inT.type = "date"; inT.style.width = "150px";
+  inT.value = entryTarget(e);
+  inT.min = e.date;
+  inT.max = ymd(addDays(d, 7)); // 사이트 예약 창
+  inT.onchange = () => {
+    const picked = parseYmd(inT.value);
+    // 캘린더가 막는 것과 같은 규칙 — 휴무일을 대상으로 잡아 두면 그날은 아무것도 안 잡힌다.
+    if (picked && closedDay(picked)) {
+      toast("대상 날짜가 사이트 휴무일입니다 (토·일)", true);
+      inT.value = entryTarget(e); return;
+    }
+    const gap = picked ? Math.round((picked - d) / 864e5) : 0;
+    if (picked && (gap < 0 || gap > 7)) {
+      toast("대상 날짜는 실행일 기준 0~7일 뒤여야 합니다 (사이트 예약 창)", true);
+      inT.value = entryTarget(e); return;
+    }
+    e.target_date = inT.value === ymd(addDays(d, currentOffset())) ? "" : inT.value;
+    renderCalendar();
+  };
+  tgtWrap.appendChild(inT);
+  tgtWrap.appendChild(el("span", "hint", e.target_date ? "직접 지정" : "+" + off + "일 자동"));
+  body.appendChild(tgtWrap);
+
+  const g = el("div", "grid g4");
+  g.appendChild(entryField(e, "subject", "회의명", $("bkSubject").value || "(예약 설정)"));
+  g.appendChild(entryField(e, "manager", "담당자명", $("bkManager").value || "(예약 설정)"));
+
+  const pWrap = el("div");
+  pWrap.appendChild(el("label", null, "이용목적"));
+  const selP = el("select");
+  fill(selP, [{ value: "", label: "(예약 설정)" }].concat(
+    (CATALOG.purposes || []).map((p) => ({ value: p.detailCd, label: p.codeNm }))), e.purpose_cd || "");
+  selP.onchange = () => { e.purpose_cd = selP.value; renderCalendar(); };
+  pWrap.appendChild(selP);
+  g.appendChild(pWrap);
+
+  const aWrap = el("div");
+  aWrap.appendChild(el("label", null, "예약자"));
+  const selA = el("select");
+  const accOpts = [{ value: "", label: "(자동)" }].concat(
+    ACCOUNTS.filter((a) => a.enabled).map((a) => ({ value: a.id, label: a.label || a.username })));
+  fill(selA, accOpts, e.account_id || "");
+  if (e.account_id && !accOpts.some((o) => o.value === e.account_id)) {
+    const gone = el("option", null, "⚠ 지워진 계정");
+    gone.value = e.account_id; selA.appendChild(gone); selA.value = e.account_id;
+  }
+  selA.onchange = () => { e.account_id = selA.value; renderCalendar(); };
+  aWrap.appendChild(selA);
+  g.appendChild(aWrap);
+  body.appendChild(g);
+
+  body.appendChild(entryRooms(e));
+  body.appendChild(entryFallback(e));
+  card.appendChild(body);
+  return card;
+}
+
+// 회의실 후보 — 이 한 건을 잡기 위해 위에서부터 시도할 목록.
+function entryRooms(e) {
+  const box = el("div", "entry-sec");
+  const head = el("div", "row");
+  head.appendChild(el("b", null, "회의실 후보"));
+  head.appendChild(el("span", "hint", "위에서부터 시도해 하나가 잡히면 끝납니다"));
+  box.appendChild(head);
+
+  const list = el("div");
+  const targets = e.targets || (e.targets = []);
+  if (!targets.length) {
+    list.appendChild(el("div", "empty",
+      "비어 있음 — 「예약 설정」의 지정 대상(" + TARGETS.length + "개)을 그대로 씁니다."));
+  }
+  targets.forEach((t, i) => {
+    const row = el("div", "target");
+    row.appendChild(el("div", "n", String(i + 1)));
+    const mid = el("div"); mid.style.flex = "1";
+    mid.appendChild(el("div", "t", t.label || spaceLabel(t.space_cd)));
+    mid.appendChild(el("div", "m", t.start + "~" + endOf(t.start, t.duration_slots) +
+      " · " + (t.duration_slots * 30 / 60) + "시간"));
+    row.appendChild(mid);
+    const a = el("div", "row");
+    if (i > 0) {
+      const up = el("button", "small", "↑");
+      up.onclick = () => { [targets[i - 1], targets[i]] = [targets[i], targets[i - 1]]; renderCalendar(); };
+      a.appendChild(up);
+    }
+    const rm = el("button", "small", "삭제");
+    rm.onclick = () => { targets.splice(i, 1); renderCalendar(); };
+    a.appendChild(rm);
+    row.appendChild(a);
+    list.appendChild(row);
+  });
+  box.appendChild(list);
+
+  // 후보 추가 — 건물 → 회의실 → 시작 → 길이
+  const add = el("div", "row");
+  const bSel = el("select"); bSel.style.width = "150px";
+  fill(bSel, buildingOptions(false), (CATALOG.buildings[0] || {}).bldgCd);
+  const rSel = el("select"); rSel.style.width = "210px";
+  fill(rSel, spaceOptions(bSel.value));
+  bSel.onchange = () => fill(rSel, spaceOptions(bSel.value));
+  const sSel = el("select"); sSel.style.width = "90px";
+  fill(sSel, slotOptions, "13:00");
+  const lSel = el("select"); lSel.style.width = "130px";
+  fill(lSel, lenOptions, String(MAX_SLOTS));
+  const btn = el("button", "small", "후보 추가");
+  btn.onclick = () => {
+    const cd = rSel.value;
+    if (!cd) { toast("회의실을 고르세요", true); return; }
+    if (targets.some((t) => t.space_cd === cd && t.start === sSel.value)) {
+      toast("이미 같은 후보가 있습니다", true); return;
+    }
+    if (toMin(sSel.value) + Number(lSel.value) * 30 > GRID_END) {
+      toast("종료 시각이 " + hhmm(GRID_END) + " 을 넘습니다", true); return;
+    }
+    const sp = spaceInfo(cd);
+    targets.push({ space_cd: cd, bldg_cd: sp ? sp.bldgCd : bSel.value,
+      label: spaceLabel(cd), start: sSel.value, duration_slots: Number(lSel.value) });
+    renderCalendar();
+  };
+  [bSel, rSel, sSel, lSel, btn].forEach((x) => add.appendChild(x));
+  box.appendChild(add);
+  return box;
+}
+
+// 폴백 — 후보가 다 막혔을 때 같은 건물에서 빈 자리를 찾는다.
+function entryFallback(e) {
+  const box = el("div", "entry-sec");
+  const head = el("div", "row");
+  head.appendChild(el("b", null, "폴백"));
+  const mode = el("select"); mode.style.width = "190px";
+  fill(mode, [
+    { value: "inherit", label: "「예약 설정」 따름" },
+    { value: "off", label: "쓰지 않음" },
+    { value: "on", label: "이 건물에서 찾기" },
+  ], e.fallback == null ? "inherit" : (e.fallback.enabled ? "on" : "off"));
+  mode.onchange = () => {
+    if (mode.value === "inherit") e.fallback = null;
+    else if (mode.value === "off") e.fallback = { enabled: false };
+    else {
+      const first = (e.targets || [])[0];
+      e.fallback = { enabled: true, bldg_cd: first ? first.bldg_cd : "", prefer_floor: "",
+        start: first ? first.start : "13:00", start_window_minutes: 120,
+        min_slots: 2, max_slots: MAX_SLOTS };
+    }
+    renderCalendar();
+  };
+  head.appendChild(mode);
+  box.appendChild(head);
+
+  if (!e.fallback || !e.fallback.enabled) {
+    box.appendChild(el("div", "hint", e.fallback == null
+      ? "「예약 설정」 탭의 폴백 규칙을 그대로 씁니다."
+      : "후보가 다 막히면 이 건은 포기합니다."));
+    return box;
+  }
+
+  const fb = e.fallback;
+  const g = el("div", "grid g4");
+  const mk = (label, node) => { const w = el("div"); w.appendChild(el("label", null, label)); w.appendChild(node); return w; };
+
+  const bSel = el("select");
+  fill(bSel, buildingOptions(true), fb.bldg_cd || "");
+  bSel.onchange = () => { fb.bldg_cd = bSel.value; renderCalendar(); };
+  g.appendChild(mk("건물", bSel));
+
+  const fSel = el("select");
+  fill(fSel, floorOptions(fb.bldg_cd || "", true), fb.prefer_floor || "");
+  fSel.onchange = () => { fb.prefer_floor = fSel.value; };
+  g.appendChild(mk("선호 층", fSel));
+
+  const sSel = el("select");
+  fill(sSel, slotOptions, fb.start || "13:00");
+  sSel.onchange = () => { fb.start = sSel.value; };
+  g.appendChild(mk("희망 시작", sSel));
+
+  const wSel = el("select");
+  fill(wSel, [0, 30, 60, 120, 240, 480].map((m) => ({ value: String(m),
+    label: m === 0 ? "정확히" : "+" + m + "분까지" })), String(fb.start_window_minutes ?? 120));
+  wSel.onchange = () => { fb.start_window_minutes = Number(wSel.value); };
+  g.appendChild(mk("시작 허용 범위", wSel));
+
+  const minSel = el("select");
+  fill(minSel, lenOptions, String(fb.min_slots || 2));
+  minSel.onchange = () => { fb.min_slots = Number(minSel.value); };
+  g.appendChild(mk("최소 길이", minSel));
+
+  const maxSel = el("select");
+  fill(maxSel, lenOptions, String(fb.max_slots || MAX_SLOTS));
+  maxSel.onchange = () => { fb.max_slots = Number(maxSel.value); };
+  g.appendChild(mk("최대 길이", maxSel));
+
+  box.appendChild(g);
+  return box;
+}
+
+function entryField(e, key, label, ph) {
+  const w = el("div");
+  w.appendChild(el("label", null, label));
+  const inp = el("input");
+  inp.placeholder = ph;
+  inp.value = e[key] || "";
+  inp.oninput = () => { e[key] = inp.value.trim(); };
+  w.appendChild(inp);
+  return w;
+}
+
 function selectedDays() {
   return [...$("scDays").querySelectorAll("button")]
     .filter((b) => b.getAttribute("aria-pressed") === "true").map((b) => Number(b.dataset.day));
@@ -698,10 +1315,12 @@ function loadForm(c) {
   $("bkSubject").value = c.booking.subject || "";
   $("bkSubject").oninput = subjectPreview; subjectPreview();
   $("bkManager").value = c.booking.manager || "";
-  $("bkContact").value = c.booking.contact || "";
-  $("bkContent").value = c.booking.content || "";
-  fill($("bkCount"), [{ value: "1", label: "1건" }, { value: "2", label: "2건 (하루 상한)" }],
-    String(c.booking.count || 1));
+  $("bkPurposeEtc").value = c.booking.purpose_etc || "";
+  if (!$("bkPurpose").options.length) {
+    fill($("bkPurpose"), [{ value: c.booking.purpose_cd || "A", label: c.booking.purpose_cd || "A" }]);
+  }
+  $("bkPurpose").value = c.booking.purpose_cd || "A";
+  refreshCountOptions(c.site.accounts || [], c.booking.count || 1);
   fill($("bkGap"), [0, 20, 30, 35, 45, 60, 90].map((n) => ({ value: String(n),
     label: n === 0 ? "기다리지 않음" : n + "초" })), String(c.booking.gap_seconds ?? 35));
   const syncGap = () => { $("bkGapBox").style.display = Number($("bkCount").value) > 1 ? "" : "none"; };
@@ -716,8 +1335,8 @@ function loadForm(c) {
   const fb = c.booking.fallback || {};
   $("fbEnabled").checked = !!fb.enabled;
   $("fbEnabled").onchange = () => renderTargets();
-  fill($("fbBuilding"), buildingOptions(true), fb.building || "");
-  fill($("fbFloor"), floorOptions(fb.building || "", true), fb.prefer_floor || "");
+  fill($("fbBuilding"), buildingOptions(true), fb.bldg_cd || "");
+  fill($("fbFloor"), floorOptions(fb.bldg_cd || "", true), fb.prefer_floor || "");
   fill($("fbStart"), slotOptions, fb.start || "13:00");
   fill($("fbWindow"), [0, 30, 60, 90, 120, 180, 240, 360, 720].map((m) => ({ value: String(m),
     label: m === 0 ? "정확히 그 시각" : "+" + m + "분까지" })), fb.start_window_minutes ?? 60);
@@ -728,23 +1347,21 @@ function loadForm(c) {
   $("scEnabled").checked = !!c.schedule.enabled;
   $("scFireAt").value = c.schedule.fire_at || "";
   renderDayToggles(c.schedule.weekdays || []);
+  ENTRIES = (c.schedule.entries || []).map((e) => Object.assign({}, e));
+  CAL_MONTH = null; // 열 때마다 이번 달부터
+  setMode(c.schedule.mode === "dates" ? "dates" : "weekly");
   offsetHint(); // 요일 토글이 그려진 뒤라야 "월·수 실행 → 일·화 예약" 문구를 만들 수 있다
   fill($("scWarmup"), [60, 120, 180, 300, 600, 900].map((s) => ({ value: String(s),
     label: s < 60 ? s + "초" : (s / 60) + "분 전" })), c.schedule.warmup_lead_s || 180);
-  $("scUid").value = c.schedule.uid_pool_size || 4;
   $("scDry").value = String(!!c.runtime.dry_run);
   $("rtInterval").value = c.schedule.retry.interval_ms;
   $("rtDuration").value = c.schedule.retry.max_duration_s;
   $("rtAttempts").value = c.schedule.retry.max_attempts;
 
-  // 계정
-  $("acUser").value = c.site.username || "";
+  // 계정 목록은 renderStatus 가 매번 반영한다(저장 직후 바로 보이도록).
   $("stBase").value = c.site.base_url || "";
   $("stTimeout").value = c.site.timeout_s || 10;
   $("stUA").value = c.site.user_agent || "";
-  const sb = $("siteBadge");
-  sb.className = "badge " + (c.site.password_set && c.site.username ? "on" : "warn");
-  sb.textContent = c.site.password_set && c.site.username ? "자격증명 저장됨" : "자격증명 미설정";
 
   // Notion
   $("noEnabled").checked = !!c.notion.enabled;
@@ -756,31 +1373,36 @@ function loadForm(c) {
 }
 
 // 실제로 사이트에 어떻게 보일지 미리 보여준다. 중복 대괄호를 눈으로 잡으라는 것.
+// 개편 전에는 사이트가 제목 앞에 [회사명]을 붙여서 미리보기가 필요했다.
+// 이제는 보낸 title 이 그대로 쓰여서 안내만 남긴다.
 function subjectPreview() {
   const v = $("bkSubject").value.trim();
   const el2 = $("bkSubjectPreview");
-  if (!v) { el2.textContent = ""; return; }
-  el2.innerHTML = "<br>실제 표시: <b>[회사명]" + v.replace(/[<>&]/g, "") + "</b>";
-  el2.style.color = /^\s*\[/.test(v) ? "var(--warn)" : "var(--ink-2)";
+  el2.textContent = v ? "" : "";
 }
 
-// 사이트의 예약 창은 "오늘 <= 날짜 < 오늘+7" 이다. +7 이 경계에 걸리는지는
-// 실측으로만 확정할 수 있어서, 고르면 경고만 띄우고 막지는 않는다.
+// 사이트의 예약 창은 "오늘 ~ 오늘+7일"(양끝 포함)이다. 개편으로 +7 도 열렸다.
 function offsetHint() {
   const n = Number($("bkOffset").value);
   const d = new Date(Date.now() + n * 864e5);
   const when = d.toLocaleDateString("ko-KR", { month: "numeric", day: "numeric", weekday: "short" });
   const h = $("bkOffsetHint");
-  if (n === 7) {
-    h.innerHTML = "오늘 실행하면 <b>" + when + "</b> — ⚠ 사이트 예약 창은 오늘부터 7일 <b>미만</b>이라 " +
-      "+7일은 아직 안 열려 있을 수 있습니다. 드라이런 로그로 확인하고, 비어 있으면 6일로 줄이세요.";
-    h.style.color = "var(--warn)";
-  } else {
-    h.textContent = "오늘 실행하면 " + when + " 예약을 시도합니다." + shiftNote(n);
-    h.style.color = "";
-  }
+  // 개편 전에는 창이 "오늘 <= 날짜 < 오늘+7" 이라 +7 이 경계에 걸렸다. 지금은 +7 도 열린다.
+  h.textContent = "오늘 실행하면 " + when + " 예약을 시도합니다." + shiftNote(n) + dayNote(d);
+  h.style.color = closedDay(d) ? "var(--warn)" : "";
   refreshDayArrows();
+  if (!$("modeDates").hidden) renderCalendar(); // 캘린더 칸의 대상 날짜도 같이 따라간다
 }
+// 사이트가 운영하지 않는 요일(주말)에 걸리면 그날은 아무 공간도 열리지 않는다.
+const DAY_KEYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+function closedDay(d) {
+  const days = CATALOG.bookable_days;
+  return !!days && days[DAY_KEYS[d.getDay()]] === "N";
+}
+function dayNote(d) {
+  return closedDay(d) ? " ⚠ 사이트가 예약을 받지 않는 요일입니다." : "";
+}
+
 // 「스케줄」탭에서 고른 실행 요일이 실제로는 무슨 요일 예약이 되는지 한 줄로 덧붙인다.
 // 요일과 대상 날짜가 다른 탭에 나뉘어 있어서 둘을 머릿속에서 더해야 하는 게 헷갈리는 지점이다.
 function shiftNote(n) {
@@ -799,12 +1421,12 @@ function collectBooking() {
     gap_seconds: Number($("bkGap").value),
     subject: $("bkSubject").value.trim(),
     manager: $("bkManager").value.trim(),
-    contact: $("bkContact").value.trim(),
-    content: $("bkContent").value.trim(),
+    purpose_cd: $("bkPurpose").value,
+    purpose_etc: $("bkPurposeEtc").value.trim(),
     targets: TARGETS,
     fallback: {
       enabled: $("fbEnabled").checked,
-      building: $("fbBuilding").value,
+      bldg_cd: $("fbBuilding").value,
       prefer_floor: $("fbFloor").value,
       start: $("fbStart").value,
       start_window_minutes: Number($("fbWindow").value),
@@ -816,10 +1438,11 @@ function collectBooking() {
 function collectSchedule() {
   return {
     enabled: $("scEnabled").checked,
+    mode: currentMode(),
     fire_at: $("scFireAt").value.trim(),
     weekdays: selectedDays(),
+    entries: ENTRIES,
     warmup_lead_s: Number($("scWarmup").value),
-    uid_pool_size: Number($("scUid").value),
     retry: { interval_ms: Number($("rtInterval").value),
       max_duration_s: Number($("rtDuration").value), max_attempts: Number($("rtAttempts").value) },
   };
@@ -841,24 +1464,97 @@ document.querySelectorAll("[data-save]").forEach((b) => b.addEventListener("clic
   finally { b.disabled = false; }
 }));
 
-/* ── 자격증명 ─────────────────────────────────────── */
-$("acSave").addEventListener("click", async () => {
-  const body = { username: $("acUser").value.trim() };
-  if ($("acPw").value) body.password = $("acPw").value;
-  if (!body.username) { toast("아이디를 입력하세요", true); return; }
-  try { await api("/api/secrets", body); $("acPw").value = ""; toast("저장했습니다"); await refresh(); }
-  catch (e) { toast(e.message, true); }
-});
-$("acClear").addEventListener("click", async () => {
-  if (!confirm("저장된 jointips 비밀번호를 지웁니다. 자동 예약이 멈춥니다.")) return;
-  try { await api("/api/secrets", { clear_password: true }); toast("지웠습니다"); await refresh(); }
-  catch (e) { toast(e.message, true); }
-});
-$("acTest").addEventListener("click", async (e) => {
-  e.target.disabled = true; toast("로그인 시도 중…");
-  try { const r = await api("/api/test/site", {}); toast(r.message); }
-  catch (err) { toast(err.message, true); }
-  finally { e.target.disabled = false; }
+/* ── 자격증명 (계정 여러 개) ──────────────────────── */
+// 사이트 한도가 계정별이라 계정 수가 곧 하루 확보 가능 건수다. 순서 = 우선순위.
+// 하루 상한은 계정 수에 비례한다(사이트 한도가 계정별이라서) — 계정을 늘리면 선택지도 늘어난다.
+function refreshCountOptions(list, want) {
+  const seats = list.filter((a) => a.enabled && a.username && a.password_set).length || 1;
+  const maxCount = seats * 2;
+  const keep = Number(want || $("bkCount").value || 1);
+  fill($("bkCount"), Array.from({ length: maxCount }, (_, i) => ({
+    value: String(i + 1),
+    label: (i + 1) + "건" + (i + 1 === maxCount ? " (계정 " + seats + "개 상한)" : ""),
+  })), String(Math.min(keep, maxCount)));
+}
+
+let ACCOUNTS = [], accountsSig = null;
+// 목록이 실제로 바뀌었을 때만 다시 그린다 — 폴링마다 그리면 입력 중인 비밀번호 칸이 날아간다.
+function renderAccounts(list) {
+  const sig = JSON.stringify(list);
+  if (sig === accountsSig) return;
+  accountsSig = sig;
+  ACCOUNTS = list;
+  refreshCountOptions(list);
+  renderTargets(); // 「앞 N건의 합」 경고가 건수를 따라간다
+  if (!$("modeDates").hidden) renderCalendar(); // 예약자 드롭다운도 계정을 따라간다
+  const box = $("accounts"); box.innerHTML = "";
+  const ready = list.filter((a) => a.enabled && a.username && a.password_set).length;
+  const sb = $("siteBadge");
+  sb.className = "badge " + (ready ? "on" : "warn");
+  sb.textContent = ready ? "계정 " + ready + "개 · 하루 최대 " + (ready * 2) + "건" : "계정 미설정";
+
+  if (!list.length) {
+    box.appendChild(el("div", "empty", "등록된 계정이 없습니다. 아래에서 추가하세요."));
+    return;
+  }
+  list.forEach((a, i) => {
+    const row = el("div", "acct" + (a.enabled ? "" : " off"));
+    row.appendChild(el("div", "n", String(i + 1)));
+    const mid = el("div"); mid.style.flex = "1";
+    mid.appendChild(el("div", "t", a.label || a.username || "(이름 없음)"));
+    mid.appendChild(el("div", "m", (a.label ? a.username + " · " : "") +
+      (a.password_set ? "비밀번호 저장됨" : "⚠ 비밀번호 미설정") + (a.enabled ? "" : " · 사용 안 함")));
+    row.appendChild(mid);
+
+    const act = el("div", "row");
+    const pw = el("input"); pw.type = "password"; pw.placeholder = "비밀번호 변경";
+    pw.style.width = "150px"; pw.autocomplete = "new-password";
+    act.appendChild(pw);
+    const save = el("button", "small", "저장");
+    save.onclick = async () => {
+      const body = { account_id: a.id, label: a.label || "", username: a.username };
+      if (pw.value) body.password = pw.value;
+      try { await api("/api/secrets", body); pw.value = ""; toast("저장했습니다"); await refresh(); }
+      catch (e) { toast(e.message, true); }
+    };
+    act.appendChild(save);
+
+    const test = el("button", "small", "테스트");
+    test.onclick = async () => {
+      test.disabled = true; toast("로그인 시도 중…");
+      try { const r = await api("/api/test/site", { account_id: a.id }); toast(r.message); }
+      catch (e) { toast(e.message, true); }
+      finally { test.disabled = false; }
+    };
+    act.appendChild(test);
+
+    const tog = el("button", "small", a.enabled ? "끄기" : "켜기");
+    tog.onclick = async () => {
+      try { await api("/api/secrets", { account_id: a.id, label: a.label || "", enabled: !a.enabled }); await refresh(); }
+      catch (e) { toast(e.message, true); }
+    };
+    act.appendChild(tog);
+
+    const del = el("button", "small danger", "삭제");
+    del.onclick = async () => {
+      if (!confirm((a.label || a.username) + " 계정을 지웁니다. 계속할까요?")) return;
+      try { await api("/api/secrets", { account_id: a.id, delete_account: true }); toast("지웠습니다"); await refresh(); }
+      catch (e) { toast(e.message, true); }
+    };
+    act.appendChild(del);
+    row.appendChild(act);
+    box.appendChild(row);
+  });
+}
+$("naAdd").addEventListener("click", async () => {
+  const u = $("naUser").value.trim();
+  if (!u) { toast("아이디를 입력하세요", true); return; }
+  if (!$("naPw").value) { toast("비밀번호를 입력하세요", true); return; }
+  try {
+    await api("/api/secrets", { label: $("naLabel").value.trim(), username: u, password: $("naPw").value });
+    $("naLabel").value = ""; $("naUser").value = ""; $("naPw").value = "";
+    toast("계정을 추가했습니다"); await refresh();
+  } catch (e) { toast(e.message, true); }
 });
 $("pwSave").addEventListener("click", async () => {
   try {
@@ -936,7 +1632,7 @@ $("ttLoad").addEventListener("click", async () => {
   const btn = $("ttLoad"); btn.disabled = true;
   $("ttResult").innerHTML = ""; $("ttResult").appendChild(el("div", "empty", "조회 중…"));
   try {
-    const r = await api("/api/query", { date: $("ttDate").value, building: $("ttBuilding").value });
+    const r = await api("/api/query", { date: $("ttDate").value, bldg_cd: $("ttBuilding").value });
     renderTimetable(r.rows || []);
   } catch (e) { $("ttResult").innerHTML = ""; $("ttResult").appendChild(el("div", "empty", e.message)); }
   finally { btn.disabled = false; }
@@ -944,7 +1640,7 @@ $("ttLoad").addEventListener("click", async () => {
 function renderTimetable(rows) {
   const box = $("ttResult"); box.innerHTML = ""; pick = null; hideTip(null);
   if (!rows.length) {
-    box.appendChild(el("div", "empty", "표시할 회의실이 없습니다. 날짜가 예약 가능 범위(오늘~7일 미만) 밖일 수 있습니다."));
+    box.appendChild(el("div", "empty", "표시할 회의실이 없습니다. 날짜가 예약 가능 범위(오늘~+7일) 밖일 수 있습니다."));
     return;
   }
   const scroll = el("div", "tt-scroll"), table = el("table", "tt");
@@ -957,13 +1653,14 @@ function renderTimetable(rows) {
   rows.forEach((row) => {
     const tr = el("tr");
     const rc = el("td", "room");
-    rc.appendChild(el("div", "rn", row.name));
-    rc.appendChild(el("div", "rp", (row.place || "") + " · " + (row.capacity || "")));
+    rc.appendChild(el("div", "rn", withFloor(row.floor_no, row.space_nm)));
+    rc.appendChild(el("div", "rp", row.bldg_nm + " · " + (row.capacity || "?") + "명" +
+      (row.bookable ? "" : " · 신청 불가")));
     tr.appendChild(rc);
     const groups = bookingGroups(row);
     (row.cells || []).forEach((cell, i) => {
       const td = el("td", "slot" + (cell.available ? " free" : "") + (i % 2 === 1 ? " hh" : ""));
-      td.dataset.room = row.room_id; td.dataset.idx = String(i);
+      td.dataset.room = row.space_cd; td.dataset.idx = String(i);
       if (cell.available) {
         td.addEventListener("click", () => onSlotClick(row, i, tbody));
         td.addEventListener("mouseenter", () => showTip(td, row, null, i, tbody));
@@ -984,16 +1681,16 @@ function renderTimetable(rows) {
     '<span><i style="background:var(--pick)"></i>선택</span>';
   box.appendChild(lg);
 }
-// bookingGroups 는 연속된 기예약 칸을 하나의 예약으로 묶는다.
-// 같은 예약은 share_id 가 같다(§3.4). share_id 가 없으면 회의명으로 대신 묶는다.
+// bookingGroups 는 연속된 기예약 칸을 하나로 묶는다.
+// 개편 후 슬롯 API 는 누가 무슨 회의로 잡았는지 알려주지 않는다(AVAILABLE/UNAVAILABLE 뿐).
+// 그래서 예전처럼 share_id·회의명으로 가르지 못하고, 붙어 있는 칸을 한 덩어리로 본다.
 function bookingGroups(row) {
   const out = [];
   let cur = null;
   (row.cells || []).forEach((c, i) => {
     if (c.available) { cur = null; return; }
-    const key = c.share_id || c.title || "";
-    if (cur && cur.key === key && cur.to === i - 1) { cur.to = i; return; }
-    cur = { key: key, from: i, to: i, title: c.title, shareId: c.share_id };
+    if (cur && cur.to === i - 1) { cur.to = i; return; }
+    cur = { from: i, to: i, status: c.status };
     out.push(cur);
   });
   return out;
@@ -1016,11 +1713,11 @@ function showTip(td, row, g, i, tbody) {
   if (g) {
     const span = SLOTS[g.from] + "~" + hhmm(toMin(SLOTS[g.to]) + 30);
     const slots = g.to - g.from + 1;
-    tip.appendChild(el("div", "tt", g.title || "예약됨 (회의명 비공개)"));
+    tip.appendChild(el("div", "tt", row.bookable ? "예약됨" : "신청을 받지 않는 공간"));
     tip.appendChild(el("div", "tm", span + " · " + (slots * 30 / 60) + "시간"));
-    tip.appendChild(el("div", "tr", row.name + " · " + (row.place || "")));
-    // 같은 예약이 차지한 칸 전체 표시
-    tbody.querySelectorAll('td.slot[data-room="' + row.room_id + '"]').forEach((x) => {
+    tip.appendChild(el("div", "tr", row.space_nm + " · " + row.bldg_nm));
+    // 붙어 있는 칸 전체 표시
+    tbody.querySelectorAll('td.slot[data-room="' + row.space_cd + '"]').forEach((x) => {
       const k = Number(x.dataset.idx);
       if (k < g.from || k > g.to) return;
       x.classList.add("grp");
@@ -1029,10 +1726,10 @@ function showTip(td, row, g, i, tbody) {
     });
   } else {
     const n = freeRun(row, i);
-    const cap = Math.min(n, 8);
+    const cap = Math.min(n, MAX_SLOTS);
     tip.appendChild(el("div", "tt", SLOTS[i] + " 비어 있음"));
     tip.appendChild(el("div", "tm", "여기서 연속 " + n + "칸 (" + (n * 30 / 60) + "시간)"
-      + (n > 8 ? " · 최대 4시간까지 예약 가능" : "")));
+      + (n > MAX_SLOTS ? " · 1회 최대 " + (MAX_SLOTS / 2) + "시간까지" : "")));
     tip.appendChild(el("div", "tr", "클릭해서 시작, 한 번 더 클릭해 끝 지정 → " +
       SLOTS[i] + "~" + hhmm(toMin(SLOTS[i]) + cap * 30) + " 까지"));
   }
@@ -1053,12 +1750,16 @@ function hideTip(tbody) {
 }
 
 function onSlotClick(row, idx, tbody) {
-  if (!pick || pick.room !== row.room_id) { pick = { room: row.room_id, from: idx, row }; paintPick(tbody); return; }
+  if (!pick || pick.room !== row.space_cd) { pick = { room: row.space_cd, from: idx, row }; paintPick(tbody); return; }
   const a = Math.min(pick.from, idx), b = Math.max(pick.from, idx);
   const slots = b - a + 1;
-  if (slots > 8) { toast("최대 8슬롯(4시간)까지만 예약할 수 있습니다", true); pick = null; paintPick(tbody); return; }
+  if (slots > MAX_SLOTS) { toast("1회 최대 " + (MAX_SLOTS / 2) + "시간(" + MAX_SLOTS + "슬롯)까지만 예약할 수 있습니다", true); pick = null; paintPick(tbody); return; }
   for (let i = a; i <= b; i++) if (!row.cells[i].available) { toast("선택 구간에 이미 예약된 시간이 있습니다", true); pick = null; paintPick(tbody); return; }
-  addTarget({ room_id: Number(row.room_id), building: row.building, floor: row.floor, start: row.cells[a].time, duration_slots: slots });
+  addTarget({
+    space_cd: row.space_cd, bldg_cd: row.bldg_cd,
+    label: row.bldg_nm + " " + withFloor(row.floor_no, row.space_nm),
+    start: row.cells[a].time, duration_slots: slots,
+  });
   pick = null; paintPick(tbody);
 }
 function paintPick(tbody) {
@@ -1089,21 +1790,37 @@ function renderStatus(s) {
   $("runCancel").hidden = !running;
   $("runNow").disabled = running; $("runDry").disabled = running;
 
+  renderAccounts(c.site.accounts || []);
   $("stEnabled").textContent = c.schedule.enabled ? "켜짐" : "꺼짐";
   const off = c.booking.date_offset_days || 0;
-  const days = c.schedule.weekdays.length ? c.schedule.weekdays : [0, 1, 2, 3, 4, 5, 6];
+  // weekdays 는 비어 있으면 서버가 [] 로 내려주지만, 손으로 고친 설정 파일이면 null 일 수 있다.
+  const wd = c.schedule.weekdays || [];
+  const todayStr = ymd(new Date());
+  const upcoming = (c.schedule.entries || []).filter((e) => e.enabled && e.date >= todayStr);
   $("stEnabledSub").textContent = c.runtime.dry_run ? "드라이런 모드 — 실제 신청 안 함"
-    : (c.schedule.weekdays.length ? c.schedule.weekdays.map((d) => WEEKDAYS[d]).join("·") : "매일") +
-      " " + c.schedule.fire_at +
-      (off ? " → " + days.map((d) => WEEKDAYS[(d + off) % 7]).join("·") + " 예약" : "");
+    : c.schedule.mode === "dates"
+      ? "지정 스케줄 — 남은 예약 " + upcoming.length + "건 " + c.schedule.fire_at
+      : !wd.length
+        ? "고른 요일이 없어 돌지 않습니다"
+        : wd.map((d) => WEEKDAYS[d]).join("·") + " " + c.schedule.fire_at +
+          (off ? " → " + wd.map((d) => WEEKDAYS[(d + off) % 7]).join("·") + " 예약" : "");
   $("stNext").textContent = s.next_fire ? fmtTime(s.next_fire) : "예정 없음";
   $("stNextSub").textContent = s.next_why ||
     (s.next_fire ? "워밍업은 " + (c.schedule.warmup_lead_s / 60) + "분 전 시작" : "");
   $("stDate").textContent = s.next_target_date ? withWeekday(s.next_target_date) : "—";
-  const want = c.booking.count || 1;
-  $("stDateSub").textContent = want + "건 목표 · " +
-    (TARGETS.length ? TARGETS.length + "개 대상" + (c.booking.fallback.enabled ? " + 폴백" : "")
-                    : (c.booking.fallback.enabled ? "폴백 탐색만" : "대상 없음"));
+  // 지정 스케줄이면 그 날짜에 넣어 둔 건수가 곧 목표다(「예약 설정」의 건수가 아니다).
+  if (c.schedule.mode === "dates" && s.next_target_date) {
+    const fireDate = s.next_fire ? ymd(new Date(s.next_fire)) : "";
+    const onDay = (c.schedule.entries || []).filter((e) => e.enabled && e.date === fireDate);
+    const withRooms = onDay.filter((e) => (e.targets || []).length).length;
+    $("stDateSub").textContent = onDay.length + "건 목표 · " +
+      (withRooms ? withRooms + "건은 회의실 지정" : "「예약 설정」의 대상 사용");
+  } else {
+    const want = c.booking.count || 1;
+    $("stDateSub").textContent = want + "건 목표 · " +
+      (TARGETS.length ? TARGETS.length + "개 대상" + (c.booking.fallback.enabled ? " + 폴백" : "")
+                      : (c.booking.fallback.enabled ? "폴백 탐색만" : "대상 없음"));
+  }
 
   const last = (s.history || [])[0];
   const lv = $("stLast"), ls = $("stLastSub");
@@ -1183,16 +1900,60 @@ $("logRefresh").addEventListener("click", refresh);
 
 /* ── 부팅 / 폴링 ──────────────────────────────────── */
 let formLoaded = false;
+
+// 건물·공간 목록을 사이트에서 받아 온다(서버가 10분 캐시). refresh=true 면 캐시를 버린다.
+async function loadCatalog(force) {
+  const r = await api("/api/catalog", { refresh: !!force });
+  CATALOG = r.catalog || CATALOG;
+  // 고르고 있던 값이 있으면 지키고, 없으면 첫 항목이 그대로 선택되게 둔다.
+  // fill 에 "" 를 넘기면 일치하는 option 이 없어 select 가 빈칸으로 보인다.
+  const prevB = $("ntBuilding").value, prevR = $("ntRoom").value;
+  fill($("ntBuilding"), buildingOptions(false), prevB || (CATALOG.buildings[0] || {}).bldgCd);
+  fill($("ntRoom"), spaceOptions($("ntBuilding").value), prevR || undefined);
+  fill($("ttBuilding"), buildingOptions(true), $("ttBuilding").value || "");
+  if (!$("ntBuilding").dataset.wired) {
+    wireCascade($("ntBuilding"), $("ntRoom"));
+    $("ntBuilding").dataset.wired = "1";
+  }
+  if (CATALOG.purposes && CATALOG.purposes.length) {
+    const prevP = $("bkPurpose").value;
+    fill($("bkPurpose"), CATALOG.purposes.map((p) => ({ value: p.detailCd, label: p.codeNm })), prevP || undefined);
+  }
+  renderTargets();
+}
+$("scCatalog").addEventListener("click", async (e) => {
+  e.target.disabled = true;
+  try { await loadCatalog(true); toast("회의실 목록을 새로 받았습니다 — 건물 " + CATALOG.buildings.length + "곳 · 공간 " + CATALOG.spaces.length + "개"); }
+  catch (err) { toast(err.message, true); }
+  finally { e.target.disabled = false; }
+});
+
+// 사이트 개편으로 설정을 손본 내역은 한 번만 띄운다.
+let notesShown = false;
+function showNotes(notes) {
+  if (notesShown || !notes || !notes.length) return;
+  notesShown = true;
+  const box = $("migrationNote");
+  if (!box) return;
+  box.hidden = false;
+  box.innerHTML = "";
+  box.appendChild(el("b", null, "사이트 개편에 맞춰 설정을 손봤습니다"));
+  const ul = el("ul");
+  ul.style.margin = "6px 0 0 18px";
+  notes.forEach((n) => ul.appendChild(el("li", null, n)));
+  box.appendChild(ul);
+}
 async function refresh() {
   const s = await api("/api/state");
   STATE = s;
-  CODES = { buildings: s.buildings || [], floors: s.floors || [], rooms: s.rooms || [] };
   if (!formLoaded) {
-    fill($("ntBuilding"), buildingOptions(false), CODES.buildings[0] && CODES.buildings[0].code);
+    // 회의실 목록은 사이트에서 받아 온다. 실패해도 나머지 화면은 살려 둔다 —
+    // 목록이 없으면 대상만 못 고를 뿐, 상태·기록은 볼 수 있어야 한다.
+    try { await loadCatalog(false); }
+    catch (e) { toast("회의실 목록을 받지 못했습니다: " + e.message, true); }
     fill($("ttBuilding"), buildingOptions(true), "");
     fill($("ntStart"), slotOptions, "13:00");
-    fill($("ntSlots"), lenOptions, "8");
-    const sync = wireCascade($("ntBuilding"), $("ntFloor"), $("ntRoom")); sync();
+    fill($("ntSlots"), lenOptions, String(MAX_SLOTS));
     $("fbBuilding").addEventListener("change", () => {
       const prev = $("fbFloor").value;
       fill($("fbFloor"), floorOptions($("fbBuilding").value, true), prev);
@@ -1202,6 +1963,7 @@ async function refresh() {
     else $("ttDate").value = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10);
     formLoaded = true;
   }
+  showNotes(s.notes);
   renderStatus(s);
   renderRuns(s);
   // 실행 중이면 촘촘히, 아니면 느슨하게 폴링한다.

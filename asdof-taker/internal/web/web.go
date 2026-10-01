@@ -43,6 +43,7 @@ type Server struct {
 	notionBase string
 
 	throttle *throttle
+	cat      catalogCache
 }
 
 func New(store *config.Store, r *runner.Runner, s *runner.Scheduler, log *slog.Logger) *Server {
@@ -73,6 +74,7 @@ func (s *Server) Handler() http.Handler {
 	mux.Handle("POST /api/test/site", s.auth(s.testSite))
 	mux.Handle("POST /api/test/notion", s.auth(s.testNotion))
 	mux.Handle("POST /api/test/notion/write", s.auth(s.testNotionWrite))
+	mux.Handle("POST /api/catalog", s.auth(s.catalog))
 	mux.Handle("POST /api/query", s.auth(s.query))
 	mux.Handle("POST /api/run", s.auth(s.run))
 	mux.Handle("POST /api/run/cancel", s.auth(s.cancelRun))
@@ -210,14 +212,22 @@ func (s *Server) changePassword(w http.ResponseWriter, r *http.Request) {
 
 // ── 상태 / 설정 ────────────────────────────────────────────────────────────
 
+// publicAccount 는 계정 한 줄이다. 비밀번호는 "설정됨" 플래그로만 나간다.
+type publicAccount struct {
+	ID          string `json:"id"`
+	Label       string `json:"label"`
+	Username    string `json:"username"`
+	PasswordSet bool   `json:"password_set"`
+	Enabled     bool   `json:"enabled"`
+}
+
 // publicConfig 는 화면으로 내보내는 설정이다. 비밀값은 "설정됨" 플래그로만 나간다.
 type publicConfig struct {
 	Site struct {
-		BaseURL     string `json:"base_url"`
-		Username    string `json:"username"`
-		PasswordSet bool   `json:"password_set"`
-		UserAgent   string `json:"user_agent"`
-		TimeoutS    int    `json:"timeout_s"`
+		BaseURL   string          `json:"base_url"`
+		Accounts  []publicAccount `json:"accounts"`
+		UserAgent string          `json:"user_agent"`
+		TimeoutS  int             `json:"timeout_s"`
 	} `json:"site"`
 	Schedule config.Schedule `json:"schedule"`
 	Booking  config.Booking  `json:"booking"`
@@ -233,8 +243,13 @@ type publicConfig struct {
 func toPublic(c config.Config) publicConfig {
 	var p publicConfig
 	p.Site.BaseURL = c.Site.BaseURL
-	p.Site.Username = c.Site.Username
-	p.Site.PasswordSet = c.Site.PasswordEnc != ""
+	p.Site.Accounts = make([]publicAccount, 0, len(c.Site.Accounts))
+	for _, a := range c.Site.Accounts {
+		p.Site.Accounts = append(p.Site.Accounts, publicAccount{
+			ID: a.ID, Label: a.Label, Username: a.Username,
+			PasswordSet: a.PasswordEnc != "", Enabled: a.Enabled,
+		})
+	}
 	p.Site.UserAgent = c.Site.UserAgent
 	p.Site.TimeoutS = c.Site.TimeoutS
 	p.Schedule = c.Schedule
@@ -253,15 +268,14 @@ func (s *Server) state(w http.ResponseWriter, r *http.Request) {
 	next, why := s.sched.Next()
 
 	out := map[string]any{
-		"config":    toPublic(cfg),
-		"now":       time.Now().In(loc).Format(time.RFC3339),
-		"timezone":  loc.String(),
-		"next_why":  why,
-		"history":   s.runner.History(20),
-		"ready":     errText(cfg.ReadyToRun()),
-		"buildings": jointips.Buildings,
-		"floors":    jointips.Floors,
-		"rooms":     jointips.Rooms,
+		"config":   toPublic(cfg),
+		"now":      time.Now().In(loc).Format(time.RFC3339),
+		"timezone": loc.String(),
+		"next_why": why,
+		"history":  s.runner.History(20),
+		"ready":    errText(cfg.ReadyToRun()),
+		// 설정을 손봐 준 내역(사이트 개편 마이그레이션)은 한 번 띄우고 지운다.
+		"notes": s.store.Notes(),
 	}
 	if off, seen, at := s.sched.SiteOffset(); seen {
 		out["site_offset_ms"] = off.Milliseconds()
@@ -314,6 +328,18 @@ func (s *Server) saveConfig(w http.ResponseWriter, r *http.Request) {
 			}
 			if err := json.Unmarshal(sec.raw, sec.dst); err != nil {
 				return fmt.Errorf("%s 를 읽을 수 없습니다: %w", sec.name, err)
+			}
+		}
+		// 캘린더에서 온 항목은 순서가 보장되지 않고, 새로 만든 건 id 가 없다.
+		if len(in.Schedule) > 0 {
+			for i := range c.Schedule.Entries {
+				if strings.TrimSpace(c.Schedule.Entries[i].ID) == "" {
+					c.Schedule.Entries[i].ID = config.NewEntryID()
+				}
+			}
+			c.Schedule.SortEntries()
+			if c.Schedule.Mode == "" {
+				c.Schedule.Mode = config.ModeWeekly
 			}
 		}
 		// 비밀값이 섞인 섹션은 허용 필드만 따로 받는다(암호문이 덮어써지지 않게).
@@ -369,9 +395,13 @@ func (s *Server) saveConfig(w http.ResponseWriter, r *http.Request) {
 // 명시적으로 지우려면 clear 플래그를 쓴다.
 func (s *Server) saveSecrets(w http.ResponseWriter, r *http.Request) {
 	var in struct {
+		// AccountID 가 비어 있으면 새 계정을 만든다.
+		AccountID   string `json:"account_id"`
+		Label       string `json:"label"`
 		Username    string `json:"username"`
 		Password    string `json:"password"`
-		ClearPass   bool   `json:"clear_password"`
+		Enabled     *bool  `json:"enabled"`
+		Delete      bool   `json:"delete_account"`
 		NotionToken string `json:"notion_token"`
 		ClearToken  bool   `json:"clear_notion_token"`
 	}
@@ -381,18 +411,59 @@ func (s *Server) saveSecrets(w http.ResponseWriter, r *http.Request) {
 	}
 	vault := s.store.Vault()
 	cfg, err := s.store.Update(func(c *config.Config) error {
-		if u := strings.TrimSpace(in.Username); u != "" {
-			c.Site.Username = u
-		}
-		switch {
-		case in.ClearPass:
-			c.Site.PasswordEnc = ""
-		case in.Password != "":
-			enc, err := vault.Encrypt(in.Password)
-			if err != nil {
-				return err
+		if in.Delete {
+			if in.AccountID == "" {
+				return fmt.Errorf("지울 계정을 지정하세요")
 			}
-			c.Site.PasswordEnc = enc
+			kept := c.Site.Accounts[:0]
+			for _, a := range c.Site.Accounts {
+				if a.ID != in.AccountID {
+					kept = append(kept, a)
+				}
+			}
+			c.Site.Accounts = kept
+		} else if in.AccountID != "" || strings.TrimSpace(in.Username) != "" || in.Password != "" {
+			idx := -1
+			for i, a := range c.Site.Accounts {
+				if a.ID == in.AccountID && in.AccountID != "" {
+					idx = i
+					break
+				}
+			}
+			if idx < 0 {
+				// 같은 아이디를 새로 추가하려 하면 기존 계정을 고치는 것으로 본다 —
+				// 실수로 중복 계정을 만들면 잡을 수 있는 건수가 부풀려진다.
+				if u := strings.ToLower(strings.TrimSpace(in.Username)); u != "" {
+					for i, a := range c.Site.Accounts {
+						if strings.ToLower(strings.TrimSpace(a.Username)) == u {
+							idx = i
+							break
+						}
+					}
+				}
+			}
+			if idx < 0 {
+				if len(c.Site.Accounts) >= config.MaxAccounts {
+					return fmt.Errorf("계정은 최대 %d개까지입니다", config.MaxAccounts)
+				}
+				c.Site.Accounts = append(c.Site.Accounts, config.Account{ID: config.NewAccountID(), Enabled: true})
+				idx = len(c.Site.Accounts) - 1
+			}
+			a := &c.Site.Accounts[idx]
+			if u := strings.TrimSpace(in.Username); u != "" {
+				a.Username = u
+			}
+			a.Label = strings.TrimSpace(in.Label)
+			if in.Password != "" {
+				enc, err := vault.Encrypt(in.Password)
+				if err != nil {
+					return err
+				}
+				a.PasswordEnc = enc
+			}
+			if in.Enabled != nil {
+				a.Enabled = *in.Enabled
+			}
 		}
 		switch {
 		case in.ClearToken:
@@ -411,17 +482,31 @@ func (s *Server) saveSecrets(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.sched.Reload()
-	s.log.Info("자격증명 갱신", "username", cfg.Site.Username,
-		"password", config.Mask(cfg.Site.PasswordEnc), "notion_token", config.Mask(cfg.Notion.TokenEnc))
+	s.log.Info("자격증명 갱신", "accounts", len(cfg.Site.Accounts),
+		"notion_token", config.Mask(cfg.Notion.TokenEnc))
 	writeJSON(w, map[string]any{"ok": true, "config": toPublic(cfg)})
 }
 
 // ── 연결 테스트 ────────────────────────────────────────────────────────────
 
+// testSite 는 계정 하나로 로그인해 본다. account_id 를 안 주면 첫 계정을 쓴다.
 func (s *Server) testSite(w http.ResponseWriter, r *http.Request) {
+	var in struct {
+		AccountID string `json:"account_id"`
+	}
+	decode(r, &in)
 	cfg := s.store.Get()
-	pw, err := s.store.Password()
-	if err != nil || pw == "" || cfg.Site.Username == "" {
+	acc, ok := cfg.Site.Account(in.AccountID)
+	if !ok {
+		ready := cfg.Site.ReadyAccounts()
+		if len(ready) == 0 {
+			writeErr(w, http.StatusBadRequest, "아이디/비밀번호를 먼저 저장하세요")
+			return
+		}
+		acc = ready[0]
+	}
+	pw, err := s.store.AccountPassword(acc.ID)
+	if err != nil || pw == "" || strings.TrimSpace(acc.Username) == "" {
 		writeErr(w, http.StatusBadRequest, "아이디/비밀번호를 먼저 저장하세요")
 		return
 	}
@@ -432,11 +517,11 @@ func (s *Server) testSite(w http.ResponseWriter, r *http.Request) {
 	}
 	ctx, cancel := ctxWithTimeout(r, 30*time.Second)
 	defer cancel()
-	if err := client.Login(ctx, cfg.Site.Username, pw); err != nil {
+	if err := client.Login(ctx, acc.Username, pw); err != nil {
 		writeErr(w, http.StatusBadGateway, err.Error())
 		return
 	}
-	msg := fmt.Sprintf("로그인 성공 — uid 확보 (%s)", cfg.Site.Username)
+	msg := fmt.Sprintf("로그인 성공 — %s (%s)", acc.Name(), client.Member().UserNm)
 	if st, err := client.ServerTime(ctx); err == nil {
 		if d := time.Since(st); d > 2*time.Second || d < -2*time.Second {
 			msg += fmt.Sprintf(" · ⚠ 서버 시계와 %.0f초 차이", d.Seconds())
@@ -512,10 +597,9 @@ func (s *Server) testNotionWrite(w http.ResponseWriter, r *http.Request) {
 		start, slots = cfg.Booking.Targets[0].Start, cfg.Booking.Targets[0].DurationSlots
 	}
 	room := "테스트 회의실"
-	if len(cfg.Booking.Targets) > 0 {
-		if rc := jointips.LookupRoom(cfg.Booking.Targets[0].RoomID); rc != nil {
-			room = jointips.RoomLabel(rc.Place, rc.Name)
-		}
+	if len(cfg.Booking.Targets) > 0 && cfg.Booking.Targets[0].Label != "" {
+		// Label 은 "현승빌딩(S3) 5층 회의실A" — Notion 표기("현승 5A")로 줄여 둔다.
+		room = jointips.RoomLabel(cfg.Booking.Targets[0].Label, "", cfg.Booking.Targets[0].Label)
 	}
 	loc := cfg.Runtime.Location()
 	rec := notion.Record{
@@ -583,8 +667,8 @@ func sentValues(s *notion.Schema, r notion.Record) map[string]string {
 
 func (s *Server) query(w http.ResponseWriter, r *http.Request) {
 	var in struct {
-		Date     string `json:"date"`     // "2026-08-25"
-		Building string `json:"building"` // "" = 전체
+		Date   string `json:"date"`    // "2026-09-18"
+		BldgCd string `json:"bldg_cd"` // "" = 전체
 	}
 	if err := decode(r, &in); err != nil {
 		writeErr(w, http.StatusBadRequest, "요청을 읽을 수 없습니다")
@@ -596,23 +680,24 @@ func (s *Server) query(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, http.StatusBadRequest, "날짜 형식이 잘못됐습니다 (YYYY-MM-DD)")
 		return
 	}
-	pw, err := s.store.Password()
-	if err != nil || pw == "" || cfg.Site.Username == "" {
-		writeErr(w, http.StatusBadRequest, "아이디/비밀번호를 먼저 저장하세요")
-		return
-	}
 	client, err := jointips.New(cfg.Site.BaseURL, cfg.Site.UserAgent, cfg.Site.Timeout())
 	if err != nil {
 		writeErr(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-	ctx, cancel := ctxWithTimeout(r, 40*time.Second)
+	ctx, cancel := ctxWithTimeout(r, 60*time.Second)
 	defer cancel()
-	if err := client.Login(ctx, cfg.Site.Username, pw); err != nil {
-		writeErr(w, http.StatusBadGateway, err.Error())
-		return
+	// 슬롯 조회 자체는 비로그인으로도 되지만, 로그인하면 내 예약(MY_CONFLICT)까지 표시된다.
+	// 자격증명이 없거나 틀려도 조회는 계속한다 — 화면을 못 쓰게 만들 이유가 없다.
+	// 첫 번째 쓸 수 있는 계정으로 로그인해 두면 내 예약(MY_CONFLICT)까지 표시된다.
+	if ready := cfg.Site.ReadyAccounts(); len(ready) > 0 {
+		if pw, perr := s.store.AccountPassword(ready[0].ID); perr == nil && pw != "" {
+			if err := client.Login(ctx, ready[0].Username, pw); err != nil {
+				s.log.Warn("현황 조회용 로그인 실패 — 비로그인으로 조회합니다", "err", err)
+			}
+		}
 	}
-	rows, err := client.Query(ctx, in.Building, d.Format("2006.01.02"))
+	rows, err := client.Timetable(ctx, jointips.DefaultRegion, in.BldgCd, d.Format("2006-01-02"))
 	if err != nil {
 		writeErr(w, http.StatusBadGateway, err.Error())
 		return
@@ -622,10 +707,35 @@ func (s *Server) query(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) run(w http.ResponseWriter, r *http.Request) {
 	var in struct {
-		DryRun bool `json:"dry_run"`
+		DryRun  bool   `json:"dry_run"`
+		EntryID string `json:"entry_id"` // 지정 스케줄 항목 하나만 돌려 볼 때
+		Date    string `json:"date"`     // 그 실행일의 건 전부를 돌려 볼 때
 	}
 	decode(r, &in)
-	run, err := s.runner.Start(context.Background(), runner.Options{Mode: "manual", DryRun: in.DryRun})
+	// 수동 실행도 지정 스케줄 항목을 집을 수 있게 한다 — 드라이런으로 그 항목의 설정을
+	// 그대로 확인할 수 있어야 쓸모가 있다. date 를 주면 그날의 건 전부를 돌린다.
+	cfg := s.store.Get()
+	var entries []config.ScheduleEntry
+	switch {
+	case in.EntryID != "":
+		for _, e := range cfg.Schedule.Entries {
+			if e.ID == in.EntryID {
+				entries = append(entries, e)
+				break
+			}
+		}
+		if len(entries) == 0 {
+			writeErr(w, http.StatusBadRequest, "지정 예약을 찾을 수 없습니다")
+			return
+		}
+	case in.Date != "":
+		if entries = cfg.Schedule.EntriesOn(in.Date); len(entries) == 0 {
+			writeErr(w, http.StatusBadRequest, "그 날짜에 켜져 있는 지정 예약이 없습니다")
+			return
+		}
+	}
+	run, err := s.runner.Start(context.Background(), runner.Options{
+		Mode: "manual", DryRun: in.DryRun, Entries: entries})
 	if err != nil {
 		writeErr(w, http.StatusConflict, err.Error())
 		return

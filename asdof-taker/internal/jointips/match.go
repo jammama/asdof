@@ -10,7 +10,7 @@ type Candidate struct {
 // Start 는 후보의 시작 시각을 "HH:MM" 으로 돌려준다.
 func (c Candidate) Start() string { return formatHHMM(c.StartMin) }
 
-// Match 는 주어진 행들에서 조건에 맞는 가장 좋은 빈 자리를 찾는다(§5.2).
+// Match 는 주어진 행들에서 조건에 맞는 가장 좋은 빈 자리를 찾는다.
 //
 // 후보 조건: 시작 셀이 available 이고 targetMin ~ targetMin+windowMin 사이에서 시작하며,
 // 거기서부터 연속 available 슬롯이 minSlots 이상. 길이는 maxSlots 까지만 취한다.
@@ -18,6 +18,9 @@ func (c Candidate) Start() string { return formatHHMM(c.StartMin) }
 func Match(rows []Row, targetMin, windowMin, minSlots, maxSlots int) *Candidate {
 	var best *Candidate
 	for _, row := range rows {
+		if !row.Bookable {
+			continue
+		}
 		for i, c := range row.Cells {
 			if !c.Available {
 				continue
@@ -53,31 +56,31 @@ func Match(rows []Row, targetMin, windowMin, minSlots, maxSlots int) *Candidate 
 	return best
 }
 
-// MatchWithPreference 는 §5.2 의 3단계 탐색 순서를 구현한다.
-//  1. building + preferFloor 에 해당하는 행
-//  2. building 의 모든 층
-//  3. (building 이 비어 있으면) 전체 행
-func MatchWithPreference(rows []Row, building, preferFloor string, targetMin, windowMin, minSlots, maxSlots int) *Candidate {
-	if building != "" && preferFloor != "" {
-		if c := Match(filter(rows, building, preferFloor), targetMin, windowMin, minSlots, maxSlots); c != nil {
+// MatchWithPreference 는 3단계 탐색 순서를 구현한다.
+//  1. bldgCd + preferFloor 에 해당하는 행
+//  2. bldgCd 의 모든 층
+//  3. (bldgCd 가 비어 있으면) 전체 행
+func MatchWithPreference(rows []Row, bldgCd, preferFloor string, targetMin, windowMin, minSlots, maxSlots int) *Candidate {
+	if bldgCd != "" && preferFloor != "" {
+		if c := Match(filter(rows, bldgCd, preferFloor), targetMin, windowMin, minSlots, maxSlots); c != nil {
 			return c
 		}
 	}
-	if building != "" {
-		if c := Match(filter(rows, building, ""), targetMin, windowMin, minSlots, maxSlots); c != nil {
+	if bldgCd != "" {
+		if c := Match(filter(rows, bldgCd, ""), targetMin, windowMin, minSlots, maxSlots); c != nil {
 			return c
 		}
 	}
 	return Match(rows, targetMin, windowMin, minSlots, maxSlots)
 }
 
-func filter(rows []Row, building, floor string) []Row {
+func filter(rows []Row, bldgCd, floor string) []Row {
 	out := make([]Row, 0, len(rows))
 	for _, r := range rows {
-		if building != "" && r.Building != building {
+		if bldgCd != "" && r.BldgCd != bldgCd {
 			continue
 		}
-		if floor != "" && r.Floor != floor {
+		if floor != "" && r.FloorNo != floor {
 			continue
 		}
 		out = append(out, r)
@@ -85,41 +88,29 @@ func filter(rows []Row, building, floor string) []Row {
 	return out
 }
 
-// Occupied 는 지정 구간이 모두 이미 예약(selected)되었고 title 이 subject 를 포함하는지 본다.
-// 예약 성공의 최종 근거(§3.6 2차 판정)로 쓴다.
-func (r Row) Occupied(start string, slots int, subject string) bool {
+// Occupied 는 지정 구간이 모두 이미 차 있는지 본다.
+//
+// 예전에는 셀 title 의 회의명까지 대조했지만, 슬롯 API 는 누가 잡았는지 알려주지 않는다.
+// 그래서 이것만으로는 '내가 잡았다'를 증명하지 못한다 — 예약 성공의 최종 근거는
+// 내 예약 목록(MyReservations)이고, 이 함수는 그 보조다.
+func (r Row) Occupied(start string, slots int) bool {
 	startMin, err := parseHHMM(start)
 	if err != nil {
 		return false
 	}
+	unit := r.SlotUnit
+	if unit == 0 {
+		unit = slotMinutes
+	}
 	hit := 0
 	for _, c := range r.Cells {
 		m, err := parseHHMM(c.Time)
-		if err != nil || m < startMin || m >= startMin+slots*slotMinutes {
+		if err != nil || m < startMin || m >= startMin+slots*unit {
 			continue
 		}
-		if c.Available {
-			return false
-		}
-		if subject == "" || containsFold(c.Title, subject) {
+		if c.Status == SlotUnavailable {
 			hit++
 		}
 	}
 	return hit == slots
-}
-
-func containsFold(haystack, needle string) bool {
-	if needle == "" {
-		return true
-	}
-	return len(haystack) >= len(needle) && indexFold(haystack, needle) >= 0
-}
-
-func indexFold(s, sub string) int {
-	for i := 0; i+len(sub) <= len(s); i++ {
-		if s[i:i+len(sub)] == sub {
-			return i
-		}
-	}
-	return -1
 }
