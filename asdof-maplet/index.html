@@ -14,7 +14,10 @@
       <header id="sidebar-header">
         <div id="title-row">
           <h1>즐겨찾기 맵렛 <span id="count"></span></h1>
-          <button id="bounds-btn">표시된 곳만 검색</button>
+          <div id="title-actions">
+            <button id="bounds-btn">표시된 곳만 검색</button>
+            <button id="share-btn" title="현재 검색·지도 상태를 링크로 복사">링크 복사</button>
+          </div>
         </div>
         <div id="controls">
           <input type="search" id="search" placeholder="식당명 / 지역 / 메뉴 검색">
@@ -61,6 +64,7 @@
             <thead>
               <tr>
                 <th data-key="name">식당명 <span class="arrow"></span></th>
+                <th data-key="kakao_rating" class="col-rating" title="카카오맵 별점">별점 <span class="arrow"></span></th>
                 <th data-key="sido">시도 <span class="arrow"></span></th>
                 <th data-key="gungu">군구 <span class="arrow"></span></th>
               </tr>
@@ -73,6 +77,7 @@
             <div>
               <button id="mini-detail-btn">상세</button>
               <button id="mini-naver-btn">네이버검색</button>
+              <button id="mini-kakao-btn">카카오검색</button>
             </div>
             <button id="mini-menu-close" aria-label="닫기">&times;</button>
           </div>

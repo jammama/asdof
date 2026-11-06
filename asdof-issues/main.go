@@ -1,8 +1,10 @@
 // asdof-issues — PMS 노션 이슈 트리아지 대시보드의 파일 서버.
 //
-// Claude 가 30분마다 노션 이슈를 읽고 판정한 결과를 /api/sync 로 밀어 넣고,
-// 사람은 화면에서 확인 체크만 한다. 체크한 이슈라도 원문/댓글이 바뀌어 revision 이
-// 달라지거나 Claude 가 reopen(재발 등)을 보내면 자동으로 미체크로 되돌린다.
+// 모든 일의 기준은 노션이다. Claude 는 30분마다
+//   - Outlook "trackbot" 폴더 메일을 요약해 메일 탭에 올리고 (/api/mail-sync, 신규요청은 '확인필요')
+//   - 노션 '진행 중' 이슈를 할일 탭 '수정필요' 로 올린다 (/api/sync, stage=fix)
+//
+// 노션 상태가 '테스트 중'·'해결' 이 되면 서버가 할일을 '수정완료' 로 옮겨 이력에 남긴다.
 //
 // DB 없이 JSON 파일 하나(DATA_FILE)에 저장한다. 임시파일 + rename 으로 원자적 교체.
 // 고객사 이슈 내용이라 읽기도 비밀번호(X-Admin-Password)가 필요하다.
@@ -12,6 +14,7 @@
 //	LISTEN_ADDR     기본 127.0.0.1:8800  (nginx 리버스 프록시 앞단)
 //	STATIC_DIR      기본 ./static
 //	DATA_FILE       기본 ./data.json
+//	FILES_DIR       기본 ./files  (일일 정리 문서, /files/{name} 로 내려줌 — static 과 달리 배포 때 지워지지 않음)
 //	ADMIN_PASSWORD  화면 비밀번호 (필수)
 //	SYNC_TOKEN      Claude 동기화용 토큰 (필수)
 package main
@@ -33,7 +36,7 @@ import (
 
 // ---------- 모델 ----------
 
-// 판정 종류 — 화면 필터/배지와 1:1
+// 옛 판정 종류 (2026-10-19 규칙 개편 전) — 이력 카드의 배지 표시에만 쓴다
 var verdicts = map[string]bool{
 	"fix":          true, // 수정 필요 (내가/AI 가 코드 수정)
 	"app":          true, // 앱 개발자에게 전달
@@ -44,8 +47,25 @@ var verdicts = map[string]bool{
 	"resolved":     true, // 해결됨 — 노션 상태가 '해결' 일 때만 (서버가 자동 지정)
 }
 
-// resolvedStatus 인 노션 상태만 해결됨으로 본다.
-const resolvedStatus = "해결"
+// 할일 단계 (Issue.Stage)
+const (
+	stageFix  = "fix"  // 수정필요 — 노션 '진행 중'
+	stageDone = "done" // 수정완료 — 노션 '테스트 중'·'해결' 로 바뀜 → 이력
+	// "" 는 보관 — 규칙 개편 전 판정 이력이거나 진행이 멈춘(취소·재요청 등) 할일
+)
+
+// 노션 상태
+const (
+	progressStatus = "진행 중"
+	testingStatus  = "테스트 중"
+	resolvedStatus = "해결"
+)
+
+// isDoneStatus 는 개발이 끝난 노션 상태(테스트 중·해결)인지 본다.
+func isDoneStatus(s string) bool { return s == resolvedStatus || s == testingStatus }
+
+// 할일 대상 — 무엇을 누구에게 넘길지 (web·server = 에이전트 프롬프트, app = 앱 개발자 요약)
+var targets = map[string]bool{"web": true, "server": true, "app": true, "mixed": true}
 
 // Action 은 내가 직접 보내거나 붙여넣을 문구 하나 — 화면에서 클릭으로 복사한다.
 type Action struct {
@@ -62,17 +82,24 @@ type Event struct {
 
 type Issue struct {
 	// 노션 원문 메타 (Claude 가 채움)
-	ID           string `json:"id"` // 노션 page id
-	No           string `json:"no"` // 노션 ID 속성 (예: 160)
-	Title        string `json:"title"`
-	URL          string `json:"url"`
-	Author       string `json:"author"`
-	CreatedAt    string `json:"created_at"`
-	NotionStatus string `json:"notion_status"`
-	NotionEdited string `json:"notion_edited"` // 노션 변경 일시
-	Revision     string `json:"revision"`      // 재확인 기준: "<변경 일시>|c<댓글 수>" — 달라지면 체크 해제
+	ID             string `json:"id"` // 노션 page id
+	No             string `json:"no"` // 노션 ID 속성 (예: 160)
+	Title          string `json:"title"`
+	URL            string `json:"url"`
+	Author         string `json:"author"`
+	CreatedAt      string `json:"created_at"`
+	NotionStatus   string `json:"notion_status"`
+	NotionEdited   string `json:"notion_edited"`   // 노션 변경 일시
+	NotionPriority string `json:"notion_priority"` // 노션 우선순위 (높음·보통·낮음)
+	Due            string `json:"due"`             // 노션 마감일 (YYYY-MM-DD)
+	Revision       string `json:"revision"`        // 변경 기준: "<변경 일시>|c<댓글 수>"
 
-	// 판정 (Claude 가 채움)
+	// 할일 (Claude 가 채움)
+	Stage   string `json:"stage"`    // fix(수정필요) | done(수정완료) | ""(보관)
+	StageAt string `json:"stage_at"` // 단계가 바뀐 시각
+	Target  string `json:"target"`   // web | server | app | mixed
+
+	// 옛 판정 (규칙 개편 전 이력 표시용)
 	Verdict  string   `json:"verdict"`
 	Priority string   `json:"priority"` // high | mid | low
 	Summary  string   `json:"summary"`  // 한 줄 요약
@@ -83,7 +110,7 @@ type Issue struct {
 	NotifyNeeded bool   `json:"notify_needed"`
 	TriagedAt    string `json:"triaged_at"`
 
-	// 확인 상태 (사람이 채움, 서버가 되돌림)
+	// 옛 확인 상태 (규칙 개편 전)
 	Checked         bool    `json:"checked"`
 	CheckedAt       string  `json:"checked_at"`
 	CheckedRevision string  `json:"checked_revision"`
@@ -93,9 +120,16 @@ type Issue struct {
 }
 
 type db struct {
-	LastSync string   `json:"last_sync"`
-	LastNote string   `json:"last_note"`
-	Issues   []*Issue `json:"issues"`
+	// Version 2 = 노션 기준 규칙(2026-10-19). 1 이하 데이터는 로드 시 migrateV2 로 보관 처리한다
+	Version      int           `json:"version"`
+	LastSync     string        `json:"last_sync"`
+	LastNote     string        `json:"last_note"`
+	Issues       []*Issue      `json:"issues"`
+	LastMailSync string        `json:"last_mail_sync"`
+	LastMailNote string        `json:"last_mail_note"`
+	Mails        []*Mail       `json:"mails"`
+	Todos        []*Todo       `json:"todos"`
+	Attachments  []*Attachment `json:"attachments"`
 }
 
 // ---------- 저장소 ----------
@@ -107,7 +141,7 @@ type store struct {
 }
 
 func newStore(path string) (*store, error) {
-	s := &store{path: path, data: db{Issues: []*Issue{}}}
+	s := &store{path: path, data: db{Issues: []*Issue{}, Mails: []*Mail{}, Todos: []*Todo{}, Attachments: []*Attachment{}}}
 	b, err := os.ReadFile(path)
 	if errors.Is(err, os.ErrNotExist) {
 		return s, s.flush()
@@ -123,7 +157,39 @@ func newStore(path string) (*store, error) {
 	if s.data.Issues == nil {
 		s.data.Issues = []*Issue{}
 	}
+	if s.data.Mails == nil {
+		s.data.Mails = []*Mail{}
+	}
+	if s.data.Todos == nil {
+		s.data.Todos = []*Todo{}
+	}
+	if s.data.Attachments == nil {
+		s.data.Attachments = []*Attachment{}
+	}
+	if s.data.Version < 2 {
+		s.migrateV2()
+		if err := s.flush(); err != nil {
+			return nil, err
+		}
+	}
 	return s, nil
+}
+
+// migrateV2 는 규칙 개편 전 데이터를 보관한다: 이슈 판정 → 할일 이력(보관), 메일 → 메일 이력, 옛 할일 목록 → 삭제.
+// 메일에는 받은 순서대로 메일#번호를 매긴다.
+func (s *store) migrateV2() {
+	for _, it := range s.data.Issues {
+		it.Stage = ""
+	}
+	sort.SliceStable(s.data.Mails, func(i, j int) bool { return s.data.Mails[i].ReceivedAt < s.data.Mails[j].ReceivedAt })
+	for i, m := range s.data.Mails {
+		m.Archived = true
+		if m.No == 0 {
+			m.No = i + 1
+		}
+	}
+	s.data.Todos = []*Todo{}
+	s.data.Version = 2
 }
 
 // flush 는 호출자가 쓰기 락을 잡고 있어야 한다.
@@ -157,8 +223,12 @@ func addEvent(it *Issue, text string) {
 	}
 }
 
-// syncIssue 는 Claude 가 보낸 판정(또는 meta 갱신) 하나를 반영한다.
-// 반환값: "new" | "reopened" | "updated" | "meta" | "skipped"
+// syncIssue 는 Claude 가 보낸 할일(또는 meta 갱신) 하나를 반영한다.
+// 반환값: "new" | "updated" | "meta" | "done" | "archived" | "skipped"
+//
+// 단계 전환은 노션 상태로 정한다:
+//   - 수정필요 중에 노션이 '테스트 중'·'해결' 이 되면 → 수정완료(이력)
+//   - 수정필요 중에 노션이 '진행 중' 이 아닌 다른 상태(재요청·요청 취소 등)가 되면 → 보관(이력)
 func (s *store) syncIssue(in *syncItem) string {
 	it := s.find(in.ID)
 	if it == nil {
@@ -166,72 +236,52 @@ func (s *store) syncIssue(in *syncItem) string {
 			return "skipped"
 		}
 		it = &Issue{ID: in.ID}
-		in.applyMeta(it)
-		in.applyVerdict(it)
-		addEvent(it, "신규 등록 — "+it.Verdict)
 		s.data.Issues = append(s.data.Issues, it)
+		in.applyMeta(it)
+		in.applyTodo(it)
+		addEvent(it, "수정필요 등록")
 		return "new"
 	}
-	prevRev, prevVerdict, prevStatus := it.Revision, it.Verdict, it.NotionStatus
+	prevStatus, prevStage := it.NotionStatus, it.Stage
 	in.applyMeta(it)
-	if !in.MetaOnly {
-		in.applyVerdict(it)
-	}
 	if prevStatus != it.NotionStatus {
 		addEvent(it, fmt.Sprintf("노션 상태 %s → %s", prevStatus, it.NotionStatus))
 	}
-	if prevVerdict != it.Verdict {
-		addEvent(it, fmt.Sprintf("판정 변경 %s → %s", prevVerdict, it.Verdict))
+	result := "meta"
+	if !in.MetaOnly {
+		in.applyTodo(it)
+		result = "updated"
 	}
-
-	reason := ""
-	switch {
-	case in.Reopen:
-		reason = in.ReopenReason
-		if reason == "" {
-			reason = "Claude 재확인 요청"
+	if it.Stage == stageFix && it.NotionStatus != progressStatus {
+		if isDoneStatus(it.NotionStatus) {
+			it.setStage(stageDone)
+			addEvent(it, "수정완료 — 노션 "+it.NotionStatus)
+			return "done"
 		}
-	case prevRev != "" && it.Revision != prevRev:
-		reason = in.ReopenReason
-		if reason == "" && prevStatus != it.NotionStatus {
-			reason = fmt.Sprintf("노션 상태 변경 %s → %s", prevStatus, it.NotionStatus)
-		}
-		if reason == "" {
-			reason = "노션 변경 일시 갱신"
-		}
+		it.setStage("")
+		addEvent(it, "보관 — 노션 "+it.NotionStatus)
+		return "archived"
 	}
-	result := "updated"
-	if in.MetaOnly {
-		result = "meta"
-	}
-	if reason == "" {
-		return result
-	}
-	addEvent(it, "재확인 필요 — "+reason)
-	if it.Checked {
-		it.Checked = false
-		it.Reopened = true
-		it.ReopenReason = reason
-		return "reopened"
-	}
-	if it.Reopened {
-		it.ReopenReason = reason
+	if prevStage != stageFix && it.Stage == stageFix {
+		addEvent(it, "수정필요 등록")
 	}
 	return result
+}
+
+func (it *Issue) setStage(st string) {
+	it.Stage = st
+	it.StageAt = now()
 }
 
 // ---------- 동기화 입력 ----------
 
 type syncItem struct {
 	Issue
-	Reopen       bool   `json:"reopen"`
-	ReopenReason string `json:"reopen_reason"`
-	// MetaOnly 는 판정 없이 노션 메타(상태·제목·변경 일시·revision)만 갱신한다.
-	// revision 이 달라지면 판정과 무관하게 체크가 해제된다 (재확인 기준 = 노션 변경 일시).
+	// MetaOnly 는 할일 내용 없이 노션 메타(상태·제목·변경 일시·revision)만 갱신한다.
 	MetaOnly bool `json:"meta_only"`
 }
 
-// applyMeta 는 노션 원문 메타를 덮어쓴다. 노션 상태가 '해결' 이면 판정도 해결됨으로 옮긴다.
+// applyMeta 는 노션 원문 메타를 덮어쓴다.
 func (in *syncItem) applyMeta(it *Issue) {
 	set := func(dst *string, v string, n int) {
 		if v != "" {
@@ -245,25 +295,17 @@ func (in *syncItem) applyMeta(it *Issue) {
 	set(&it.CreatedAt, in.CreatedAt, 40)
 	set(&it.NotionStatus, in.NotionStatus, 50)
 	set(&it.NotionEdited, in.NotionEdited, 40)
+	set(&it.NotionPriority, in.NotionPriority, 20)
+	set(&it.Due, in.Due, 40)
 	set(&it.Revision, in.Revision, 200)
-	if it.NotionStatus == resolvedStatus {
-		it.Verdict = "resolved"
-		it.NotifyNeeded = false
-	} else if it.Verdict == "resolved" {
-		it.Verdict = "testing" // 노션에서 '해결' 이 풀렸으면 다시 테스트중으로
-	}
 }
 
-// applyVerdict 는 Claude 판정 필드를 덮어쓴다 (확인 상태는 건드리지 않는다).
-// 해결됨은 노션 상태로만 정해지므로 Claude 가 resolved 를 보내도 '해결' 이 아니면 테스트중으로 둔다.
-func (in *syncItem) applyVerdict(it *Issue) {
-	it.Verdict = in.Verdict
-	if it.NotionStatus == resolvedStatus {
-		it.Verdict = "resolved"
-	} else if it.Verdict == "resolved" {
-		it.Verdict = "testing"
+// applyTodo 는 Claude 가 정리한 할일 내용과 단계를 덮어쓴다.
+func (in *syncItem) applyTodo(it *Issue) {
+	if in.Stage != it.Stage {
+		it.setStage(in.Stage)
 	}
-	it.NotifyNeeded = in.NotifyNeeded && it.Verdict != "resolved"
+	it.Target = in.Target
 	it.Priority = in.Priority
 	it.Summary = clamp(in.Summary, 500)
 	it.Analysis = clamp(in.Analysis, 8000)
@@ -293,8 +335,11 @@ func (in *syncItem) validate() error {
 	if in.MetaOnly {
 		return nil
 	}
-	if !verdicts[in.Verdict] {
-		return fmt.Errorf("%s: verdict 는 fix|app|insufficient|invalid|testing|review|resolved 중 하나", in.ID)
+	if in.Stage != stageFix && in.Stage != stageDone {
+		return fmt.Errorf("%s: stage 는 fix|done", in.ID)
+	}
+	if in.Target != "" && !targets[in.Target] {
+		return fmt.Errorf("%s: target 는 web|server|app|mixed", in.ID)
 	}
 	switch in.Priority {
 	case "high", "mid", "low":
@@ -317,6 +362,7 @@ type server struct {
 	st        *store
 	password  string
 	syncToken string
+	filesDir  string
 }
 
 func eq(a, b string) bool {
@@ -491,7 +537,7 @@ func renderMarkdown(d db) string {
 func main() {
 	addr := env("LISTEN_ADDR", "127.0.0.1:8800")
 	static := env("STATIC_DIR", "./static")
-	sv := &server{password: os.Getenv("ADMIN_PASSWORD"), syncToken: os.Getenv("SYNC_TOKEN")}
+	sv := &server{password: os.Getenv("ADMIN_PASSWORD"), syncToken: os.Getenv("SYNC_TOKEN"), filesDir: env("FILES_DIR", "./files")}
 	if sv.password == "" || sv.syncToken == "" {
 		log.Fatal("ADMIN_PASSWORD, SYNC_TOKEN 환경변수 필수")
 	}
@@ -512,6 +558,14 @@ func main() {
 	mux.HandleFunc("PUT /api/issues/{id}/check", sv.handleCheck)
 	mux.HandleFunc("POST /api/sync", sv.handleSync)
 	mux.HandleFunc("GET /api/export.md", sv.handleExport)
+	mux.HandleFunc("POST /api/mail-sync", sv.handleMailSync)
+	mux.HandleFunc("PUT /api/mails/check", sv.handleMailCheck)
+	mux.HandleFunc("POST /api/mail-register", sv.handleMailRegister)
+	mux.HandleFunc("POST /api/todo-sync", sv.handleTodoSync)
+	mux.HandleFunc("POST /api/attachment-sync", sv.handleAttachSync)
+	mux.HandleFunc("PUT /api/todos/check", sv.handleTodoCheck) // ?id= // ?id=<internetMessageId> (꺾쇠·@ 포함이라 쿼리로)
+	mux.HandleFunc("GET /files/{name}", sv.handleFile)
+	mux.HandleFunc("GET /api/reports", sv.handleReports)
 	mux.Handle("GET /", http.FileServer(http.Dir(filepath.Clean(static))))
 
 	log.Printf("asdof-issues listening on %s", addr)

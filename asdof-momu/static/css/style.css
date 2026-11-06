@@ -139,10 +139,14 @@ textarea { resize: vertical; min-height: 60px; }
 .item-right { text-align: right; flex-shrink: 0; font-size: 11px; color: #6b7382; line-height: 1.5; }
 
 .mini-btn {
+  text-decoration: none; display: inline-block;
   font-size: 11px; font-weight: 500; line-height: 1.4; padding: 1px 7px; border-radius: 5px;
   background: #23272f; border: 1px solid #333a45; color: #a8b0bd; flex-shrink: 0;
 }
 .mini-btn:hover { color: #e8eaed; border-color: #4c5566; }
+.mini-btn.danger-s { color: #b87983; border-color: #4a2c32; background: transparent; }
+.mini-btn.danger-s:hover { color: #ff8f9c; border-color: #8a3a45; background: #3a2226; }
+.d-foot { display: flex; justify-content: flex-end; margin-top: 22px; padding-top: 12px; border-top: 1px solid #23262d; }
 .mini-btn.pri { border-color: #2f4f86; color: #9dc2ff; }
 .mini-btn.pri:hover { background: #1e3a63; color: #cfe0ff; }
 .item-name .mini-btn:first-of-type { margin-left: 2px; }
@@ -369,6 +373,16 @@ body.sorting, body.sorting * { cursor: grabbing !important; user-select: none !i
 #toast.err { background: #3a2226; border-color: #5c2b33; color: #ffc0c8; }
 
 /* ---------- 지도 오버레이 ---------- */
+.office-pin {
+  display: flex; align-items: center; gap: 3px; padding: 3px 8px 3px 4px;
+  background: #1c1f26; border: 2px solid #ffb454; border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.45); pointer-events: none; white-space: nowrap;
+}
+.office-pin span {
+  width: 20px; height: 20px; border-radius: 50%; background: #ffb454;
+  display: flex; align-items: center; justify-content: center; font-size: 12px;
+}
+.office-pin b { font-size: 11px; color: #ffd9a3; letter-spacing: -.2px; }
 .ov {
   background: #1c1f26; border: 1px solid #4c8dff; border-radius: 9px;
   padding: 8px 11px; font-size: 13px; white-space: nowrap;

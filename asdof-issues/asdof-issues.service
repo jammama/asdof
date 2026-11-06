@@ -9,6 +9,7 @@ ExecStart=/usr/local/bin/asdof-issues
 Environment=LISTEN_ADDR=127.0.0.1:8800
 Environment=STATIC_DIR=/var/lib/asdof-issues/static
 Environment=DATA_FILE=/var/lib/asdof-issues/data.json
+Environment=FILES_DIR=/var/lib/asdof-issues/files
 # ADMIN_PASSWORD, SYNC_TOKEN
 EnvironmentFile=/etc/asdof-issues.env
 StateDirectory=asdof-issues

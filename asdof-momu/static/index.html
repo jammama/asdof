@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#14161a">
   <title>모무 — 뭐 먹었지?</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <link rel="stylesheet" href="css/style.css?v=17">
+  <link rel="stylesheet" href="css/style.css?v=20">
 </head>
 <body>
 <div id="app">
@@ -29,20 +29,20 @@
       </div>
 
       <div id="tabs">
-        <button class="tab on" data-tab="log">내 기록</button>
-        <button class="tab" data-tab="mine">등록식당</button>
+        <button class="tab on" data-tab="mine">등록식당</button>
         <button class="tab" data-tab="kakao">식당 찾기</button>
+        <button class="tab" data-tab="log">내 기록</button>
       </div>
 
       <!-- 검색창은 탭끼리 공유한다 — 탭을 옮겨도 적던 내용이 그대로 남는다 -->
       <form id="q-form" class="row">
-        <input type="search" id="q" placeholder="식당명 · 메뉴 · 동행 · 메모로 기록 검색" autocomplete="off">
-        <button type="button" id="filter-btn" class="ghost on hidden">필터</button>
+        <input type="search" id="q" placeholder="식당명 · 메뉴 · 주소 · 메모 검색" autocomplete="off">
+        <button type="button" id="filter-btn" class="ghost on">필터</button>
         <button type="submit" id="kakao-go" class="hidden">검색</button>
       </form>
 
       <!-- 등록식당: 검색 필터 -->
-      <div id="pane-mine-ctl" class="pane-ctl hidden">
+      <div id="pane-mine-ctl" class="pane-ctl">
         <div id="filter-panel">
           <button id="f-reset" class="icon-btn" title="필터 초기화" aria-label="필터 초기화">↻</button>
           <section class="f-sec">
@@ -74,14 +74,14 @@
     </header>
 
     <!-- 등록식당 목록 머리줄 — 개수 + 정렬 -->
-    <div id="mine-bar" class="hidden">
+    <div id="mine-bar">
       <span id="mine-n"></span>
       <select id="f-sort" class="sort-sel" aria-label="정렬"></select>
     </div>
 
     <div id="list-wrap">
-      <div id="list-log"></div>
-      <ul id="list-mine" class="list hidden"></ul>
+      <div id="list-log" class="hidden"></div>
+      <ul id="list-mine" class="list"></ul>
       <ul id="list-kakao" class="list hidden"></ul>
       <div id="empty" class="empty hidden"></div>
     </div>
@@ -151,6 +151,6 @@
 <div id="toast" class="hidden"></div>
 
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=f828a7fc8b831cd61ef2df06a93d4b11&libraries=clusterer,services&autoload=false"></script>
-<script src="js/app.js?v=22"></script>
+<script src="js/app.js?v=28"></script>
 </body>
 </html>

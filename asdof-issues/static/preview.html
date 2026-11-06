@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>문서 미리보기</title>
+<style>
+  body { margin: 0; background: #e9ecef; font-family: -apple-system, 'Malgun Gothic', sans-serif; }
+  .bar { position: sticky; top: 0; z-index: 1; display: flex; gap: 10px; align-items: center; padding: 10px 16px; background: #0f1724; color: #e6edf3; font-size: 14px; }
+  .bar .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+  .bar a { color: #fff; background: #3b82f6; border-radius: 6px; padding: 5px 12px; text-decoration: none; font-size: 13px; white-space: nowrap; }
+  #msg { padding: 40px 16px; text-align: center; color: #555; }
+  #doc { padding: 16px 0 40px; }
+  #doc .docx-wrapper { background: transparent; padding: 0; }
+  #doc .docx-wrapper > section.docx { box-shadow: 0 2px 10px rgba(0,0,0,.15); margin: 0 auto 16px; max-width: 100%; }
+</style>
+</head>
+<body>
+<div class="bar"><span class="name" id="name"></span><a id="dl" href="#">다운로드</a></div>
+<div id="msg">불러오는 중…</div>
+<div id="doc"></div>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx-preview@0.3.7/dist/docx-preview.min.js"></script>
+<script>
+// 대시보드 '대응 내용 정리' 탭의 미리보기 — docx 를 브라우저에서 바로 그린다 (외부 뷰어로 파일을 넘기지 않음).
+// 비밀번호는 대시보드 로그인 때 저장된 값을 쓴다.
+(async () => {
+  const name = new URLSearchParams(location.search).get('name') || '';
+  let pw = '';
+  try { pw = localStorage.getItem('pw') || ''; } catch {}
+  const url = `files/${encodeURIComponent(name)}?pw=${encodeURIComponent(pw)}`;
+  document.getElementById('name').textContent = name;
+  document.title = name || '문서 미리보기';
+  document.getElementById('dl').href = url;
+  const msg = document.getElementById('msg');
+  if (!name) { msg.textContent = '문서 이름이 없습니다.'; return; }
+  try {
+    const res = await fetch(url);
+    if (res.status === 401) { msg.textContent = '대시보드에 먼저 로그인해 주세요.'; return; }
+    if (!res.ok) { msg.textContent = '문서를 찾을 수 없습니다.'; return; }
+    await docx.renderAsync(await res.blob(), document.getElementById('doc'), null, { inWrapper: true, ignoreLastRenderedPageBreak: false });
+    msg.remove();
+  } catch (e) {
+    msg.textContent = '미리보기 실패: ' + e.message + ' — 다운로드해서 열어 주세요.';
+  }
+})();
+</script>
+</body>
+</html>

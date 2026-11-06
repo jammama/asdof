@@ -14,6 +14,8 @@
     --fix: #ff6b6b; --app: #b08cff; --insufficient: #ffb547; --invalid: #7d8699; --resolved: #3ecf8e;
     --testing: #4fc3f7; --review: #f06292; --notify: #ffd54f;
     --reopen: #ff4d8d;
+    --k-check: #4fc3f7; --k-fix: #ff8a65; --k-design: #b08cff; --k-share: #3ecf8e;
+    --action: #ff6b6b; --reply: #ffb547; --info: #7d8699; --done: #3ecf8e;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.55 -apple-system, "Apple SD Gothic Neo", "Pretendard", system-ui, sans-serif; }
@@ -43,6 +45,12 @@
   .badge { font-size: 11px; padding: 1px 8px; border-radius: 999px; background: color-mix(in srgb, var(--c) 22%, transparent); color: var(--c); font-weight: 600; }
   .badge.re { --c: var(--reopen); }
   .pri-high { color: var(--fix); font-weight: 700; }
+  .side { flex: none; text-align: right; font-size: 11px; color: var(--muted); line-height: 1.5; white-space: nowrap; }
+  .side .p-높음 { color: var(--fix); font-weight: 700; }
+  .side .over { color: var(--fix); font-weight: 700; }
+  .sort { margin-left: auto; display: flex; gap: 4px; align-items: center; font-size: 12px; color: var(--muted); }
+  .sort button { border: 1px solid var(--line); background: var(--panel); border-radius: 6px; padding: 2px 8px; font-size: 12px; }
+  .sort button.on { border-color: var(--accent); background: #1c2a44; }
   .sum { margin-top: 4px; color: #c7ccd8; }
   .body { display: none; padding: 0 14px 14px 46px; }
   .card.has-notify .body { padding-left: 70px; }
@@ -66,6 +74,46 @@
   #login input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: inherit; }
   #login button { width: 100%; margin-top: 8px; padding: 10px; border-radius: 8px; border: 0; background: var(--accent); color: #fff; }
   #login .err { color: var(--fix); font-size: 13px; min-height: 20px; margin-top: 6px; }
+  .mode { display: flex; gap: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 2px; }
+  .mode button { border: 0; background: transparent; border-radius: 6px; padding: 3px 12px; font-size: 13px; color: var(--muted); }
+  .mode button.on { background: #1c2a44; color: var(--text); }
+  .mode .n { margin-left: 4px; font-size: 12px; }
+  .mail-link { background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin-top: 6px; font-size: 13px; }
+  .mail-link .s { font-weight: 600; }
+  .att { color: var(--muted); font-size: 12px; }
+  .todo { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--c, var(--line)); border-radius: 10px; margin-bottom: 6px; }
+  .todo .badge { margin-right: 6px; }
+  .todo.done { opacity: .5; }
+  .todo.done .tx { text-decoration: line-through; }
+  .todo .tx { flex: 1; min-width: 0; }
+  .todo .tx .line { cursor: pointer; }
+  .todo .tx .line .has { color: var(--accent); font-size: 12px; margin-left: 6px; }
+  .todo .acts { display: none; }
+  .todo.open .acts { display: block; }
+  .file { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--c, var(--line)); border-radius: 10px; margin-bottom: 6px; }
+  .file .fx { flex: 1; min-width: 0; }
+  .file .fn { font-weight: 600; word-break: break-all; }
+  .file .fw { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .file .fw a { color: var(--accent); }
+  .file .miss { color: var(--review); font-weight: 600; }
+  .rbtns { display: flex; gap: 6px; flex-wrap: wrap; flex: none; align-items: center; }
+  .rbtn { border: 1px solid var(--accent); background: transparent; color: var(--accent); border-radius: 6px; padding: 4px 10px; font-size: 12px; text-decoration: none; white-space: nowrap; }
+  .rbtn.main { background: var(--accent); color: #fff; }
+  .file .fold { cursor: pointer; }
+  .file .fold::before { content: '▸ '; color: var(--muted); }
+  .file.open .fold::before { content: '▾ '; }
+  .file .rbody { display: none; }
+  .file.open .rbody { display: block; }
+  .mailno { color: var(--accent); font-weight: 700; margin-right: 6px; }
+  .reg { color: var(--resolved); }
+  .rmail { margin-top: 8px; background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; }
+  .rmail .act-h b { font-weight: 600; }
+  .rmail pre { margin: 0; padding: 8px 10px; white-space: pre-wrap; font: inherit; font-size: 13px; }
+
+  .refs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+  .ref { border: 1px solid var(--line); background: var(--panel2); border-radius: 6px; padding: 1px 8px; font-size: 12px; color: var(--accent); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .card.flash { animation: flash 1.6s ease-out; }
+  @keyframes flash { from { box-shadow: 0 0 0 2px var(--accent); } to { box-shadow: 0 0 0 0 transparent; } }
   .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #263042; padding: 8px 14px; border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; }
   .toast.on { opacity: 1; }
 </style>
@@ -85,6 +133,7 @@
     <div class="wrap">
       <div class="top">
         <h1>PMS 이슈 트리아지</h1>
+        <div class="mode" id="mode"></div>
         <span class="sync" id="sync"></span>
       </div>
       <div class="tabs" id="tabs"></div>
@@ -99,24 +148,40 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const VERDICT = {
-  review:       { label: '확인필요',      c: 'var(--review)' },
-  fix:          { label: '수정 필요',     c: 'var(--fix)' },
-  app:          { label: '앱 개발자 전달', c: 'var(--app)' },
-  insufficient: { label: '내용 미비',     c: 'var(--insufficient)' },
-  invalid:      { label: '잘못된 이슈',   c: 'var(--invalid)' },
-  testing:      { label: '테스트중',      c: 'var(--testing)' },
-  resolved:     { label: '해결됨',        c: 'var(--resolved)' },
-};
-const TABS = [
-  ['todo', '확인 필요'], ['reopened', '다시 확인'], ['checked', '확인 완료'], ['all', '전체'],
-];
 const PRI = { high: 0, mid: 1, low: 2 };
+// 규칙 개편(2026-10-19) 전 판정 — 보관 카드에만 표시
+const VERDICT_OLD = { review: '확인필요', fix: '수정 필요', app: '앱 개발자 전달', insufficient: '내용 미비', invalid: '잘못된 이슈', testing: '테스트중', resolved: '해결됨' };
+// 할일 = 노션 '진행 중' 이슈. 수정필요 → (노션 테스트 중·해결) 수정완료 → 이력
+const TODO_TABS = [['fix', '수정필요'], ['history', '이력']];
+const STAGE = {
+  fix:  { label: '수정필요', c: 'var(--fix)' },
+  done: { label: '수정완료', c: 'var(--resolved)' },
+  '':   { label: '보관',     c: 'var(--invalid)' },
+};
+const TARGET = {
+  web:    { label: '웹',     c: 'var(--k-check)' },
+  server: { label: '서버',   c: 'var(--k-fix)' },
+  app:    { label: '앱',     c: 'var(--app)' },
+  mixed:  { label: '웹·앱',  c: 'var(--k-design)' },
+};
+const MAIL_VERDICT = {
+  request: { label: '신규요청', c: 'var(--review)' },
+  reply:   { label: '회신',     c: 'var(--reply)' },
+  info:    { label: '참고',     c: 'var(--info)' },
+  action:  { label: '조치 필요', c: 'var(--action)' },
+  done:    { label: '처리됨',   c: 'var(--done)' },
+};
+// 확인필요 = 신규요청 메일 중 아직 노션에 안 올린 것
+const MAIL_TABS = [['confirm', '확인필요'], ['all', '전체'], ['history', '이력']];
 
 let pw = '';
 try { pw = localStorage.getItem('pw') || ''; } catch {}
-let state = { issues: [] };
-let tab = 'todo', verdictFilter = '';
+let state = { issues: [], mails: [], todos: [] };
+let mode = 'todos', tab = 'fix', verdictFilter = null;
+// 할일 정렬 (화면 전용): created = 등록일자 최신순, due = 마감일 빠른순(마감일 없는 건 뒤로)
+let todoSort = 'created';
+try { todoSort = localStorage.getItem('todoSort') === 'due' ? 'due' : 'created'; } catch {}
+try { mode = ['mails', 'todos', 'files', 'reports'].includes(localStorage.getItem('mode')) ? localStorage.getItem('mode') : 'todos'; } catch {}
 const open = new Set();
 
 const $ = (id) => document.getElementById(id);
@@ -146,62 +211,87 @@ $('loginForm').onsubmit = async (e) => {
 async function load() {
   try {
     state = await api('api/issues');
+    state.reports = await api('api/reports').catch(() => []);
     $('app').hidden = false;
     render();
   } catch (e) { if (e.message !== '401') toast('불러오기 실패: ' + e.message); }
 }
 
-function inTab(it) {
-  if (tab === 'todo') return !it.checked;
-  if (tab === 'reopened') return !it.checked && it.reopened;
-  if (tab === 'checked') return it.checked;
-  return true;
-}
+const liveMails = () => (state.mails || []).filter((m) => !m.dup_of);
+const needConfirm = (m) => !m.archived && m.verdict === 'request' && !(m.registered || []).length;
 
 function render() {
-  const all = state.issues || [];
-  $('sync').textContent = '마지막 동기화 ' + fmt(state.last_sync);
-  $('note').textContent = state.last_note || '';
-
-  $('tabs').innerHTML = TABS.map(([k, l]) =>
-    `<button class="tab ${tab === k ? 'on' : ''}" data-tab="${k}">${l}<span class="n">${all.filter((it) => { const t = tab; tab = k; const r = inTab(it); tab = t; return r; }).length}</span></button>`).join('');
-
-  const scoped = all.filter(inTab);
-  $('chips').innerHTML = `<button class="chip ${verdictFilter === '' ? 'on' : ''}" data-v="">전체<span class="n">${scoped.length}</span></button>` +
-    Object.entries(VERDICT).map(([k, v]) =>
-      `<button class="chip ${verdictFilter === k ? 'on' : ''}" data-v="${k}" style="--c:${v.c}"><span style="color:${v.c}">●</span> ${v.label}<span class="n">${scoped.filter((it) => it.verdict === k).length}</span></button>`).join('');
-
-  const rows = scoped.filter((it) => !verdictFilter || it.verdict === verdictFilter)
-    .sort((a, b) => (b.reopened - a.reopened) || (PRI[a.priority] - PRI[b.priority]) || String(b.created_at).localeCompare(String(a.created_at)));
-
-  $('list').innerHTML = rows.length ? rows.map(card).join('') : '<div class="empty">표시할 이슈가 없습니다</div>';
+  const todoN = (state.issues || []).filter((it) => it.stage === 'fix').length;
+  $('mode').innerHTML = [['todos', '할일', todoN], ['mails', '메일', liveMails().filter(needConfirm).length], ['files', '첨부파일 리스트', buildFiles().length], ['reports', '대응 내용 정리', (state.reports || []).length]]
+    .map(([k, l, n]) => `<button class="${mode === k ? 'on' : ''}" data-mode="${k}">${l}<span class="n">${n}</span></button>`).join('');
+  if (mode === 'mails') return renderMails(liveMails());
+  if (mode === 'files') return renderFiles();
+  if (mode === 'reports') return renderReports(state.reports || []);
+  return renderTodos(state.issues || []);
 }
 
-function card(it) {
-  const v = VERDICT[it.verdict] || { label: it.verdict, c: 'var(--line)' };
-  const cls = ['card', it.notify_needed && 'has-notify', it.checked && 'checked', it.reopened && !it.checked && 'reopened', open.has(it.id) && 'open'].filter(Boolean).join(' ');
-  return `<div class="${cls}" style="--c:${v.c}" data-id="${esc(it.id)}">
-    <div class="head" data-toggle>
-      ${it.notify_needed ? '<span class="notify" title="코드는 완료됐지만 노션에 수정 완료 안내 댓글이 없음">전달 필요</span>' : ''}
-      <button class="chk ${it.checked ? 'on' : ''}" data-check title="확인 체크">${it.checked ? '✓' : ''}</button>
-      <div class="ttl">
-        <div class="t">${it.no ? `<span class="no">#${esc(it.no)}</span>` : ''}${esc(it.title)}</div>
-        <div class="meta">
-          <span class="badge">${v.label}</span>
-          ${it.reopened && !it.checked ? '<span class="badge re">다시 확인</span>' : ''}
-          ${it.priority === 'high' ? '<span class="pri-high">긴급</span>' : ''}
-          <span>${esc(it.author)} · ${fmt(it.created_at)}</span>
-          ${it.notion_status ? `<span>노션: ${esc(it.notion_status)}</span>` : ''}
-          ${it.notion_edited ? `<span>변경 ${fmt(it.notion_edited)}</span>` : ''}
-        </div>
-        ${it.reopened && !it.checked ? `<div class="reason">↻ ${esc(it.reopen_reason)}</div>` : ''}
-        <div class="sum">${esc(it.summary)}</div>
-      </div>
-    </div>
-    <div class="body">
-      ${it.analysis ? `<div class="sec"><h4>판단 근거</h4><div class="ana">${esc(it.analysis)}</div></div>` : ''}
-      ${(it.evidence || []).length ? `<div class="sec"><h4>확인한 곳</h4><ul class="ev">${it.evidence.map((e) => `<li>${esc(e)}</li>`).join('')}</ul></div>` : ''}
-      ${(it.actions || []).length ? `<div class="sec"><h4>보낼 문구</h4>${it.actions.map((a, i) => `
+function todoInTab(it, t = tab) {
+  return t === 'fix' ? it.stage === 'fix' : it.stage !== 'fix';
+}
+
+function findRef(r) {
+  if (r.kind === 'mail') return (state.mails || []).find((m) => m.id === r.id);
+  return (state.issues || []).find((it) => it.id === r.id || it.no === r.id);
+}
+
+function refChip(r) {
+  const x = findRef(r);
+  if (!x) return `<span class="ref" style="color:var(--muted)">${r.kind === 'mail' ? '✉ (없는 메일)' : '#' + esc(r.id)}</span>`;
+  const label = r.kind === 'mail' ? `✉ 메일#${x.no || ''} ${x.subject}` : `#${x.no} ${x.title}`;
+  return `<button class="ref" data-ref="${r.kind}" data-ref-id="${esc(x.id)}" title="${esc(label)}">${esc(label.length > 34 ? label.slice(0, 34) + '…' : label)}</button>`;
+}
+
+function renderTodos(all) {
+  if (!TODO_TABS.some(([k]) => k === tab)) tab = 'fix';
+  $('sync').textContent = '마지막 동기화 ' + fmt(state.last_sync);
+  $('note').textContent = tab === 'fix'
+    ? "노션 '진행 중' 이슈. 웹·서버는 에이전트 프롬프트, 앱은 앱 개발자 전달 요약. 노션이 '테스트 중'·'해결' 이 되면 수정완료로 이력에 남습니다."
+    : '수정완료(노션 테스트 중·해결)와 보관(규칙 개편 전 판정·진행이 멈춘 건).';
+  $('tabs').innerHTML = TODO_TABS.map(([k, l]) =>
+    `<button class="tab ${tab === k ? 'on' : ''}" data-tab="${k}">${l}<span class="n">${all.filter((it) => todoInTab(it, k)).length}</span></button>`).join('');
+  const scoped = all.filter((it) => todoInTab(it));
+  const facet = tab === 'fix' ? TARGET : { done: STAGE.done, '': STAGE[''] };
+  const keyOf = (it) => tab === 'fix' ? it.target : (it.stage || '');
+  $('chips').innerHTML = `<button class="chip ${verdictFilter === null ? 'on' : ''}" data-v="*">전체<span class="n">${scoped.length}</span></button>` +
+    Object.entries(facet).map(([k, v]) =>
+      `<button class="chip ${verdictFilter === k ? 'on' : ''}" data-v="${k}"><span style="color:${v.c}">●</span> ${v.label}<span class="n">${scoped.filter((it) => keyOf(it) === k).length}</span></button>`).join('') +
+    `<span class="sort">정렬 ${[['created', '등록일자'], ['due', '마감일']].map(([k, l]) => `<button class="${todoSort === k ? 'on' : ''}" data-sort="${k}">${l}</button>`).join('')}</span>`;
+  const byCreated = (a, b) => String(b.created_at).localeCompare(String(a.created_at));
+  const rows = scoped.filter((it) => verdictFilter === null || keyOf(it) === verdictFilter)
+    .sort((a, b) => todoSort === 'due'
+      ? (!a.due - !b.due) || String(a.due).localeCompare(String(b.due)) || byCreated(a, b)
+      : byCreated(a, b));
+  $('list').innerHTML = rows.length ? rows.map(card).join('') : '<div class="empty">표시할 할일이 없습니다</div>';
+}
+
+function mailInTab(m, t = tab) {
+  if (t === 'confirm') return needConfirm(m);
+  if (t === 'history') return !!m.archived;
+  return !m.archived;
+}
+
+function renderMails(all) {
+  if (!MAIL_TABS.some(([k]) => k === tab)) tab = 'confirm';
+  $('sync').textContent = '메일 동기화 ' + fmt(state.last_mail_sync);
+  $('note').textContent = tab === 'confirm' ? '신규요청 메일 중 아직 노션에 올리지 않은 것. 노션 등록을 요청하면 나눠서 신규요청(또는 재요청)으로 올립니다.' : (state.last_mail_note || '');
+  $('tabs').innerHTML = MAIL_TABS.map(([k, l]) =>
+    `<button class="tab ${tab === k ? 'on' : ''}" data-tab="${k}">${l}<span class="n">${all.filter((m) => mailInTab(m, k)).length}</span></button>`).join('');
+  const scoped = all.filter((m) => mailInTab(m));
+  $('chips').innerHTML = `<button class="chip ${verdictFilter === null ? 'on' : ''}" data-v="*">전체<span class="n">${scoped.length}</span></button>` +
+    Object.entries(MAIL_VERDICT).map(([k, v]) =>
+      `<button class="chip ${verdictFilter === k ? 'on' : ''}" data-v="${k}"><span style="color:${v.c}">●</span> ${v.label}<span class="n">${scoped.filter((m) => m.verdict === k).length}</span></button>`).join('');
+  const rows = scoped.filter((m) => verdictFilter === null || m.verdict === verdictFilter)
+    .sort((a, b) => String(b.received_at).localeCompare(String(a.received_at)));
+  $('list').innerHTML = rows.length ? rows.map(mailCard).join('') : '<div class="empty">표시할 메일이 없습니다</div>';
+}
+
+function actionsHtml(actions) {
+  return (actions || []).length ? `<div class="sec"><h4>보낼 문구</h4>${actions.map((a, i) => `
         <div class="act">
           <div class="act-h">
             <span class="kind ${a.kind}">${a.kind === 'prompt' ? '프롬프트' : '사람'}</span>
@@ -209,9 +299,212 @@ function card(it) {
             <button class="copy" data-copy="${i}">복사</button>
           </div>
           <pre>${esc(a.text)}</pre>
-        </div>`).join('')}</div>` : ''}
+        </div>`).join('')}</div>` : '';
+}
+
+function issueLinks(nos) {
+  return (nos || []).map((no) => {
+    const it = (state.issues || []).find((x) => x.no === no);
+    return it ? `<a href="${esc(it.url)}" target="_blank" rel="noopener">#${esc(no)}</a>` : `#${esc(no)}`;
+  }).join(' ');
+}
+
+function mailCard(m) {
+  const v = MAIL_VERDICT[m.verdict] || { label: m.verdict, c: 'var(--line)' };
+  const dups = (state.mails || []).filter((x) => x.dup_of === m.id);
+  const cls = ['card', m.archived && 'checked', open.has(m.id) && 'open'].filter(Boolean).join(' ');
+  return `<div class="${cls}" style="--c:${v.c}" data-id="${esc(m.id)}" data-kind="mail">
+    <div class="head" data-toggle>
+      <div class="ttl">
+        <div class="t"><span class="mailno">메일#${esc(m.no)}</span>${esc(m.subject)}</div>
+        <div class="meta">
+          <span class="badge">${v.label}</span>
+          ${(m.registered || []).length ? `<span class="reg">노션 등록 ${issueLinks(m.registered)}</span>` : ''}
+          ${m.priority === 'high' ? '<span class="pri-high">긴급</span>' : ''}
+          <span>${esc(m.from)} · ${fmt(m.received_at)}</span>
+          ${(m.issue_nos || []).length ? `<span>언급 ${issueLinks(m.issue_nos)}</span>` : ''}
+          ${dups.length ? `<span>재전달 ${dups.length}건</span>` : ''}
+        </div>
+        <div class="sum">${esc(m.summary)}</div>
+      </div>
+    </div>
+    <div class="body">
+      ${m.analysis ? `<div class="sec"><h4>내용</h4><div class="ana">${esc(m.analysis)}</div></div>` : ''}
+      ${(m.attachments || []).length ? `<div class="sec"><h4>첨부</h4><div class="att">${m.attachments.map(esc).join(' · ')}</div></div>` : ''}
+      ${actionsHtml(m.actions)}
       <div class="sec hist">
-        ${it.url ? `<a href="${esc(it.url)}" target="_blank" rel="noopener">노션에서 열기 ↗</a> · ` : ''}판정 ${fmt(it.triaged_at)}
+        ${m.web_link ? `<a href="${esc(m.web_link)}" target="_blank" rel="noopener">Outlook에서 열기 ↗</a> · ` : ''}정리 ${fmt(m.triaged_at)}
+        ${(m.history || []).slice(-5).reverse().map((h) => `<div>${fmt(h.at)} ${esc(h.text)}</div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ---------- 첨부파일 리스트 ----------
+// 메일 첨부(서버 mails)와 이슈 본문이 '출처'로 인용한 문서(state.attachments)를 파일명으로 합쳐 보여 준다.
+const FILE_KIND = { ppt: 'PPT', xlsx: '엑셀', doc: '문서', pdf: 'PDF', zip: 'ZIP', other: '기타' };
+const fileKind = (n) => { const e = (String(n).match(/\.([a-z0-9]+)(?:\s|\(|$)/i) || [])[1]?.toLowerCase() || ''; return /^pptx?$/.test(e) ? 'ppt' : /^xlsx?$|^csv$/.test(e) ? 'xlsx' : /^docx?$|^hwp$/.test(e) ? 'doc' : e === 'pdf' ? 'pdf' : e === 'zip' ? 'zip' : 'other'; };
+// 탭 분류 — 서버에 직접 지정한 category 가 있으면 그것, 없으면 파일명 규칙 (위에서부터 먼저 맞는 것)
+const FILE_TABS = [['request', '요청사항'], ['plan', '기획검토'], ['summary', '내용정리'], ['etc', '기타']];
+const fileCategory = (n) =>
+  /요청사항|회의자료|기능\s*변경/.test(n) ? 'request'
+  : /설계|검토|기획|워크플로우|보고서|재검증/.test(n) ? 'plan'
+  : /정리|가이드|기준/.test(n) ? 'summary'
+  : 'etc';
+const fileKey = (n) => String(n).toLowerCase().replace(/\s*\((?:링크|구글드라이브 링크|인라인)\)\s*$/, '').replace(/\.[a-z0-9]+$/, '').replace(/\s+/g, '');
+
+function buildFiles() {
+  const map = new Map();
+  const get = (name) => {
+    const clean = String(name).replace(/\s*\((?:링크|구글드라이브 링크|인라인)\)\s*$/, '');
+    const k = fileKey(clean);
+    if (!map.has(k)) map.set(k, { key: k, name: clean, kind: fileKind(clean), category: fileCategory(clean), mails: [], refs: [], where: '', link: '', note: '', manual: false });
+    return map.get(k);
+  };
+  for (const m of liveMails()) {
+    for (const a of m.attachments || []) {
+      if (/\(인라인\)$/.test(a)) continue; // 본문 삽입 이미지는 제외
+      const f = get(a);
+      f.mails.push(m);
+      if (/\((?:링크|구글드라이브 링크)\)$/.test(a)) f.note = f.note || '메일 본문의 드라이브/링크 첨부';
+    }
+  }
+  for (const a of state.attachments || []) {
+    const f = get(a.name);
+    if (!f.name.includes('.') && a.name.includes('.')) f.name = a.name; // 확장자 있는 이름 우선
+    f.kind = a.kind && a.kind !== 'other' ? a.kind : f.kind;
+    f.refs.push(...(a.refs || []));
+    f.where = a.where || f.where; f.link = a.link || f.link; f.note = a.note || f.note; f.manual = true;
+    if (a.category) f.category = a.category;
+  }
+  return [...map.values()];
+}
+
+// 전달 일자 — 첨부한 메일 중 가장 최근 수신일, 메일이 없으면 파일명 날짜(261006·2026-10-14), 그것도 없으면 인용한 이슈의 가장 이른 등록일
+function fileDate(f) {
+  const mailAt = f.mails.map((m) => m.received_at || '').sort().pop();
+  if (mailAt) return mailAt;
+  const iso = f.name.match(/(20\d{2})[-.](\d{2})[-.](\d{2})/);
+  if (iso) return `${iso[1]}-${iso[2]}-${iso[3]}`;
+  const yymmdd = f.name.match(/(?:^|\D)(2\d)(0[1-9]|1[0-2])([0-3]\d)(?:\D|$)/);
+  if (yymmdd) return `20${yymmdd[1]}-${yymmdd[2]}-${yymmdd[3]}`;
+  return f.refs.map((r) => (findRef(r) || {}).created_at || '').filter(Boolean).sort()[0] || '';
+}
+
+function renderFiles() {
+  if (!FILE_TABS.some(([k]) => k === tab)) tab = 'request';
+  $('sync').textContent = '메일 동기화 ' + fmt(state.last_mail_sync);
+  $('note').textContent = '이슈가 출처로 인용한 문서와 메일 첨부를 파일명으로 합쳐 보여 줍니다. 원본 위치를 못 찾은 문서는 빨간 표시.';
+  const all = buildFiles();
+  $('tabs').innerHTML = FILE_TABS.map(([k, l]) =>
+    `<button class="tab ${tab === k ? 'on' : ''}" data-tab="${k}">${l}<span class="n">${all.filter((f) => f.category === k).length}</span></button>`).join('');
+  const missing = (f) => !f.mails.length && !f.link && !f.where;
+  const scoped = all.filter((f) => f.category === tab);
+  $('chips').innerHTML = `<button class="chip ${verdictFilter === null ? 'on' : ''}" data-v="*">전체<span class="n">${scoped.length}</span></button>` +
+    `<button class="chip ${verdictFilter === 'missing' ? 'on' : ''}" data-v="missing"><span style="color:var(--review)">●</span> 위치 미확인<span class="n">${scoped.filter(missing).length}</span></button>` +
+    Object.entries(FILE_KIND).map(([k, l]) => `<button class="chip ${verdictFilter === k ? 'on' : ''}" data-v="${k}">${l}<span class="n">${scoped.filter((f) => f.kind === k).length}</span></button>`).join('');
+  const rows = scoped.filter((f) => verdictFilter === null || (verdictFilter === 'missing' ? missing(f) : f.kind === verdictFilter))
+    .sort((a, b) => fileDate(b).localeCompare(fileDate(a)) || b.name.localeCompare(a.name));
+  const dedupe = (refs) => refs.filter((r, i) => refs.findIndex((x) => x.kind === r.kind && x.id === r.id) === i);
+  $('list').innerHTML = rows.length ? rows.map((f) => {
+    const miss = missing(f);
+    const refs = dedupe([...f.refs, ...f.mails.map((m) => ({ kind: 'mail', id: m.id }))]);
+    const at = fileDate(f);
+    const where = [
+      ...f.mails.map((m) => `✉ ${fmt(m.received_at)} 메일 첨부`),
+      f.where && esc(f.where),
+      f.link && `<a href="${esc(f.link)}" target="_blank" rel="noopener">원본 링크 ↗</a>`,
+      f.note && esc(f.note),
+    ].filter(Boolean);
+    return `<div class="file" style="--c:${miss ? 'var(--review)' : 'var(--line)'}">
+      <div class="fx">
+        <div class="fn"><span class="badge" style="--c:var(--accent)">${FILE_KIND[f.kind] || '기타'}</span> ${esc(f.name)}</div>
+        <div class="fw">${at ? `전달 ${esc(at.slice(0, 10))} · ` : ''}${miss ? '<span class="miss">원본 위치 미확인</span> · 트리아지 메일 첨부·드라이브 링크에서 찾지 못함' : where.join(' · ')}</div>
+        <div class="refs">${refs.map(refChip).join('')}</div>
+      </div>
+    </div>`;
+  }).join('') : '<div class="empty">첨부파일이 없습니다</div>';
+}
+
+// 대응 내용 정리 — report.py upload 로 올린 날짜별 docx. 미리보기는 preview.html 이 브라우저에서 바로 그린다
+const fileUrl = (name) => `files/${encodeURIComponent(name)}?pw=${encodeURIComponent(pw)}`;
+const kb = (n) => n > 1048576 ? (n / 1048576).toFixed(1) + 'MB' : Math.round(n / 1024) + 'KB';
+
+// 접기 상태 — 기본은 최신 문서만 펼침. 사용자가 접거나 펼친 것은 기억한다
+const folded = new Set(), unfolded = new Set();
+
+function renderReports(all) {
+  tab = 'all';
+  $('sync').textContent = '';
+  $('note').textContent = "날짜별 '{날짜} pms요구사항 해결 문의 내용 정리' 문서와 메일에 붙여넣을 제목·본문.";
+  $('tabs').innerHTML = '';
+  $('chips').innerHTML = '';
+  $('list').innerHTML = all.length ? all.map((f, i) => {
+    const m = f.mail;
+    const isOpen = folded.has(f.name) ? false : (unfolded.has(f.name) || i === 0);
+    return `<div class="file ${isOpen ? 'open' : ''}" style="--c:var(--accent)" data-report="${i}">
+      <div class="fx">
+        <div class="fn fold" data-report-fold>${esc(f.name)}</div>
+        <div class="fw">${esc([fmt(f.updated_at) + ' 업로드', kb(f.size), m && `[개발완료] ${m.done}건 · [문의] ${m.ask}건`].filter(Boolean).join(' · '))}</div>
+        ${m ? `<div class="rmail rbody">
+          <div class="act-h"><span>제목</span> <b>${esc(m.subject)}</b><button class="copy" data-report-copy="subject">제목 복사</button></div>
+          <div class="act-h"><span>메일 본문</span><button class="copy" data-report-copy="body">본문 복사</button></div>
+          <pre>${esc(m.body)}</pre>
+        </div>` : ''}
+      </div>
+      <div class="rbtns">
+        <a class="rbtn" href="preview.html?name=${encodeURIComponent(f.name)}" target="_blank" rel="noopener">미리보기</a>
+        <a class="rbtn" href="${fileUrl(f.name)}">다운로드</a>
+      </div>
+    </div>`;
+  }).join('') : '<div class="empty">아직 올린 정리 문서가 없습니다 (report.py upload)</div>';
+}
+
+function relatedMails(it) {
+  const ms = liveMails().filter((m) => it.no && ((m.issue_nos || []).includes(it.no) || (m.registered || []).includes(it.no)))
+    .sort((a, b) => String(b.received_at).localeCompare(String(a.received_at)));
+  return ms.length ? `<div class="sec"><h4>관련 메일</h4>${ms.map((m) => `
+    <div class="mail-link"><span class="s"><span class="mailno">메일#${esc(m.no)}</span>${esc(m.subject)}</span> <span class="att">${esc(m.from)} · ${fmt(m.received_at)}</span>
+      <div class="sum">${esc(m.summary)}</div></div>`).join('')}</div>` : '';
+}
+
+// 카드 오른쪽 위: 노션 우선순위 · 마감일 (마감 지남은 강조)
+function sideInfo(it) {
+  if (!it.notion_priority && !it.due) return '';
+  const due = it.due ? it.due.slice(0, 10) : '';
+  const over = due && it.stage === 'fix' && due < new Date().toLocaleDateString('sv-SE');
+  return `<div class="side">${it.notion_priority ? `<div class="p-${esc(it.notion_priority)}">${esc(it.notion_priority)}</div>` : ''}${due ? `<div class="${over ? 'over' : ''}">~${Number(due.slice(5, 7))}/${Number(due.slice(8, 10))}</div>` : ''}</div>`;
+}
+
+function card(it) {
+  const st = STAGE[it.stage || ''];
+  const tg = TARGET[it.target];
+  const legacy = !it.stage && it.verdict && VERDICT_OLD[it.verdict];
+  const cls = ['card', it.stage !== 'fix' && 'checked', open.has(it.id) && 'open'].filter(Boolean).join(' ');
+  return `<div class="${cls}" style="--c:${it.stage === 'fix' && tg ? tg.c : st.c}" data-id="${esc(it.id)}">
+    <div class="head" data-toggle>
+      <div class="ttl">
+        <div class="t">${it.no ? `<span class="no">#${esc(it.no)}</span>` : ''}${esc(it.title)}</div>
+        <div class="meta">
+          <span class="badge">${st.label}</span>
+          ${tg ? `<span class="badge" style="--c:${tg.c}">${tg.label}</span>` : ''}
+          ${legacy ? `<span>옛 판정: ${legacy}</span>` : ''}
+          ${it.priority === 'high' ? '<span class="pri-high">긴급</span>' : ''}
+          <span>${esc(it.author)} · ${fmt(it.created_at)}</span>
+          ${it.notion_status ? `<span>노션: ${esc(it.notion_status)}</span>` : ''}
+          ${it.notion_edited ? `<span>변경 ${fmt(it.notion_edited)}</span>` : ''}
+        </div>
+        <div class="sum">${esc(it.summary)}</div>
+      </div>
+      ${sideInfo(it)}
+    </div>
+    <div class="body">
+      ${it.analysis ? `<div class="sec"><h4>정리</h4><div class="ana">${esc(it.analysis)}</div></div>` : ''}
+      ${(it.evidence || []).length ? `<div class="sec"><h4>확인한 곳</h4><ul class="ev">${it.evidence.map((e) => `<li>${esc(e)}</li>`).join('')}</ul></div>` : ''}
+      ${relatedMails(it)}
+      ${actionsHtml(it.actions)}
+      <div class="sec hist">
+        ${it.url ? `<a href="${esc(it.url)}" target="_blank" rel="noopener">노션에서 열기 ↗</a> · ` : ''}정리 ${fmt(it.triaged_at)}
         ${(it.history || []).slice(-5).reverse().map((h) => `<div>${fmt(h.at)} ${esc(h.text)}</div>`).join('')}
       </div>
     </div>
@@ -219,23 +512,57 @@ function card(it) {
 }
 
 document.addEventListener('click', async (e) => {
-  const t = e.target.closest('[data-tab],[data-v],[data-check],[data-copy],[data-toggle]');
-  if (!t) return;
-  if (t.dataset.tab) { tab = t.dataset.tab; verdictFilter = ''; return render(); }
-  if (t.dataset.v !== undefined && t.classList.contains('chip')) { verdictFilter = t.dataset.v; return render(); }
-  const id = t.closest('.card')?.dataset.id;
-  const it = state.issues.find((x) => x.id === id);
-  if (!it) return;
-  if (t.dataset.check !== undefined) {
-    e.stopPropagation();
-    try {
-      const upd = await api(`api/issues/${encodeURIComponent(id)}/check`, { method: 'PUT', body: JSON.stringify({ checked: !it.checked }) });
-      Object.assign(it, upd);
-      render();
-      toast(upd.checked ? '확인 처리했습니다' : '다시 확인 대상으로 돌렸습니다');
-    } catch (err) { if (err.message !== '401') toast('실패: ' + err.message); }
+  const rc = e.target.closest('[data-report-copy]');
+  if (rc) {
+    const f = state.reports[+rc.closest('[data-report]').dataset.report];
+    await copyText(f.mail[rc.dataset.reportCopy]);
+    const label = rc.textContent;
+    rc.textContent = '복사됨'; rc.classList.add('done');
+    setTimeout(() => { rc.textContent = label; rc.classList.remove('done'); }, 1500);
     return;
   }
+  const rf = e.target.closest('[data-report-fold]');
+  if (rf) {
+    const el = rf.closest('[data-report]');
+    const name = state.reports[+el.dataset.report].name;
+    const nowOpen = !el.classList.contains('open');
+    el.classList.toggle('open', nowOpen);
+    (nowOpen ? unfolded : folded).add(name);
+    (nowOpen ? folded : unfolded).delete(name);
+    return;
+  }
+  const t = e.target.closest('[data-sort],[data-mode],[data-tab],[data-v],[data-ref],[data-copy],[data-toggle]');
+  if (!t) return;
+  if (t.dataset.sort) {
+    todoSort = t.dataset.sort;
+    try { localStorage.setItem('todoSort', todoSort); } catch {}
+    return render();
+  }
+  if (t.dataset.ref) {
+    // 첨부파일 리스트 → 출처 카드로 이동: 해당 탭으로 전환하고 카드를 펼쳐 스크롤
+    const id = t.dataset.refId;
+    const x = findRef({ kind: t.dataset.ref, id });
+    if (t.dataset.ref === 'mail') { mode = 'mails'; tab = x && x.archived ? 'history' : 'all'; }
+    else { mode = 'todos'; tab = x && x.stage === 'fix' ? 'fix' : 'history'; }
+    verdictFilter = null;
+    open.add(id);
+    render();
+    const el = [...document.querySelectorAll('.card')].find((c) => c.dataset.id === id);
+    if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('flash'); }
+    return;
+  }
+  if (t.dataset.mode) {
+    mode = t.dataset.mode; tab = ''; verdictFilter = null;
+    try { localStorage.setItem('mode', mode); } catch {}
+    return render();
+  }
+  if (t.dataset.tab) { tab = t.dataset.tab; verdictFilter = null; return render(); }
+  if (t.dataset.v !== undefined && t.classList.contains('chip')) { verdictFilter = t.dataset.v === '*' ? null : t.dataset.v; return render(); }
+  const cardEl = t.closest('.card');
+  const id = cardEl?.dataset.id;
+  const isMail = cardEl?.dataset.kind === 'mail';
+  const it = (isMail ? state.mails : state.issues).find((x) => x.id === id);
+  if (!it) return;
   if (t.dataset.copy !== undefined) {
     const text = it.actions[+t.dataset.copy].text;
     await copyText(text);

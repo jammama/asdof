@@ -75,6 +75,17 @@
     return n == null ? '' : n.toLocaleString('ko-KR') + '원';
   }
 
+  // 카카오 장소 매칭된 곳은 장소 페이지, 아니면 카카오맵 검색
+  function kakaoSearchUrl(r) {
+    return r.kakao_id ? 'https://place.map.kakao.com/' + r.kakao_id
+      : 'https://map.kakao.com/?q=' + encodeURIComponent(r.name);
+  }
+
+  function ratingHtml(r) {
+    if (r.kakao_rating == null) return '<span class="none">-</span>';
+    return '★' + r.kakao_rating.toFixed(1) + '<small>(' + r.kakao_rating_count + ')</small>';
+  }
+
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (ch) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
@@ -151,6 +162,18 @@
     });
     var k = state.sortKey, asc = state.sortAsc ? 1 : -1;
     list.sort(function (a, b) {
+      if (k === 'kakao_rating') {
+        var ar = a.kakao_rating, br = b.kakao_rating;
+        if (ar == null || br == null) { // 별점 없는 곳은 항상 맨 아래
+          if (ar != null) return -1;
+          if (br != null) return 1;
+        } else if (ar !== br) {
+          return (ar - br) * asc;
+        } else if (a.kakao_rating_count !== b.kakao_rating_count) {
+          return b.kakao_rating_count - a.kakao_rating_count; // 동점이면 리뷰 많은 순
+        }
+        return (a.name || '').localeCompare(b.name || '', 'ko');
+      }
       var av = a[k] || '', bv = b[k] || '';
       if (av === bv) return (a.name || '').localeCompare(b.name || '', 'ko');
       return av.localeCompare(bv, 'ko') * asc;
@@ -166,6 +189,7 @@
     var n = activeFilterCount();
     btn.textContent = n ? '필터 ' + n : '필터';
     btn.classList.toggle('on', n > 0);
+    writeUrl();
   }
 
   // 필터/검색 결과만 지도에 표시 (표시된곳만 보기와 무관하게 전체 결과 유지)
@@ -193,6 +217,7 @@
       return '<tr data-id="' + r.store_id + '"' +
         (r.store_id === state.activeId ? ' class="active"' : '') + '>' +
         '<td class="col-name">' + esc(r.name) + badge + menuHit + '</td>' +
+        '<td class="col-rating">' + ratingHtml(r) + '</td>' +
         '<td class="col-sido">' + esc(r.sido) + '</td>' +
         '<td class="col-gungu">' + esc(r.gungu) + '</td></tr>';
     }).join('');
@@ -255,8 +280,11 @@
     body.innerHTML =
       '<h2>' + esc(r.name) + '</h2>' +
       (r.name_en ? '<div class="en-name">' + esc(r.name_en) + '</div>' : '') +
+      (r.kakao_rating != null ? '<div class="rating">카카오맵 ★' + r.kakao_rating.toFixed(1) +
+        ' <small>(' + r.kakao_rating_count + '명)</small></div>' : '') +
       '<a class="naver-link" href="https://search.naver.com/search.naver?query=' +
       encodeURIComponent(r.name) + '" target="_blank" rel="noopener">N 네이버검색 ↗</a>' +
+      '<a class="kakao-link" href="' + kakaoSearchUrl(r) + '" target="_blank" rel="noopener">K 카카오검색 ↗</a>' +
       '<div class="meta">' +
       '<div><b>주소</b> ' + esc(r.address || '-') + '</div>' +
       (r.address_jibun ? '<div><b>지번</b> ' + esc(r.address_jibun) + '</div>' : '') +
@@ -289,6 +317,7 @@
     state.activeId = null;
     renderList();
     closeOverlay();
+    writeUrl();
   }
 
   function hideDetail() {
@@ -316,6 +345,7 @@
       openOverlay(r, pos);
     }
     showDetail(r);
+    writeUrl();
   }
 
   function openOverlay(r, pos) {
@@ -336,10 +366,12 @@
   }
 
   function initMap() {
+    var init = state.initMap || {};
     state.map = new kakao.maps.Map(document.getElementById('map'), {
-      center: new kakao.maps.LatLng(37.52, 126.97), // 서울 용산구 남쪽 한강
-      level: 9, // 시·군 단위 배율
+      center: new kakao.maps.LatLng(init.lat || 37.52, init.lng || 126.97), // 기본: 서울 용산구 남쪽 한강
+      level: init.level || 9, // 시·군 단위 배율
     });
+    kakao.maps.event.addListener(state.map, 'idle', writeUrl);
     state.map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.RIGHT);
     state.clusterer = new kakao.maps.MarkerClusterer({
       map: state.map, averageCenter: true, minLevel: 7, disableClickZoom: false,
@@ -364,19 +396,29 @@
     document.getElementById('bounds-btn').addEventListener('click', function () {
       if (state.boundsSet) {
         state.boundsSet = null; // 해제 → 전체 목록
+        state.boundsRect = null;
       } else {
-        var bounds = state.map.getBounds();
-        var set = {};
-        state.all.forEach(function (r) {
-          if (r.lat && r.lng && bounds.contain(new kakao.maps.LatLng(r.lat, r.lng))) {
-            set[r.store_id] = true;
-          }
-        });
-        state.boundsSet = set;
+        var b = state.map.getBounds(), sw = b.getSouthWest(), ne = b.getNorthEast();
+        setBoundsRect([sw.getLat(), sw.getLng(), ne.getLat(), ne.getLng()]);
       }
       this.classList.toggle('on', !!state.boundsSet);
       applyFilterSort();
     });
+    if (state.boundsRect) { // URL로 공유된 스냅샷 복원
+      setBoundsRect(state.boundsRect);
+      document.getElementById('bounds-btn').classList.add('on');
+    }
+  }
+
+  // [남서 lat, 남서 lng, 북동 lat, 북동 lng] 사각형 안의 매장을 스냅샷
+  function setBoundsRect(rect) {
+    state.boundsRect = rect;
+    var set = {};
+    state.all.forEach(function (r) {
+      if (r.lat && r.lng && r.lat >= rect[0] && r.lat <= rect[2] &&
+          r.lng >= rect[1] && r.lng <= rect[3]) set[r.store_id] = true;
+    });
+    state.boundsSet = set;
   }
 
   // 좌표 없는 매장은 카카오 지오코더로 보정
@@ -404,7 +446,7 @@
     var sidos = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; });
     var sidoWrap = document.getElementById('f-sido');
     sidoWrap.innerHTML = sidos.map(function (s) {
-      return '<button class="chip" data-sido="' + esc(s) + '">' + esc(s) +
+      return '<button class="chip' + (state.filters.sidos[s] ? ' on' : '') + '" data-sido="' + esc(s) + '">' + esc(s) +
         '<small>' + counts[s] + '</small></button>';
     }).join('');
 
@@ -414,7 +456,7 @@
     });
     var catWrap = document.getElementById('f-cat');
     catWrap.innerHTML = CATEGORIES.map(function (c) {
-      return '<button class="chip" data-cat="' + c + '">' + c +
+      return '<button class="chip' + (state.filters.cats[c] ? ' on' : '') + '" data-cat="' + c + '">' + c +
         '<small>' + (catCounts[c] || 0) + '</small></button>';
     }).join('');
 
@@ -447,7 +489,7 @@
     // 예약 시간 칩
     var hourWrap = document.getElementById('f-hours');
     hourWrap.innerHTML = HOUR_RANGE.map(function (hh) {
-      return '<button class="chip" data-hour="' + hh + '">' + hh + '시</button>';
+      return '<button class="chip' + (state.filters.hours[hh] ? ' on' : '') + '" data-hour="' + hh + '">' + hh + '시</button>';
     }).join('');
     hourWrap.addEventListener('click', function (e) {
       var chip = e.target.closest('.chip');
@@ -498,6 +540,10 @@
     }
     lo.addEventListener('input', onPrice);
     hi.addEventListener('input', onPrice);
+    lo.value = state.filters.priceLo;
+    hi.value = state.filters.priceHi;
+    document.getElementById('f-instant').checked = state.filters.instant;
+    renderDateChips();
     updatePriceLabel();
 
     document.getElementById('f-reset').addEventListener('click', function () {
@@ -544,7 +590,7 @@
       th.addEventListener('click', function () {
         var k = th.dataset.key;
         if (state.sortKey === k) state.sortAsc = !state.sortAsc;
-        else { state.sortKey = k; state.sortAsc = true; }
+        else { state.sortKey = k; state.sortAsc = k !== 'kakao_rating'; }
         updateSortArrows();
         applyFilterSort();
       });
@@ -567,9 +613,84 @@
       window.open('https://search.naver.com/search.naver?query=' +
         encodeURIComponent(state.selectedStore.name), '_blank');
     });
+    document.getElementById('mini-kakao-btn').addEventListener('click', function () {
+      if (!state.selectedStore) return;
+      window.open(kakaoSearchUrl(state.selectedStore), '_blank');
+    });
+    document.getElementById('share-btn').addEventListener('click', function () {
+      var btn = this;
+      writeUrlNow();
+      var done = function () {
+        btn.textContent = '복사됨 ✓';
+        btn.classList.add('done');
+        setTimeout(function () { btn.textContent = '링크 복사'; btn.classList.remove('done'); }, 1500);
+      };
+      if (navigator.clipboard) navigator.clipboard.writeText(location.href).then(done, function () { prompt('링크', location.href); });
+      else prompt('링크', location.href);
+    });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') { hideDetail(); closeOverlay(); }
     });
+  }
+
+  // ---------- URL 상태 (공유 링크) ----------
+  // ?q=검색어&sido=a,b&cat=a,b&date=YYYY-MM-DD,..&hour=12,13&price=lo-hi&instant=1
+  //  &sort=key.asc|desc&lat=..&lng=..&z=레벨&box=swLat,swLng,neLat,neLng&id=매장
+  function readUrl() {
+    var p = new URLSearchParams(location.search), f = state.filters;
+    function list(k) { return (p.get(k) || '').split(',').filter(Boolean); }
+    if (p.get('q')) document.getElementById('search').value = p.get('q');
+    f.instant = p.get('instant') === '1';
+    list('sido').forEach(function (x) { f.sidos[x] = true; });
+    list('cat').forEach(function (x) { if (CATEGORIES.indexOf(x) !== -1) f.cats[x] = true; });
+    f.dates = list('date').filter(function (x) { return /^\d{4}-\d{2}-\d{2}$/.test(x); }).sort();
+    list('hour').forEach(function (x) { if (HOUR_RANGE.indexOf(+x) !== -1) f.hours[+x] = true; });
+    var pr = (p.get('price') || '').split('-').map(Number);
+    if (pr.length === 2 && pr[0] >= 0 && pr[1] <= 11 && pr[0] < pr[1]) { f.priceLo = pr[0]; f.priceHi = pr[1]; }
+    var so = (p.get('sort') || '').split('.');
+    if (['name', 'kakao_rating', 'sido', 'gungu'].indexOf(so[0]) !== -1) {
+      state.sortKey = so[0];
+      state.sortAsc = so[1] !== 'desc';
+    }
+    var lat = +p.get('lat'), lng = +p.get('lng'), z = +p.get('z');
+    if (lat && lng) state.initMap = { lat: lat, lng: lng, level: z >= 1 && z <= 14 ? z : 9 };
+    var box = list('box').map(Number);
+    if (box.length === 4 && box.every(isFinite)) state.boundsRect = box;
+    if (p.get('id')) state.initId = p.get('id');
+  }
+
+  function buildQuery() {
+    var f = state.filters, p = [];
+    function add(k, v) { if (v !== '' && v != null) p.push(k + '=' + encodeURIComponent(v)); }
+    add('q', document.getElementById('search').value.trim());
+    if (f.instant) add('instant', '1');
+    add('sido', Object.keys(f.sidos).join(','));
+    add('cat', Object.keys(f.cats).join(','));
+    add('date', f.dates.join(','));
+    add('hour', Object.keys(f.hours).join(','));
+    if (f.priceLo > 0 || f.priceHi < 11) add('price', f.priceLo + '-' + f.priceHi);
+    if (state.sortKey !== 'name' || !state.sortAsc) add('sort', state.sortKey + '.' + (state.sortAsc ? 'asc' : 'desc'));
+    if (state.map) {
+      var c = state.map.getCenter();
+      add('lat', c.getLat().toFixed(5));
+      add('lng', c.getLng().toFixed(5));
+      add('z', state.map.getLevel());
+    }
+    if (state.boundsRect) add('box', state.boundsRect.map(function (x) { return x.toFixed(5); }).join(','));
+    if (state.activeId != null) add('id', state.activeId);
+    return p.length ? '?' + p.join('&').replace(/%2C/g, ',') : '';
+  }
+
+  var urlTimer = null;
+  function writeUrlNow() {
+    clearTimeout(urlTimer);
+    if (!state.ready) return;
+    var qs = buildQuery();
+    if (qs !== location.search) history.replaceState(null, '', location.pathname + qs);
+  }
+  function writeUrl() {
+    clearTimeout(urlTimer);
+    urlTimer = setTimeout(writeUrlNow, 300);
   }
 
   // ---------- 부트스트랩 ----------
@@ -582,6 +703,7 @@
         r.gungu = region.gungu;
       });
       state.all = data;
+      readUrl();
       kakao.maps.load(function () {
         geocodeMissing(function () {
           initMap();
@@ -589,6 +711,10 @@
           initFilters();
           updateSortArrows();
           applyFilterSort();
+          state.ready = true;
+          var r = state.initId && state.all.find(function (x) { return String(x.store_id) === state.initId; });
+          if (r) focusStore(r); // 공유된 선택 매장 (지도 이동 없이 오버레이+상세)
+          else writeUrlNow();
         });
       });
     })

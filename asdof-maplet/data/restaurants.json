@@ -139,7 +139,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2027-01-08",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "8203856",
+    "kakao_rating": 3.0,
+    "kakao_rating_count": 19
   },
   {
     "store_id": 10035,
@@ -269,7 +272,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "27079616",
+    "kakao_rating": 3.9,
+    "kakao_rating_count": 18
   },
   {
     "store_id": 10754,
@@ -422,7 +428,10 @@
       "2026-08-22",
       "2026-08-23",
       "2026-09-05"
-    ]
+    ],
+    "kakao_id": "7967166",
+    "kakao_rating": 4.0,
+    "kakao_rating_count": 134
   },
   {
     "store_id": 10755,
@@ -524,7 +533,10 @@
     ],
     "reserve_from": "2026-08-23",
     "reserve_to": "2026-10-20",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "13070102",
+    "kakao_rating": 3.6,
+    "kakao_rating_count": 33
   },
   {
     "store_id": 10757,
@@ -577,7 +589,10 @@
     ],
     "price_per_person": 172500,
     "price_tier": 10,
-    "reserve_error": "no business_time_arr"
+    "reserve_error": "no business_time_arr",
+    "kakao_id": "10693192",
+    "kakao_rating": 4.2,
+    "kakao_rating_count": 111
   },
   {
     "store_id": 10758,
@@ -713,7 +728,10 @@
     ],
     "reserve_from": "2026-08-23",
     "reserve_to": "2026-10-20",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "11891739",
+    "kakao_rating": 4.1,
+    "kakao_rating_count": 47
   },
   {
     "store_id": 191857,
@@ -999,7 +1017,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-10-10",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1946702152",
+    "kakao_rating": 4.9,
+    "kakao_rating_count": 10
   },
   {
     "store_id": 785790,
@@ -1101,7 +1122,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1708467336",
+    "kakao_rating": 4.5,
+    "kakao_rating_count": 2
   },
   {
     "store_id": 10083,
@@ -1202,7 +1226,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "2021864530",
+    "kakao_rating": 2.3,
+    "kakao_rating_count": 37
   },
   {
     "store_id": 1074707,
@@ -1454,7 +1481,8 @@
     ],
     "reserve_from": "2026-08-24",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "575588981"
   },
   {
     "store_id": 1116545,
@@ -1669,7 +1697,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "844190428",
+    "kakao_rating": 4.0,
+    "kakao_rating_count": 22
   },
   {
     "store_id": 1151335,
@@ -1892,7 +1923,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "831247871",
+    "kakao_rating": 4.5,
+    "kakao_rating_count": 22
   },
   {
     "store_id": 1631452,
@@ -2067,7 +2101,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1470494431",
+    "kakao_rating": 4.7,
+    "kakao_rating_count": 33
   },
   {
     "store_id": 1631459,
@@ -2398,7 +2435,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1828922256",
+    "kakao_rating": 4.2,
+    "kakao_rating_count": 18
   },
   {
     "store_id": 948576,
@@ -2770,7 +2810,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1787183319",
+    "kakao_rating": 2.9,
+    "kakao_rating_count": 19
   },
   {
     "store_id": 982139,
@@ -3183,7 +3226,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "373369422",
+    "kakao_rating": 4.5,
+    "kakao_rating_count": 89
   },
   {
     "store_id": 983406,
@@ -3454,7 +3500,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "345244627",
+    "kakao_rating": 4.4,
+    "kakao_rating_count": 9
   },
   {
     "store_id": 1008493,
@@ -3576,7 +3625,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "118421509",
+    "kakao_rating": 3.4,
+    "kakao_rating_count": 8
   },
   {
     "store_id": 1024222,
@@ -3682,7 +3734,10 @@
     ],
     "reserve_from": "2026-08-22",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1886031253",
+    "kakao_rating": 3.0,
+    "kakao_rating_count": 2
   },
   {
     "store_id": 1033244,
@@ -3895,7 +3950,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1788626849"
   },
   {
     "store_id": 1045796,
@@ -4303,7 +4359,8 @@
     ],
     "price_per_person": 29000,
     "price_tier": 2,
-    "reserve_error": "no token"
+    "reserve_error": "no token",
+    "kakao_id": "1196072767"
   },
   {
     "store_id": 948524,
@@ -4794,7 +4851,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "2095037992",
+    "kakao_rating": 1.8,
+    "kakao_rating_count": 11
   },
   {
     "store_id": 948528,
@@ -5134,7 +5194,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "2095037992",
+    "kakao_rating": 1.8,
+    "kakao_rating_count": 11
   },
   {
     "store_id": 948554,
@@ -5491,7 +5554,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1523296794",
+    "kakao_rating": 5.0,
+    "kakao_rating_count": 1
   },
   {
     "store_id": 948567,
@@ -5592,7 +5658,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1878703888",
+    "kakao_rating": 3.8,
+    "kakao_rating_count": 72
   },
   {
     "store_id": 948568,
@@ -5693,7 +5762,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "2055665927"
   },
   {
     "store_id": 948569,
@@ -5794,7 +5864,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "907004288",
+    "kakao_rating": 3.6,
+    "kakao_rating_count": 48
   },
   {
     "store_id": 948574,
@@ -6151,7 +6224,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "11159794",
+    "kakao_rating": 3.8,
+    "kakao_rating_count": 41
   },
   {
     "store_id": 839557,
@@ -6252,7 +6328,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1973786698"
   },
   {
     "store_id": 843773,
@@ -6584,7 +6661,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "854624020"
   },
   {
     "store_id": 943316,
@@ -6946,7 +7024,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1721004649"
   },
   {
     "store_id": 948205,
@@ -7265,7 +7344,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1915877707",
+    "kakao_rating": 3.0,
+    "kakao_rating_count": 44
   },
   {
     "store_id": 948206,
@@ -7576,7 +7658,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1969790364",
+    "kakao_rating": 4.3,
+    "kakao_rating_count": 155
   },
   {
     "store_id": 948223,
@@ -7683,7 +7768,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "708922307"
   },
   {
     "store_id": 948438,
@@ -7934,7 +8020,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "689529576"
   },
   {
     "store_id": 648864,
@@ -8296,7 +8383,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "27394073",
+    "kakao_rating": 4.5,
+    "kakao_rating_count": 4
   },
   {
     "store_id": 651590,
@@ -8452,7 +8542,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1542804326",
+    "kakao_rating": 3.7,
+    "kakao_rating_count": 34
   },
   {
     "store_id": 669562,
@@ -8828,7 +8921,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1396988339",
+    "kakao_rating": 3.4,
+    "kakao_rating_count": 42
   },
   {
     "store_id": 681709,
@@ -9050,7 +9146,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "16758171",
+    "kakao_rating": 5.0,
+    "kakao_rating_count": 1
   },
   {
     "store_id": 778086,
@@ -9233,7 +9332,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1386103900",
+    "kakao_rating": 4.6,
+    "kakao_rating_count": 170
   },
   {
     "store_id": 826579,
@@ -9325,7 +9427,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-09-20",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "303033932",
+    "kakao_rating": 4.8,
+    "kakao_rating_count": 40
   },
   {
     "store_id": 449939,
@@ -9506,7 +9611,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "109915016"
   },
   {
     "store_id": 452428,
@@ -9741,7 +9847,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "16523739",
+    "kakao_rating": 4.0,
+    "kakao_rating_count": 1
   },
   {
     "store_id": 460568,
@@ -9921,7 +10030,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "2123625868"
   },
   {
     "store_id": 477337,
@@ -10111,7 +10221,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "18454335",
+    "kakao_rating": 5.0,
+    "kakao_rating_count": 6
   },
   {
     "store_id": 481137,
@@ -10372,7 +10485,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "2027647458",
+    "kakao_rating": 4.4,
+    "kakao_rating_count": 9
   },
   {
     "store_id": 485276,
@@ -11148,7 +11264,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "158690662",
+    "kakao_rating": 4.5,
+    "kakao_rating_count": 2
   },
   {
     "store_id": 425120,
@@ -11306,7 +11425,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "9284780",
+    "kakao_rating": 4.1,
+    "kakao_rating_count": 20
   },
   {
     "store_id": 428986,
@@ -11401,7 +11523,10 @@
     ],
     "price_per_person": 40000,
     "price_tier": 4,
-    "reserve_error": "no token"
+    "reserve_error": "no token",
+    "kakao_id": "1865298537",
+    "kakao_rating": 5.0,
+    "kakao_rating_count": 2
   },
   {
     "store_id": 432055,
@@ -11518,7 +11643,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "2141257391",
+    "kakao_rating": 4.0,
+    "kakao_rating_count": 3
   },
   {
     "store_id": 433152,
@@ -11698,7 +11826,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "10783086",
+    "kakao_rating": 2.9,
+    "kakao_rating_count": 13
   },
   {
     "store_id": 434629,
@@ -11854,7 +11985,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "27364348",
+    "kakao_rating": 4.1,
+    "kakao_rating_count": 51
   },
   {
     "store_id": 440336,
@@ -12101,7 +12235,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "19696945",
+    "kakao_rating": 4.7,
+    "kakao_rating_count": 22
   },
   {
     "store_id": 446013,
@@ -12516,7 +12653,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "238959797",
+    "kakao_rating": 3.8,
+    "kakao_rating_count": 4
   },
   {
     "store_id": 446157,
@@ -12953,7 +13093,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "11608657",
+    "kakao_rating": 4.5,
+    "kakao_rating_count": 4
   },
   {
     "store_id": 218126,
@@ -13083,7 +13226,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "21239196",
+    "kakao_rating": 1.8,
+    "kakao_rating_count": 14
   },
   {
     "store_id": 227847,
@@ -13876,7 +14022,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "12333276",
+    "kakao_rating": 3.2,
+    "kakao_rating_count": 26
   },
   {
     "store_id": 228004,
@@ -14185,7 +14334,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "11665043",
+    "kakao_rating": 4.3,
+    "kakao_rating_count": 26
   },
   {
     "store_id": 230276,
@@ -14375,7 +14527,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "18169259",
+    "kakao_rating": 3.5,
+    "kakao_rating_count": 19
   },
   {
     "store_id": 238190,
@@ -14615,7 +14770,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "19926048",
+    "kakao_rating": 3.3,
+    "kakao_rating_count": 24
   },
   {
     "store_id": 269967,
@@ -14813,7 +14971,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "797145862"
   },
   {
     "store_id": 275605,
@@ -15103,7 +15262,10 @@
     ],
     "reserve_from": "2026-08-23",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1339836385",
+    "kakao_rating": 4.1,
+    "kakao_rating_count": 79
   },
   {
     "store_id": 275611,
@@ -15398,7 +15560,10 @@
     ],
     "reserve_from": "2026-08-22",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "13651861",
+    "kakao_rating": 4.3,
+    "kakao_rating_count": 111
   },
   {
     "store_id": 279217,
@@ -15679,7 +15844,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1251800528",
+    "kakao_rating": 3.5,
+    "kakao_rating_count": 50
   },
   {
     "store_id": 105890,
@@ -16588,7 +16756,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1945908872",
+    "kakao_rating": 3.5,
+    "kakao_rating_count": 4
   },
   {
     "store_id": 108103,
@@ -16848,7 +17019,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "515117023",
+    "kakao_rating": 5.0,
+    "kakao_rating_count": 1
   },
   {
     "store_id": 112288,
@@ -17048,7 +17222,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1859802579",
+    "kakao_rating": 3.2,
+    "kakao_rating_count": 17
   },
   {
     "store_id": 116107,
@@ -17276,7 +17453,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "21732408"
   },
   {
     "store_id": 121951,
@@ -17378,7 +17556,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "19410093",
+    "kakao_rating": 3.3,
+    "kakao_rating_count": 40
   },
   {
     "store_id": 122491,
@@ -17409,7 +17590,10 @@
     ],
     "price_per_person": 180000,
     "price_tier": 10,
-    "reserve_error": "no business_time_arr"
+    "reserve_error": "no business_time_arr",
+    "kakao_id": "745334070",
+    "kakao_rating": 4.0,
+    "kakao_rating_count": 14
   },
   {
     "store_id": 123400,
@@ -17525,7 +17709,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "27481670",
+    "kakao_rating": 4.1,
+    "kakao_rating_count": 55
   },
   {
     "store_id": 149070,
@@ -17833,7 +18020,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1858105800",
+    "kakao_rating": 4.5,
+    "kakao_rating_count": 43
   },
   {
     "store_id": 159451,
@@ -18117,7 +18307,8 @@
     ],
     "reserve_from": "2026-08-22",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1913957413"
   },
   {
     "store_id": 42521,
@@ -18450,7 +18641,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "349465355",
+    "kakao_rating": 4.0,
+    "kakao_rating_count": 23
   },
   {
     "store_id": 43699,
@@ -18704,7 +18898,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "7971093",
+    "kakao_rating": 3.1,
+    "kakao_rating_count": 35
   },
   {
     "store_id": 55675,
@@ -18962,7 +19159,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1498905127"
   },
   {
     "store_id": 81181,
@@ -19098,7 +19296,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "735076311",
+    "kakao_rating": 3.9,
+    "kakao_rating_count": 7
   },
   {
     "store_id": 90435,
@@ -19312,7 +19513,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "263830255"
   },
   {
     "store_id": 96518,
@@ -19521,7 +19723,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "26902582",
+    "kakao_rating": 4.3,
+    "kakao_rating_count": 8
   },
   {
     "store_id": 96829,
@@ -19622,7 +19827,8 @@
     ],
     "reserve_from": "2026-08-22",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1558316825"
   },
   {
     "store_id": 36247,
@@ -19883,7 +20089,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "12983867"
   },
   {
     "store_id": 37575,
@@ -20026,7 +20233,10 @@
     ],
     "reserve_from": "2026-08-22",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1588967326",
+    "kakao_rating": 4.4,
+    "kakao_rating_count": 10
   },
   {
     "store_id": 37594,
@@ -20379,7 +20589,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "27220746"
   },
   {
     "store_id": 38512,
@@ -20480,7 +20691,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "738941834",
+    "kakao_rating": 4.2,
+    "kakao_rating_count": 168
   },
   {
     "store_id": 40916,
@@ -20679,7 +20893,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1347118133",
+    "kakao_rating": 3.3,
+    "kakao_rating_count": 21
   },
   {
     "store_id": 41309,
@@ -21777,7 +21994,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "10504159",
+    "kakao_rating": 3.8,
+    "kakao_rating_count": 12
   },
   {
     "store_id": 28750,
@@ -21936,7 +22156,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "16909764"
   },
   {
     "store_id": 28896,
@@ -22069,7 +22290,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "780619257",
+    "kakao_rating": 2.9,
+    "kakao_rating_count": 10
   },
   {
     "store_id": 29330,
@@ -22344,7 +22568,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1859669349"
   },
   {
     "store_id": 29570,
@@ -22510,7 +22735,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "13018792",
+    "kakao_rating": 4.6,
+    "kakao_rating_count": 9
   },
   {
     "store_id": 35384,
@@ -22986,7 +23214,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "298958684",
+    "kakao_rating": 4.1,
+    "kakao_rating_count": 18
   },
   {
     "store_id": 35474,
@@ -23153,7 +23384,8 @@
     ],
     "price_per_person": 3800,
     "price_tier": 0,
-    "reserve_error": "no token"
+    "reserve_error": "no token",
+    "kakao_id": "2114812216"
   },
   {
     "store_id": 35505,
@@ -23342,7 +23574,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "848595044",
+    "kakao_rating": 3.6,
+    "kakao_rating_count": 12
   },
   {
     "store_id": 22152,
@@ -23613,7 +23848,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "27074696",
+    "kakao_rating": 2.3,
+    "kakao_rating_count": 16
   },
   {
     "store_id": 25417,
@@ -23834,7 +24072,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "888218034",
+    "kakao_rating": 2.0,
+    "kakao_rating_count": 1
   },
   {
     "store_id": 25419,
@@ -24219,7 +24460,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "149883826",
+    "kakao_rating": 4.3,
+    "kakao_rating_count": 41
   },
   {
     "store_id": 25520,
@@ -24761,7 +25005,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1578643703",
+    "kakao_rating": 3.2,
+    "kakao_rating_count": 37
   },
   {
     "store_id": 25534,
@@ -24987,7 +25234,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "930434858",
+    "kakao_rating": 4.3,
+    "kakao_rating_count": 3
   },
   {
     "store_id": 28250,
@@ -25579,7 +25829,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "208104192",
+    "kakao_rating": 4.4,
+    "kakao_rating_count": 5
   },
   {
     "store_id": 28592,
@@ -25779,7 +26032,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "390268867",
+    "kakao_rating": 5.0,
+    "kakao_rating_count": 3
   },
   {
     "store_id": 14417,
@@ -26268,7 +26524,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "743419516",
+    "kakao_rating": 2.9,
+    "kakao_rating_count": 17
   },
   {
     "store_id": 15004,
@@ -26450,7 +26709,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-09-20",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "15232887",
+    "kakao_rating": 4.4,
+    "kakao_rating_count": 78
   },
   {
     "store_id": 18697,
@@ -26980,7 +27242,10 @@
     ],
     "reserve_from": "2026-08-23",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "10987258",
+    "kakao_rating": 3.8,
+    "kakao_rating_count": 129
   },
   {
     "store_id": 18708,
@@ -27189,7 +27454,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "12928896",
+    "kakao_rating": 3.8,
+    "kakao_rating_count": 33
   },
   {
     "store_id": 19271,
@@ -28086,7 +28354,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "14508440",
+    "kakao_rating": 3.8,
+    "kakao_rating_count": 17
   },
   {
     "store_id": 21995,
@@ -28228,7 +28499,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "16215467",
+    "kakao_rating": 4.0,
+    "kakao_rating_count": 8
   },
   {
     "store_id": 22010,
@@ -28532,7 +28806,10 @@
     ],
     "reserve_from": "2026-08-22",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "7921205",
+    "kakao_rating": 4.2,
+    "kakao_rating_count": 154
   },
   {
     "store_id": 10091,
@@ -28975,7 +29252,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1675177044",
+    "kakao_rating": 3.9,
+    "kakao_rating_count": 11
   },
   {
     "store_id": 10495,
@@ -29212,7 +29492,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2027-02-17",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "70526348",
+    "kakao_rating": 3.6,
+    "kakao_rating_count": 16
   },
   {
     "store_id": 10750,
@@ -29378,7 +29661,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "845396488",
+    "kakao_rating": 3.8,
+    "kakao_rating_count": 41
   },
   {
     "store_id": 10760,
@@ -29511,7 +29797,10 @@
     ],
     "reserve_from": "2026-08-22",
     "reserve_to": "2027-01-08",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "212784573",
+    "kakao_rating": 4.4,
+    "kakao_rating_count": 17
   },
   {
     "store_id": 10991,
@@ -29535,7 +29824,10 @@
     ],
     "price_per_person": null,
     "price_tier": null,
-    "reserve_error": "no business_time_arr"
+    "reserve_error": "no business_time_arr",
+    "kakao_id": "1839119474",
+    "kakao_rating": 1.7,
+    "kakao_rating_count": 6
   },
   {
     "store_id": 11431,
@@ -29674,7 +29966,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2027-03-09",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1218426174",
+    "kakao_rating": 3.4,
+    "kakao_rating_count": 9
   },
   {
     "store_id": 12546,
@@ -29775,7 +30070,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "513398024",
+    "kakao_rating": 4.0,
+    "kakao_rating_count": 61
   },
   {
     "store_id": 13037,
@@ -30152,7 +30450,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "27297135",
+    "kakao_rating": 3.7,
+    "kakao_rating_count": 13
   },
   {
     "store_id": 10044,
@@ -30649,7 +30950,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1743157322",
+    "kakao_rating": 3.8,
+    "kakao_rating_count": 35
   },
   {
     "store_id": 10054,
@@ -30855,7 +31159,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "13033876",
+    "kakao_rating": 3.4,
+    "kakao_rating_count": 35
   },
   {
     "store_id": 10058,
@@ -31053,7 +31360,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "54601611",
+    "kakao_rating": 5.0,
+    "kakao_rating_count": 2
   },
   {
     "store_id": 10061,
@@ -31211,7 +31521,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "23436155",
+    "kakao_rating": 4.0,
+    "kakao_rating_count": 27
   },
   {
     "store_id": 10070,
@@ -31410,7 +31723,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "23966194",
+    "kakao_rating": 2.1,
+    "kakao_rating_count": 15
   },
   {
     "store_id": 10071,
@@ -31586,7 +31902,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "27228581",
+    "kakao_rating": 3.2,
+    "kakao_rating_count": 57
   },
   {
     "store_id": 10081,
@@ -31769,7 +32088,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "289339549",
+    "kakao_rating": 3.9,
+    "kakao_rating_count": 15
   },
   {
     "store_id": 10086,
@@ -32205,7 +32527,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2027-01-08",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "26845535",
+    "kakao_rating": 4.7,
+    "kakao_rating_count": 445
   },
   {
     "store_id": 10014,
@@ -32378,7 +32703,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "621571654",
+    "kakao_rating": 3.3,
+    "kakao_rating_count": 10
   },
   {
     "store_id": 10016,
@@ -32592,7 +32920,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "10339078",
+    "kakao_rating": 4.2,
+    "kakao_rating_count": 12
   },
   {
     "store_id": 10018,
@@ -32714,7 +33045,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "12442416",
+    "kakao_rating": 3.6,
+    "kakao_rating_count": 22
   },
   {
     "store_id": 10022,
@@ -32842,7 +33176,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2027-01-08",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "32081946"
   },
   {
     "store_id": 10029,
@@ -33096,7 +33431,10 @@
     ],
     "reserve_from": "2026-08-22",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "8541672",
+    "kakao_rating": 3.8,
+    "kakao_rating_count": 25
   },
   {
     "store_id": 10034,
@@ -33397,7 +33735,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1491327179"
   },
   {
     "store_id": 10041,
@@ -33877,7 +34216,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1868305338"
   },
   {
     "store_id": 131769,
@@ -34496,7 +34836,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-09-04",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "17477761",
+    "kakao_rating": 4.6,
+    "kakao_rating_count": 13
   },
   {
     "store_id": 132772,
@@ -34630,7 +34973,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-09-04",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "18551552",
+    "kakao_rating": 4.5,
+    "kakao_rating_count": 16
   },
   {
     "store_id": 147089,
@@ -34865,7 +35211,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-09-04",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1735637021",
+    "kakao_rating": 3.8,
+    "kakao_rating_count": 6
   },
   {
     "store_id": 432041,
@@ -35253,7 +35602,10 @@
     ],
     "reserve_from": "2026-08-23",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "27551810",
+    "kakao_rating": 3.5,
+    "kakao_rating_count": 14
   },
   {
     "store_id": 489592,
@@ -35624,7 +35976,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-09-04",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1060912481",
+    "kakao_rating": 3.9,
+    "kakao_rating_count": 14
   },
   {
     "store_id": 1634916,
@@ -35724,7 +36079,10 @@
     ],
     "reserve_from": "2026-08-22",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "177483370",
+    "kakao_rating": 4.9,
+    "kakao_rating_count": 20
   },
   {
     "store_id": 10447,
@@ -35817,7 +36175,10 @@
     ],
     "reserve_from": "2026-08-24",
     "reserve_to": "2027-02-17",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1665802400",
+    "kakao_rating": 3.8,
+    "kakao_rating_count": 4
   },
   {
     "store_id": 10543,
@@ -35927,7 +36288,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2027-02-17",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "2147234391",
+    "kakao_rating": 4.7,
+    "kakao_rating_count": 6
   },
   {
     "store_id": 10648,
@@ -36118,7 +36482,10 @@
     ],
     "reserve_from": "2026-08-23",
     "reserve_to": "2027-02-17",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "7886168",
+    "kakao_rating": 4.1,
+    "kakao_rating_count": 28
   },
   {
     "store_id": 11246,
@@ -36494,7 +36861,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1723422024",
+    "kakao_rating": 3.6,
+    "kakao_rating_count": 14
   },
   {
     "store_id": 11249,
@@ -36957,7 +37327,10 @@
     ],
     "reserve_from": "2026-08-23",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "12591851",
+    "kakao_rating": 3.2,
+    "kakao_rating_count": 22
   },
   {
     "store_id": 11398,
@@ -37111,7 +37484,10 @@
     ],
     "reserve_from": "2026-08-23",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "12628272",
+    "kakao_rating": 2.2,
+    "kakao_rating_count": 52
   },
   {
     "store_id": 11462,
@@ -37317,7 +37693,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-09-04",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "16786024",
+    "kakao_rating": 4.0,
+    "kakao_rating_count": 61
   },
   {
     "store_id": 19249,
@@ -37395,7 +37774,10 @@
     ],
     "price_per_person": 6000,
     "price_tier": 0,
-    "reserve_error": "no token"
+    "reserve_error": "no token",
+    "kakao_id": "11742469",
+    "kakao_rating": 4.8,
+    "kakao_rating_count": 29
   },
   {
     "store_id": 28599,
@@ -37554,7 +37936,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "10432160",
+    "kakao_rating": 3.3,
+    "kakao_rating_count": 31
   },
   {
     "store_id": 28736,
@@ -37726,7 +38111,10 @@
     ],
     "reserve_from": "2026-08-25",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "679623134",
+    "kakao_rating": 4.0,
+    "kakao_rating_count": 33
   },
   {
     "store_id": 43947,
@@ -37836,7 +38224,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1561884629"
   },
   {
     "store_id": 112956,
@@ -38160,7 +38549,10 @@
     ],
     "reserve_from": "2026-08-24",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1413345315",
+    "kakao_rating": 3.3,
+    "kakao_rating_count": 14
   },
   {
     "store_id": 119496,
@@ -38424,7 +38816,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1594126161",
+    "kakao_rating": 4.9,
+    "kakao_rating_count": 204
   },
   {
     "store_id": 125002,
@@ -38622,7 +39017,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "772858218"
   },
   {
     "store_id": 135849,
@@ -38901,7 +39297,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "382450356",
+    "kakao_rating": 3.9,
+    "kakao_rating_count": 30
   },
   {
     "store_id": 250698,
@@ -39167,7 +39566,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "24256012",
+    "kakao_rating": 4.5,
+    "kakao_rating_count": 104
   },
   {
     "store_id": 277831,
@@ -39304,7 +39706,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1512817381"
   },
   {
     "store_id": 1634910,
@@ -39463,7 +39866,10 @@
       "2026-08-23",
       "2026-08-26",
       "2026-08-29"
-    ]
+    ],
+    "kakao_id": "1142260220",
+    "kakao_rating": 3.9,
+    "kakao_rating_count": 40
   },
   {
     "store_id": 105765,
@@ -39588,7 +39994,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1927888661",
+    "kakao_rating": 3.6,
+    "kakao_rating_count": 71
   },
   {
     "store_id": 1634950,
@@ -39867,7 +40276,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "862759478"
   },
   {
     "store_id": 1634961,
@@ -40028,7 +40438,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "383000672"
   },
   {
     "store_id": 1634970,
@@ -40308,7 +40719,10 @@
     ],
     "reserve_from": "2026-08-22",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1446523106",
+    "kakao_rating": 4.0,
+    "kakao_rating_count": 41
   },
   {
     "store_id": 1636316,
@@ -40613,7 +41027,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1317468248",
+    "kakao_rating": 4.8,
+    "kakao_rating_count": 8
   },
   {
     "store_id": 1636395,
@@ -40764,7 +41181,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1756114418",
+    "kakao_rating": 3.6,
+    "kakao_rating_count": 9
   },
   {
     "store_id": 1636396,
@@ -41112,7 +41532,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1296460989",
+    "kakao_rating": 4.4,
+    "kakao_rating_count": 7
   },
   {
     "store_id": 1636402,
@@ -41508,7 +41931,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1001750923"
   },
   {
     "store_id": 1634877,
@@ -41772,7 +42196,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-09-20",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1945045493",
+    "kakao_rating": 4.2,
+    "kakao_rating_count": 289
   },
   {
     "store_id": 1634880,
@@ -41894,7 +42321,10 @@
     ],
     "reserve_from": "2026-08-22",
     "reserve_to": "2026-09-20",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1698962620",
+    "kakao_rating": 4.7,
+    "kakao_rating_count": 24
   },
   {
     "store_id": 1634881,
@@ -41995,7 +42425,10 @@
     ],
     "reserve_from": "2026-08-24",
     "reserve_to": "2026-09-20",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "441673113",
+    "kakao_rating": 3.2,
+    "kakao_rating_count": 109
   },
   {
     "store_id": 1634883,
@@ -42130,7 +42563,10 @@
     ],
     "reserve_from": "2026-08-24",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1286799139",
+    "kakao_rating": 3.8,
+    "kakao_rating_count": 30
   },
   {
     "store_id": 1634886,
@@ -42560,7 +42996,10 @@
     ],
     "reserve_from": "2026-08-22",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1163337009",
+    "kakao_rating": 3.1,
+    "kakao_rating_count": 17
   },
   {
     "store_id": 1634911,
@@ -42661,7 +43100,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1481302218",
+    "kakao_rating": 4.3,
+    "kakao_rating_count": 6
   },
   {
     "store_id": 1634915,
@@ -42927,7 +43369,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1342682309"
   },
   {
     "store_id": 1634927,
@@ -43133,7 +43576,10 @@
     ],
     "price_per_person": 32000,
     "price_tier": 3,
-    "reserve_error": "no business_time_arr"
+    "reserve_error": "no business_time_arr",
+    "kakao_id": "1777851994",
+    "kakao_rating": 4.9,
+    "kakao_rating_count": 8
   },
   {
     "store_id": 1634928,
@@ -43556,7 +44002,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1683656871",
+    "kakao_rating": 4.0,
+    "kakao_rating_count": 28
   },
   {
     "store_id": 1132417,
@@ -43881,7 +44330,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "96389880",
+    "kakao_rating": 3.7,
+    "kakao_rating_count": 6
   },
   {
     "store_id": 1179713,
@@ -44186,7 +44638,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1465970259",
+    "kakao_rating": 4.9,
+    "kakao_rating_count": 1881
   },
   {
     "store_id": 1631457,
@@ -44455,7 +44910,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1824773243",
+    "kakao_rating": 4.8,
+    "kakao_rating_count": 69
   },
   {
     "store_id": 1634761,
@@ -44718,7 +45176,10 @@
     ],
     "reserve_from": "2026-08-24",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1817216361",
+    "kakao_rating": 4.8,
+    "kakao_rating_count": 220
   },
   {
     "store_id": 1634764,
@@ -44900,7 +45361,10 @@
     ],
     "reserve_from": "2026-08-24",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1748613204",
+    "kakao_rating": 4.0,
+    "kakao_rating_count": 57
   },
   {
     "store_id": 1634775,
@@ -45130,7 +45594,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "2081878632",
+    "kakao_rating": 3.8,
+    "kakao_rating_count": 6
   },
   {
     "store_id": 1634858,
@@ -45580,7 +46047,10 @@
     ],
     "reserve_from": "2026-08-22",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "339410625",
+    "kakao_rating": 4.8,
+    "kakao_rating_count": 5
   },
   {
     "store_id": 1634871,
@@ -45852,7 +46322,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "27609485",
+    "kakao_rating": 2.7,
+    "kakao_rating_count": 31
   },
   {
     "store_id": 266427,
@@ -45960,7 +46433,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "504156750",
+    "kakao_rating": 4.7,
+    "kakao_rating_count": 10
   },
   {
     "store_id": 274143,
@@ -46135,7 +46611,8 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "26895370"
   },
   {
     "store_id": 281372,
@@ -46296,7 +46773,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "1261877281",
+    "kakao_rating": 4.5,
+    "kakao_rating_count": 174
   },
   {
     "store_id": 822282,
@@ -46959,7 +47439,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1785863665",
+    "kakao_rating": 4.5,
+    "kakao_rating_count": 11
   },
   {
     "store_id": 1011843,
@@ -47554,7 +48037,10 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "408087280",
+    "kakao_rating": 3.2,
+    "kakao_rating_count": 17
   },
   {
     "store_id": 1037221,
@@ -47771,7 +48257,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "59004414",
+    "kakao_rating": 5.0,
+    "kakao_rating_count": 89
   },
   {
     "store_id": 1065766,
@@ -47878,7 +48367,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1954144938"
   },
   {
     "store_id": 1125553,
@@ -47979,7 +48469,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1326913951",
+    "kakao_rating": 4.6,
+    "kakao_rating_count": 100
   },
   {
     "store_id": 35609,
@@ -48135,7 +48628,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "13288599",
+    "kakao_rating": 4.4,
+    "kakao_rating_count": 73
   },
   {
     "store_id": 87016,
@@ -48235,7 +48731,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1258213960",
+    "kakao_rating": 5.0,
+    "kakao_rating_count": 3
   },
   {
     "store_id": 113717,
@@ -48542,7 +49041,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "1195027127",
+    "kakao_rating": 4.1,
+    "kakao_rating_count": 43
   },
   {
     "store_id": 117159,
@@ -48777,7 +49279,10 @@
     ],
     "reserve_from": "2026-08-22",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "26796197",
+    "kakao_rating": 4.3,
+    "kakao_rating_count": 20
   },
   {
     "store_id": 150833,
@@ -49147,7 +49652,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "18283622",
+    "kakao_rating": 3.9,
+    "kakao_rating_count": 57
   },
   {
     "store_id": 151733,
@@ -49834,7 +50342,8 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "26495412"
   },
   {
     "store_id": 152977,
@@ -50521,7 +51030,10 @@
     ],
     "reserve_from": "2026-08-21",
     "reserve_to": "2026-12-19",
-    "holidays": []
+    "holidays": [],
+    "kakao_id": "595583277",
+    "kakao_rating": 5.0,
+    "kakao_rating_count": 3
   },
   {
     "store_id": 170717,
@@ -51098,6 +51610,9 @@
       "2026-10-05",
       "2026-10-09",
       "2026-12-25"
-    ]
+    ],
+    "kakao_id": "2016366503",
+    "kakao_rating": 3.6,
+    "kakao_rating_count": 26
   }
 ]

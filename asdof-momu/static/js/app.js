@@ -19,8 +19,8 @@
     { key: 'count', label: '방문 많은 순' },
     { key: 'rating', label: '평점' }
   ];
-  // 회사 = 팁스타운 S5 (서울 강남구 역삼로 177). 거리 기준점의 기본값이자 첫 지도 중심.
-  var OFFICE = { lat: 37.4958317756805, lng: 127.038470950073, label: '회사(팁스타운 S5)' };
+  // 회사 = 팁스타운 S6 · 포스코체인지업그라운드 서울 (서울 강남구 역삼로 168). 거리 기준점의 기본값이자 첫 지도 중심.
+  var OFFICE = { lat: 37.4949905309364, lng: 127.03755229222, label: '회사(팁스타운 S6)' };
   var DEFAULT_CENTER = OFFICE;
   // '최근 N일 안에 간 곳은 후보에서 뺀다' — 같은 집 연달아 가는 걸 막는 게 핵심
   var REC_DAYS = [
@@ -46,7 +46,7 @@
     all: [],            // 등록된 식당 전체
     view: [],           // 필터/정렬 적용 결과 (등록식당 탭)
     log: [],            // 검색어에 맞는 방문 기록 { r, v } — 최신순 (내 기록 탭)
-    tab: 'log',         // 'log' | 'mine' | 'kakao'
+    tab: 'mine',        // 'mine' | 'kakao' | 'log'
     fm: null,           // 열려 있는 기능 모달 'rec' | 'gov' | null
     activeId: null,
     kakaoResults: [],
@@ -478,8 +478,13 @@
       li.appendChild(day);
 
       var main = el('div', 'item-main');
-      main.appendChild(el('div', 'item-name',
-        esc(r.name) + '<span class="cat-tag">' + esc(r.category || '기타') + '</span>'));
+      var nm = el('div', 'item-name',
+        esc(r.name) + '<span class="cat-tag">' + esc(r.category || '기타') + '</span>');
+      var ed = el('button', 'mini-btn', '수정');
+      ed.title = '이 방문 기록 수정';
+      ed.onclick = function (ev) { ev.stopPropagation(); openVisitForm(r, v); };
+      nm.appendChild(ed);
+      main.appendChild(nm);
       if ((v.menus || []).length) {
         var vm = el('div', 'visit-menus');
         v.menus.forEach(function (m) { vm.appendChild(el('span', 'menu-tag', esc(m))); });
@@ -514,10 +519,20 @@
       var already = S.all.some(function (r) { return r.kakao_id === p.id; });
       var li = el('li', 'item');
       var main = el('div', 'item-main');
-      main.appendChild(el('div', 'item-name',
+      var nm = el('div', 'item-name',
         esc(p.place_name) +
         (p.category_group_name ? '<span class="cat-tag">' + esc(p.category_group_name) + '</span>' : '') +
-        (already ? '<span class="badge-new">등록됨</span>' : '')));
+        (already ? '<span class="badge-new">등록됨</span>' : ''));
+      // 카카오맵 장소 페이지(사진·리뷰·메뉴)로 바로 — 새 탭
+      if (p.place_url) {
+        var kv = el('a', 'mini-btn', '카카오에서 보기');
+        kv.href = p.place_url;
+        kv.target = '_blank';
+        kv.rel = 'noopener';
+        kv.onclick = function (e) { e.stopPropagation(); };
+        nm.appendChild(kv);
+      }
+      main.appendChild(nm);
       main.appendChild(el('div', 'item-sub', esc(p.road_address_name || p.address_name || '')));
       main.appendChild(el('div', 'item-sub', esc(p.category_name || '')));
       li.appendChild(main);
@@ -830,6 +845,7 @@
   }
 
   // 자치구별 데이터 파일. 구마다 기준점(origin)과 기간이 다르며 JSON 안에 들어 있다.
+  var GOV_DATA_V = 2;   // 데이터 파일을 고치면 올린다 (브라우저 캐시 무효화) — 2: 회사 이전(S5→S6)으로 거리 재계산
   var GOV_DISTRICTS = [
     { key: 'gangnam-all', label: '강남구 (전 부서)', file: 'ga-spending.json' },
     { key: 'gangnam', label: '강남구 (역삼1·2동)', file: 'gn-spending.json' },
@@ -871,7 +887,7 @@
     if (S.gov.cache[key]) { after(S.gov.cache[key]); return; }
     $('#gov-note').innerHTML = '<div class="empty">' + esc(meta.label) + ' 불러오는 중…</div>';
     $('#gov-list').innerHTML = '';
-    fetch('data/' + meta.file).then(function (r) {
+    fetch('data/' + meta.file + '?v=' + GOV_DATA_V).then(function (r) {
       if (!r.ok) throw new Error('데이터를 불러오지 못했습니다 (' + r.status + ')');
       return r.json();
     }).then(function (d) {
@@ -1094,6 +1110,13 @@
     });
     S.map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.RIGHT);
     S.clusterer = new kakao.maps.MarkerClusterer({ map: S.map, averageCenter: true, minLevel: 7 });
+
+    // 회사 위치 — 식당 마커와 헷갈리지 않게 핀이 아닌 둥근 아이콘. 탭을 바꿔도 지우지 않는다.
+    new kakao.maps.CustomOverlay({
+      position: new kakao.maps.LatLng(OFFICE.lat, OFFICE.lng),
+      content: '<div class="office-pin" title="' + esc(OFFICE.label) + '"><span>🏢</span><b>회사</b></div>',
+      xAnchor: 0.5, yAnchor: 0.5, zIndex: 3, clickable: false
+    }).setMap(S.map);
 
     kakao.maps.event.addListener(S.map, 'click', closeOverlay);
     // 지도를 움직이면 거리(기준점=지도 중심)와 '보이는 곳만' 필터를 다시 계산
@@ -1360,13 +1383,7 @@
         if (existing) {
           var del = el('button', 'danger', '삭제');
           del.style.marginRight = 'auto';
-          del.onclick = function () {
-            if (!confirm('“' + r.name + '” 과 방문 기록 ' + (r.visits || []).length + '건을 모두 삭제합니다.')) return;
-            api('DELETE', '/api/restaurants/' + r.id).then(function () {
-              close(); closeDetail(); toast('삭제했습니다.');
-              return load();
-            }).catch(function (e) { toast(e.message, true); });
-          };
+          del.onclick = function () { deleteRestaurant(r, close); };
           btns.appendChild(del);
         }
         var cancel = el('button', 'ghost', '취소');
@@ -1413,6 +1430,21 @@
     }).catch(function () { /* 인증 취소 */ });
   }
 
+  // 식당 삭제 — 방문 기록·메뉴 별점까지 함께 지워지므로 건수를 보여 주고 한 번 더 묻는다
+  function deleteRestaurant(r, after) {
+    var nv = (r.visits || []).length;
+    if (!confirm('“' + r.name + '” 을(를) 삭제합니다.' +
+      (nv ? '\n방문 기록 ' + nv + '건도 함께 지워지며 되돌릴 수 없습니다.' : '\n되돌릴 수 없습니다.'))) return;
+    requirePw().then(function () {
+      return api('DELETE', '/api/restaurants/' + r.id);
+    }).then(function () {
+      if (after) after();
+      closeDetail();
+      toast('“' + r.name + '” 을(를) 삭제했습니다.');
+      return load();
+    }).catch(function (e) { if (e.message !== '취소') toast(e.message, true); });
+  }
+
   // 카카오 카테고리 문자열("음식점 > 한식 > 국밥")에서 우리 카테고리 추정
   function guessCategory(place) {
     var c = (place.category_name || '') + ' ' + (place.place_name || '');
@@ -1448,7 +1480,7 @@
       var menuVal = existing ? (v.menus || []).join(', ') : defMenu;
       var priceVal = existing ? (v.price || '') : 10000;
 
-      openModal(existing ? '방문 기록 수정' : r.name + ' — 뭐 먹었지?', function (body, close) {
+      openModal(existing ? r.name + ' — 방문 기록 수정' : r.name + ' — 뭐 먹었지?', function (body, close) {
         var rating = v.rating || 0;
         body.appendChild(el('div', null,
           '<div class="field field-2">' +
@@ -1842,6 +1874,13 @@
       if (note.length) card.appendChild(el('div', 'visit-note', note.join('\n')));
       box.appendChild(card);
     });
+
+    // 맨 아래 — 실수로 누르지 않게 작고 눈에 덜 띄게
+    var foot = el('div', 'd-foot');
+    var del = el('button', 'mini-btn danger-s', '식당 삭제');
+    del.onclick = function () { deleteRestaurant(r); };
+    foot.appendChild(del);
+    box.appendChild(foot);
 
     $('#detail').className = '';
   }

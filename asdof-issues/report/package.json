@@ -1,0 +1,6 @@
+{
+  "name": "asdof-issues-report",
+  "private": true,
+  "description": "일일 요구사항 해결·문의 정리 docx 생성",
+  "dependencies": { "docx": "^9.5.1" }
+}
